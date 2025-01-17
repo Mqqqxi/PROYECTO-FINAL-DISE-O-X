@@ -1,12 +1,24 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from apps.persona.models import Persona
 
-# Create your models here.
-class Paciente(Persona):
-    obraSocial = models.CharField(max_length=45)
 
-class Meta:
+from django.db import models
+
+class Paciente(models.Model):
+    persona = models.OneToOneField(Persona, on_delete=models.CASCADE, db_column='Persona_idPersona', primary_key=True)
+    obraSocial = models.CharField(max_length=45, null=True)
+
+    class Meta:
+        managed= True
         db_table = 'paciente'
+
+    def __str__(self):
+        return f"{self.persona.first_name} {self.persona.last_name}"
+
+
+
+
 
 class ValorAntropometrico(models.Model):
     paciente = models.OneToOneField(Paciente, on_delete=models.CASCADE, related_name='valores_antropometricos')

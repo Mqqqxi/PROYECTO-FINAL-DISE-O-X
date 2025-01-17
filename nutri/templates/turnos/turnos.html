@@ -10,11 +10,18 @@
 </section>
 
 <!-- Modal para seleccionar horarios -->
+<!-- Modal para seleccionar horarios -->
 <div id="modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #ccc; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">
     <h3>Horarios disponibles</h3>
     <div id="available-times">
         <!-- Aquí se cargarán los horarios dinámicamente -->
     </div>
+    <div id="reserved-turn" style="margin-top: 20px; display: none;">
+        <h4>Tu turno reservado:</h4>
+        <p id="reserved-details"></p>
+        <button id="cancel-turn-btn">Cancelar turno</button>
+    </div>
+    
     <button id="close-modal-btn">Cerrar</button>
 </div>
 
@@ -55,6 +62,12 @@
         const closeModalBtn = document.getElementById('close-modal-btn');
         const closeReasonModalBtn = document.getElementById('close-reason-modal-btn');
         const reserveBtn = document.getElementById('reserve-btn');
+        // Variables y elementos
+        const reservedTurnDiv = document.getElementById('reserved-turn');
+    const reservedDetails = document.getElementById('reserved-details');
+    const cancelTurnBtn = document.getElementById('cancel-turn-btn');
+
+
 
         let selectedDate = null;
         let selectedTime = null;
@@ -76,6 +89,63 @@
             });
             return horarios;
         }
+
+
+        
+
+        // Función para cargar turno reservado
+        function cargarTurnoReservado() {
+        fetch('{% url "turnos:obtener_turno" %}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.turno) {
+                    reservedTurnDiv.style.display = 'block';
+                    reservedDetails.innerHTML = `
+                        Día: ${data.turno.dia}<br>
+                        Hora: ${data.turno.hora}<br>
+                        Motivo: ${data.turno.motivo}
+                    `;
+                } else {
+                    reservedTurnDiv.style.display = 'none';
+                }
+            })
+            .catch(error => console.error('Error al cargar turno reservado:', error));
+    }
+
+    // Función para cancelar el turno
+    cancelTurnBtn.addEventListener('click', function () {
+        if (confirm('¿Estás seguro de que deseas cancelar este turno?')) {
+            fetch('{% url "turnos:cancelar_turno" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        reservedTurnDiv.style.display = 'none';
+                        cargarTurnoReservado(); // Actualizar la vista
+                    } else {
+                        alert(data.error || 'No se pudo cancelar el turno.');
+                    }
+                })
+                .catch(error => console.error('Error al cancelar turno:', error));
+        }
+    });
+
+
+    // Cargar turno reservado al abrir el modal
+    document.getElementById('calendar').addEventListener('click', cargarTurnoReservado);
+
+    // Llamar a la función al abrir el modal
+    function openModal(date) {
+        selectedDate = date;
+        cargarTurnoReservado();
+        modal.style.display = 'block';
+        modalOverlay.style.display = 'block';
+    }
 
         // Función para abrir el modal con los horarios
         function openModal(date) {
@@ -100,17 +170,45 @@
 
         // Función para reservar turno
         reserveBtn.addEventListener('click', function () {
-            const motivo = reasonSelect.value;
-            if (!motivo) {
-                alert('Por favor, seleccione un motivo de la consulta.');
-                return;
-            }
-            if (confirm(`¿Confirmar reserva para el ${selectedDate} a las ${selectedTime} con el motivo: "${motivo}"?`)) {
-                alert('Reserva realizada con éxito.');
-                reasonSelect.value = ''; // Restablece el select
+    const motivo = reasonSelect.value;
+    if (!motivo) {
+        alert('Por favor, seleccione un motivo de la consulta.');
+        return;
+    }
+
+    if (confirm(`¿Confirmar reserva para el ${selectedDate} a las ${selectedTime} con el motivo: "${motivo}"?`)) {
+        fetch('{% url "turnos:reservar_turno" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify({
+                dia: selectedDate,
+                hora: selectedTime,
+                motivo: motivo,
+            }),
+        })
+            .then(response => {
+                if (!response.ok) throw response.json();
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const [year, month, day] = selectedDate.split('-');
+                    alert(`Turno guardado exitosamente para el día ${day}-${month}-${year} a las ${selectedTime}.`);
+                } else {
+                    alert(data.error || 'No se pudo guardar el turno.');
+                }
+                reasonSelect.value = ''; // Restablecer select
                 closeModal('reason-modal');
-            }
-        });
+            })
+            .catch(async error => {
+                const errorData = await error;
+                alert('Error al reservar el turno: ' + (errorData.error || 'Error desconocido.'));
+            });
+    }
+    });
 
         // Asigna eventos para cerrar los modales
         closeModalBtn.addEventListener('click', () => closeModal('modal'));
@@ -129,5 +227,9 @@
         });
         calendar.render();
     });
+
+
+    
+
 </script>
 {% endblock %}

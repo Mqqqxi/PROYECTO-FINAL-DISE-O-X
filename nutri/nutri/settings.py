@@ -28,6 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+AUTH_USER_MODEL = 'persona.Persona'
+
+LOGIN_REDIRECT_URL = '/'  # Redirige al inicio después de iniciar sesión
+LOGOUT_REDIRECT_URL = '/'  # Redirige al login después de cerrar sesión
+LOGIN_URL = 'login'  # Vista de login para decoradores como @login_required
 
 # Application definition
 
@@ -82,7 +87,7 @@ WSGI_APPLICATION = 'nutri.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nutri',
+        'NAME': 'NUTRINUEW',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': '127.0.0.1',  # O el host correspondiente

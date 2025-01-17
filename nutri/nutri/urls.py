@@ -17,11 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-
+#URL LOGIN
+from django.contrib.auth import views as auth
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('inicio/', views.Home, name='inicio'),
-
+    path('', views.Home, name='inicio'),
+    #LOGIN
+    path('login/',auth.LoginView.as_view(template_name='pacientes/login.html'),name='login'),
+    path('logout/', views.custom_logout, name='logout'),
+    path("turnos/", include("apps.turno.urls")),
+    path("pacientes/",include("apps.pacientes.urls")),
 
 
     # path("comida/", include("apps.comida.urls")),
@@ -29,5 +34,6 @@ urlpatterns = [
     # path("persona/", include("apps.persona.urls")),
     # path("planNutricional/", include("apps.planNutricional.urls")),
     # path("progreso/", include("apps.progreso.urls")),
-    path("turnos/", include("apps.turno.urls")),
+    
 ]
+
