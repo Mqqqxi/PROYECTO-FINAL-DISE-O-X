@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}COMIDA{% endblock %}
+{% block content %}
+
+<div class="section-title">
+    <h2 class="text-center">LISTA DE COMIDAS</h2>
+</div>
+
+<div id="calendar"></div>
+<div class="search-container">
+    <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Buscar por nombre..." 
+        onkeyup="filterComidas()" 
+        class="search-input"
+    />
+</div>
+<div class="containerComida">
+    
+    <!-- Galería de imágenes -->
+    <div class="gallery" id="gallery">
+        {% for comida in comidas %}
+        <div class="gallery-item" onclick="showDetails('{{ comida.idcomida }}')" data-id="{{ comida.idcomida }}"
+            data-nombre="{{ comida.nombre }}" data-calorias="{{ comida.calorias }}"
+            data-proteina="{{ comida.proteina }}" data-colesterol="{{ comida.colesterol }}"
+            data-carbohidratos="{{ comida.carbohidratos }}" data-grasaTotales="{{ comida.grasaTotales }}"
+            data-sodio="{{ comida.sodio }}" data-categoria="{{ comida.categoria }}">
+            <img class="gallery-image" src="{{ comida.imagen.url }}" alt="{{ comida.nombre }}">
+            <div class="gallery-info">
+                <h3>{{ comida.nombre }}</h3>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Detalles de la comida -->
+    <div class="details">
+        <h2>Detalles de la comida</h2>
+        <p><strong>Nombre:</strong> <span id="detalle-nombre">Selecciona una comida</span></p>
+        <p><strong>Calorías:</strong> <span id="detalle-calorias">-</span></p>
+        <p><strong>Proteínas:</strong> <span id="detalle-proteina">-</span></p>
+        <p><strong>Colesterol:</strong> <span id="detalle-colesterol">-</span></p>
+        <p><strong>Carbohidratos:</strong> <span id="detalle-carbohidratos">-</span></p>
+        <p><strong>Grasas Totales:</strong> <span id="detalle-grasaTotales">-</span></p>
+        <p><strong>Sodio:</strong> <span id="detalle-sodio">-</span></p>
+        <p><strong>Categoria:</strong> <span id="detalle-categoria">-</span></p>
+        
+    </div>
+</div>
+
+<!-- Paginación con flechas debajo de las imágenes -->
+<div class="pagination">
+    <button id="prevPage" onclick="changePage(-1)">&#8592;</button>
+    <span id="currentPage">1</span>
+    <button id="nextPage" onclick="changePage(1)">&#8594;</button>
+</div>
+
+<script>
+    function showDetails(id) {
+        const item = document.querySelector(`.gallery-item[data-id='${id}']`);
+        if (item) {
+            document.getElementById("detalle-nombre").textContent = item.dataset.nombre;
+            document.getElementById("detalle-calorias").textContent = item.dataset.calorias;
+            document.getElementById("detalle-proteina").textContent = item.dataset.proteina;
+            document.getElementById("detalle-colesterol").textContent = item.dataset.colesterol;
+            document.getElementById("detalle-carbohidratos").textContent = item.dataset.carbohidratos;
+            document.getElementById("detalle-grasaTotales").textContent = item.dataset.grasaTotales;
+            document.getElementById("detalle-sodio").textContent = item.dataset.sodio;
+            document.getElementById("detalle-categoria").textContent = item.dataset.categoria;
+        }
+    }
+
+    let currentPage = 1; // Página actual
+const itemsPerPage = 10; // Cantidad de elementos por página
+
+function showPage(page) {
+    const galleryItems = Array.from(document.querySelectorAll('.gallery-item'));
+    const visibleItems = galleryItems.filter(item => item.style.display !== 'none'); // Solo los visibles
+    const totalPages = Math.ceil(visibleItems.length / itemsPerPage);
+
+    if (page < 1 || page > totalPages) return; // Validación: evitar páginas fuera de rango
+
+    // Calcula el rango de elementos a mostrar
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+
+    // Actualiza los elementos visibles
+    visibleItems.forEach((item, index) => {
+        item.style.display = index >= start && index < end ? 'block' : 'none';
+    });
+
+    // Actualiza los botones de navegación
+    document.getElementById('currentPage').textContent = `${page} / ${totalPages}`;
+    document.getElementById('prevPage').disabled = page === 1;
+    document.getElementById('nextPage').disabled = page === totalPages;
+}
+// Cambia la página actual
+function changePage(direction) {
+    const galleryItems = Array.from(document.querySelectorAll('.gallery-item'));
+    const visibleItems = galleryItems.filter(item => item.style.display !== 'none'); // Elementos visibles
+    const totalPages = Math.ceil(visibleItems.length / itemsPerPage);
+
+    // Cambia la página actual dentro de los límites
+    currentPage += direction;
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    // Muestra la nueva página
+    showPage(currentPage);
+}
+
+// Filtra las comidas según el valor de búsqueda
+function filterComidas() {
+    const searchValue = document.getElementById('searchInput').value.toLowerCase();
+    const galleryItems = document.querySelectorAll('.gallery-item');
+
+    galleryItems.forEach(item => {
+        const nombre = item.dataset.nombre.toLowerCase();
+        item.style.display = nombre.includes(searchValue) ? 'block' : 'none';
+    });
+
+    // Reinicia la paginación con los elementos visibles
+    currentPage = 1;
+    showPage(currentPage);
+}
+
+// Inicializa la paginación al cargar la página
+document.addEventListener('DOMContentLoaded', function () {
+    showPage(currentPage);
+});
+
+    
+</script>
+
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Montserrat:500);
+    
+
+    :root {
+        /* Base font size */
+        font-size: 10px;
+    }
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    .containerComida {
+        display: flex;
+        gap: 2rem;
+        max-width: 100rem;
+        /* Limita el ancho máximo del contenedor */
+        margin: 0 auto;
+        /* Centra el contenedor horizontalmente */
+        margin-bottom: 50px;
+        padding: 0 2rem;
+        /* Espacio interno a los lados */
+        align-items: flex-start;
+    }
+
+    .heading {
+        font-family: "Montserrat", Arial, sans-serif;
+        font-size: 4rem;
+        font-weight: 500;
+        line-height: 1.5;
+        text-align: center;
+        padding: 3.5rem 0;
+        color: #1a1a1a;
+    }
+
+    .heading span {
+        display: block;
+    }
+
+    .gallery {
+        flex: 2;
+        /* Ocupa 2/3 del espacio */
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        /* 4 imágenes por fila */
+        gap: 2rem;
+        max-height: 60rem;
+        /* Altura máxima para limitar a 3 filas */
+        /* overflow-y: auto; Activa el scroll si hay más imágenes */
+    }
+
+    .gallery-item {
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0.3rem 0.4rem 0.4rem rgba(0, 0, 0, 0.4);
+        /* Sombra */
+        border: none;
+        /* Asegúrate de que no haya borde */
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+        height: 20rem;
+        
+        width: 13rem;
+    }
+
+    .gallery-item:hover {
+        transform: scale(1.05);
+    }
+
+
+    .gallery-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        /* Ajusta la imagen al contenedor */
+        object-fit: cover;
+        /* Recorta proporcionalmente */
+    }
+
+    .gallery-info {
+        position: absolute;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        /* Fondo semitransparente */
+        color: white;
+        padding: 1rem;
+        width: 100%;
+        font-size: 0.1rem;
+        /* Ajusta el tamaño de la fuente aquí */
+
+        transform: translateY(100%);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .gallery-item:hover .gallery-info {
+        transform: translateY(0);
+        /* Muestra los datos al pasar el cursor */
+    }
+
+    .details {
+        flex: 1;
+        /* Ocupa 1/3 del espacio */
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 2rem;
+        background-color: #fff;
+        box-shadow: 0.3rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1);
+        min-width: 30rem;
+        /* Asegura un ancho mínimo para los detalles */
+        max-height: 60rem;
+        /* Altura máxima alineada con la galería */
+        margin-left: 3rem;
+        /* Agrega margen para mover a la derecha */
+    }
+
+
+    .gallery-info h3 {
+        color: #ffffff;
+        /* Cambia el color del título */
+        font-size: 1.4rem;
+        /* Ajusta el tamaño si es necesario */
+    }
+
+    .details h2 {
+        margin-top: 0;
+        font-size: 2rem;
+        color: #333;
+    }
+
+    .details p {
+        margin: 0.5rem 0;
+        font-size: 1.6rem;
+        line-height: 1.5;
+    }
+
+    * {
+        border: none !important;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .pagination button {
+        background-color: #29ca8e;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-size: 2rem;
+        /* Aumenta el tamaño de las flechas */
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .pagination button:hover {
+        background-color: #0056b3;
+    }
+
+    .pagination span {
+        font-size: 1.6rem;
+        font-weight: bold;
+    }
+
+    .search-container {
+    margin: 2rem auto;
+    align-items: flex-start;
+}
+
+.search-input {
+    width: 80%;
+    max-width: 30rem;
+    padding: 1rem;
+    font-size: 1.6rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0.2rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1);
+}
+
+    /* Responsividad: apila la galería y los detalles en pantallas pequeñas */
+    /* Responsividad: apila la galería y los detalles en pantallas pequeñas */
+    @media (max-width: 768px) {
+        .containerComida {
+            flex-direction: column;
+            /* Cambia a columna en pantallas pequeñas */
+        }
+
+        .gallery {
+            grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+            /* Ajusta el ancho */
+            max-height: auto;
+            /* Quita la restricción de altura */
+        }
+
+        .details {
+            max-height: auto;
+            /* Ajusta la altura */
+        }
+    }
+</style>
+{% endblock %}

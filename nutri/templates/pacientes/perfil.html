@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}PERFIL{% endblock %}
+{% block content %}
+<section class="profile-section">
+     <div class="container">
+          <h2>Editar Perfil</h2>
+          <hr>
+          <form method="POST">
+               {% csrf_token %}
+               <div class="form-group">
+                    {{ form.first_name.label_tag }}
+                    {{ form.first_name }}
+               </div>
+               <div class="form-group">
+                    {{ form.last_name.label_tag }}
+                    {{ form.last_name }}
+               </div>
+               <div class="form-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+               </div>
+               <div class="form-group">
+                    {{ form.telefono.label_tag }}
+                    {{ form.telefono }}
+               </div>
+               <div class="form-group">
+                    {{ form.direccion.label_tag }}
+                    {{ form.direccion }}
+               </div>
+               <div class="form-group">
+                    {{ form.tipoDocumento.label_tag }}
+                    {{ form.tipoDocumento }}
+               </div>
+               <div class="form-group">
+                    {{ form.numDocumento.label_tag }}
+                    {{ form.numDocumento }}
+               </div>
+               <button type="submit" name="guardar_perfil" class="btn btn-success">Guardar cambios</button>
+          </form>
+          {% if messages %}
+          <div class="alert alert-success" role="alert">
+               {% for message in messages %}
+                    {{ message }}
+               {% endfor %}
+          </div>
+          {% endif %}
+          <hr>
+
+          <!-- Formulario para cambiar la contraseña -->
+          <h2>Cambiar Contraseña</h2>
+          <form method="POST">
+               {% csrf_token %}
+               {% for field in password_form %}
+               <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="text-danger">
+                         {{ field.errors }}
+                    </div>
+                    {% endif %}
+               </div>
+               {% endfor %}
+               <button type="submit" name="cambiar_contraseña" class="btn btn-warning">Cambiar contraseña</button>
+          </form>
+          <!-- Modales -->
+          <!-- Modal para Guardar Cambios -->
+
+
+     </div>
+
+
+</section>
+
+<script>
+     document.addEventListener('DOMContentLoaded', function () {
+         const tipoDocumentoField = document.querySelector('[name="tipoDocumento"]');
+         const numDocumentoField = document.querySelector('[name="numDocumento"]');
+         tipoDocumentoField.setAttribute('readonly', 'readonly');
+         numDocumentoField.setAttribute('readonly', 'readonly');
+     });
+ </script>
+
+
+{% endblock %}

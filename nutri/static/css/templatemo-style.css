@@ -95,7 +95,8 @@ https://templatemo.com/tm-516-known
   }
 
   .section-title {
-    padding-bottom: 40px;
+    padding: 40px;
+    padding-bottom: 1px;
   }
 
   .section-title h2 {
@@ -178,8 +179,12 @@ https://templatemo.com/tm-516-known
     height: 390px;
   }
 
-
-
+  hr {
+    border: none;
+    border-top: 1px solid #000;
+    margin: 0;
+  }
+  
   /*---------------------------------------
      BUTTONS               
   -----------------------------------------*/

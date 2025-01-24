@@ -29,7 +29,7 @@ urlpatterns = [
     path("pacientes/",include("apps.pacientes.urls")),
 
 
-    # path("comida/", include("apps.comida.urls")),
+    path("comida/", include("apps.comida.urls")),
     # path("pacientes/", include("apps.pacientes.urls")),
     # path("persona/", include("apps.persona.urls")),
     # path("planNutricional/", include("apps.planNutricional.urls")),

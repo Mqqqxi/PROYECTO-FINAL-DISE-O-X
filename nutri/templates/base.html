@@ -137,10 +137,11 @@ https://templatemo.com/tm-516-known
                     <ul class="nav navbar-nav navbar-right">
                          <li class="dropdown">
                              <a href="#" class="dropdown-toggle">
-                                  Hola, {{ user.username }} <span style="margin-left: 10px;">▼</span>
+                                  Hola, {{ user.first_name }} <span style="margin-left: 10px;">▼</span>
                              </a>
                              <ul class="dropdown-menu">
-                                 <li><a href="{% url 'inicio' %}">Mi perfil</a></li>
+                                 <li><a href="{% url 'pacientes:perfil' %}">Mi perfil</a></li>
+                                 <li><a href="{% url 'pacientes:seguimiento' %}">Mi seguimiento</a></li>
                                  <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
                              </ul>
                          </li>
