@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
-
+from .models import Paciente, ValorAntropometrico, AnalisisLab, Anamnesis, HistoriaClinica
+from .forms import PacienteForm, ValorAntropometricoForm, AnalisisLabForm, AnamnesisForm, HistoriaClinicaForm
 from apps.persona.models import Persona
+from apps.pacientes.models import Paciente
 
 from .forms import RegistroPacienteForm
 from django.contrib.auth.forms import PasswordChangeForm
@@ -54,6 +56,12 @@ class PerfilPacienteForm(forms.ModelForm):
             'numDocumento': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+class PacienteForm(forms.ModelForm):
+    class Meta:
+        model = Paciente
+        fields = ['obraSocial']
+
+
 class CambiarContraseñaForm(PasswordChangeForm):
     old_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -100,3 +108,96 @@ def seguimiento_paciente(request):
 def listapaciente(request):
     pacientes = Persona.objects.filter(is_paciente=True)
     return render(request, 'pacientes/listapaciente.html', {'pacientes': pacientes})
+
+def editar_paciente(request, persona_id):
+    paciente = get_object_or_404(Paciente, persona_id=persona_id)
+    try:
+        valor_antropometrico = paciente.valores_antropometricos
+    except ValorAntropometrico.DoesNotExist:
+        valor_antropometrico = None
+
+    try:
+        analisis_lab = paciente.analisis_lab
+    except AnalisisLab.DoesNotExist:
+        analisis_lab = None
+
+    try:
+        anamnesis = paciente.anamnesis
+    except Anamnesis.DoesNotExist:
+        anamnesis = None
+
+    try:
+        historia_clinica = paciente.historia_clinica
+    except HistoriaClinica.DoesNotExist:
+        historia_clinica = None
+    
+    if request.method == 'POST':
+        paciente_form = PacienteForm(request.POST, instance=paciente)
+        
+        # Pasamos el paciente por defecto a los formularios correspondientes
+        valor_antropometrico_form = ValorAntropometricoForm(request.POST, instance=valor_antropometrico)
+        if valor_antropometrico_form.instance:
+            valor_antropometrico_form.instance.paciente = paciente
+
+        analisis_lab_form = AnalisisLabForm(request.POST, instance=analisis_lab)
+        if analisis_lab_form.instance:
+            analisis_lab_form.instance.paciente = paciente
+
+        anamnesis_form = AnamnesisForm(request.POST, instance=anamnesis)
+        if anamnesis_form.instance:
+            anamnesis_form.instance.paciente = paciente
+
+        historia_clinica_form = HistoriaClinicaForm(request.POST, instance=historia_clinica)
+        if historia_clinica_form.instance:
+            historia_clinica_form.instance.paciente = paciente
+
+        if all([paciente_form.is_valid(), valor_antropometrico_form.is_valid(), 
+                analisis_lab_form.is_valid(), anamnesis_form.is_valid(), historia_clinica_form.is_valid()]):
+
+            paciente_form.save()
+            valor_antropometrico_form.save()
+            analisis_lab_form.save()
+            anamnesis_form.save()
+            historia_clinica_form.save()
+            
+            return redirect('pacientes:listapaciente')  # Redirigir a la lista de pacientes después de guardar
+        else:
+            print("Errores en los formularios:")
+            print(paciente_form.errors)
+            print(valor_antropometrico_form.errors)
+            print(analisis_lab_form.errors)
+            print(anamnesis_form.errors)
+            print(historia_clinica_form.errors)
+    else:
+        paciente_form = PacienteForm(instance=paciente)
+        
+        # Asignar el paciente por defecto en la carga inicial de los formularios
+        valor_antropometrico_form = ValorAntropometricoForm(instance=valor_antropometrico)
+        if valor_antropometrico_form.instance:
+            valor_antropometrico_form.instance.paciente = paciente
+
+        analisis_lab_form = AnalisisLabForm(instance=analisis_lab)
+        if analisis_lab_form.instance:
+            analisis_lab_form.instance.paciente = paciente
+
+        anamnesis_form = AnamnesisForm(instance=anamnesis)
+        if anamnesis_form.instance:
+            anamnesis_form.instance.paciente = paciente
+
+        historia_clinica_form = HistoriaClinicaForm(instance=historia_clinica)
+        if historia_clinica_form.instance:
+            historia_clinica_form.instance.paciente = paciente
+
+    return render(request, 'pacientes/editar_perfil_paciente.html', {
+        'paciente_form': paciente_form,
+        'valor_antropometrico_form': valor_antropometrico_form,
+        'analisis_lab_form': analisis_lab_form,
+        'anamnesis_form': anamnesis_form,
+        'historia_clinica_form': historia_clinica_form,
+    })
+
+def deshabilitar_paciente(request, pk):
+    paciente = get_object_or_404(Paciente, pk=pk)
+    paciente.persona.is_active = False
+    paciente.persona.save()
+    return redirect('pacientes:listapaciente')

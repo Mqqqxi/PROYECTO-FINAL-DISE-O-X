@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% block title %}Editar Paciente{% endblock %}
+
+{% block content %}
+<!-- <div class="container">
+    <h2 class="text-center">Editar Paciente</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <h3>Datos del Paciente</h3>
+        {{ paciente_form.as_p }}
+
+        <h3>Valores Antropométricos</h3>
+        {{ valor_antropometrico_form.as_p }}
+
+        <h3>Análisis de Laboratorio</h3>
+        {{ analisis_lab_form.as_p }}
+
+        <h3>Anamnesis</h3>
+        {{ anamnesis_form.as_p }}
+
+        <h3>Historia Clínica</h3>
+        {{ historia_clinica_form.as_p }}
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div> -->
+
+<div class="container">
+    <h2 class="text-center">Editar Paciente</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="tabset">
+            <!-- Pestaña 1: Datos del Paciente -->
+            <input type="radio" name="tabset" id="tab1" aria-controls="paciente" checked>
+            <label for="tab1">Datos del Paciente</label>
+
+            <!-- Pestaña 2: Valores Antropométricos -->
+            <input type="radio" name="tabset" id="tab2" aria-controls="antropometria">
+            <label for="tab2">Valores Antropométricos</label>
+
+            <!-- Pestaña 3: Análisis de Laboratorio -->
+            <input type="radio" name="tabset" id="tab3" aria-controls="laboratorio">
+            <label for="tab3">Análisis de Laboratorio</label>
+
+            <!-- Pestaña 4: Anamnesis -->
+            <input type="radio" name="tabset" id="tab4" aria-controls="anamnesis">
+            <label for="tab4">Anamnesis</label>
+
+            <!-- Pestaña 5: Historia Clínica -->
+            <input type="radio" name="tabset" id="tab5" aria-controls="historia">
+            <label for="tab5">Historia Clínica</label>
+
+            <div class="tab-panels">
+                <section id="paciente" class="tab-panel">
+                    <h3>Datos del Paciente</h3>
+                    {{ paciente_form.as_p }}
+                </section>
+
+                <section id="antropometria" class="tab-panel">
+                    <h3>Valores Antropométricos</h3>
+                    {{ valor_antropometrico_form.as_p }}
+                </section>
+
+                <section id="laboratorio" class="tab-panel">
+                    <h3>Análisis de Laboratorio</h3>
+                    {{ analisis_lab_form.as_p }}
+                </section>
+
+                <section id="anamnesis" class="tab-panel">
+                    <h3>Anamnesis</h3>
+                    {{ anamnesis_form.as_p }}
+                </section>
+
+                <section id="historia" class="tab-panel">
+                    <h3>Historia Clínica</h3>
+                    {{ historia_clinica_form.as_p }}
+                </section>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Guardar</button>
+        <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-secondary mt-3">Cancelar</a>
+    </form>
+</div>
+
+<style>
+    .tabset > input[type="radio"] {
+    position: absolute;
+    left: -200vw;
+}
+
+.tabset .tab-panel {
+    display: none;
+}
+
+.tabset > input:first-child:checked ~ .tab-panels > .tab-panel:first-child,
+.tabset > input:nth-child(3):checked ~ .tab-panels > .tab-panel:nth-child(2),
+.tabset > input:nth-child(5):checked ~ .tab-panels > .tab-panel:nth-child(3),
+.tabset > input:nth-child(7):checked ~ .tab-panels > .tab-panel:nth-child(4),
+.tabset > input:nth-child(9):checked ~ .tab-panels > .tab-panel:nth-child(5) {
+    display: block;
+}
+
+.tabset > label {
+    position: relative;
+    display: inline-block;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: 600;
+    background: #f8f9fa;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+}
+
+.tabset > label:hover,
+.tabset > input:checked + label {
+    background: #06c;
+    color: white;
+}
+
+.tab-panels {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 0 5px 5px 5px;
+}
+
+/* Diseño de los campos Char y Text */
+
+/* Mejorar el diseño de los campos de texto */
+input[type="text"], 
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Cambiar borde cuando se enfoca */
+input[type="text"]:focus, 
+textarea:focus {
+    border-color: #06c;
+    box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+    outline: none;
+}
+
+/* Mejorar el diseño de los placeholders */
+::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+/* Aumentar el tamaño de los Textarea */
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+
+</style>
+
+{% endblock %}

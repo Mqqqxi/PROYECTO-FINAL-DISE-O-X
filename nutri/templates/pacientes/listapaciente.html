@@ -1,12 +1,63 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}COMIDA{% endblock %}
+{% block title %}LISTA DE PACIENTES{% endblock %}
 {% block content %}
-<div class="container mt-5">
-    <h2>PACIENTES PE</h2>
-
+<section class="container">
+    <div class="section-title">
+        <h2 class="text-center">LISTA DE PACIENTES</h2>
+    </div>
+    <div id="calendar"></div>
+</section>
+<div class="container">
+<table id="miTabla" class="table display">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>DNI</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Activo</th>
+		<th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for paciente in pacientes %}
+      <tr>
+        <td>{{ paciente.first_name }}</td>
+        <td>{{ paciente.last_name }}</td>
+        <td>{{ paciente.numDocumento }}</td>
+        <td>{{ paciente.email }}</td>
+        <td>{{ paciente.telefono }}</td>
+        <td>{{ paciente.is_active }}</td>
+		<td>
+			<a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-sm">Editar</a>
+			<a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger btn-sm">Deshabilitar</a>
+		  </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+<script>
+  $(document).ready(function () {
+    $('#miTabla').DataTable({
+      paging: true,           
+      ordering: true,         
+      searching: true,        
+      pageLength: 10,         
+      language: {             
+        url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+      },
+      dom: 'Bfrtip',
+      buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    });
+  });
+
+  
+</script>
 {% endblock %}

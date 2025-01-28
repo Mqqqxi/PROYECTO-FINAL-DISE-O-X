@@ -2,65 +2,74 @@
 {% load static %}
 {% block title %}REGISTRARSE{% endblock %}
 {% block content %}
-  <form method="post" class="register-form">
+<form method="post" class="register-form">
     {% csrf_token %}
     <div class="section-title">
-      <h2 class="text-center">REGISTRARSE</h2>
+        <h2 class="text-center">REGISTRARSE</h2>
     </div>
 
     {% if error %}
-      <div class="alert alert-danger">{{ error }}</div>
+    <div class="alert alert-danger">{{ error }}</div>
     {% endif %}
 
     <!-- Campo: Nombre -->
     <input type="text" name="first_name" placeholder="Nombre" value="{{ form.first_name.value }}" required />
     {% if form.first_name.errors %}
-      <div class="alert alert-danger">{{ form.first_name.errors|striptags }}</div>
+    <div class="alert alert-danger">{{ form.first_name.errors|striptags }}</div>
     {% endif %}
 
     <!-- Campo: Apellido -->
     <input type="text" name="last_name" placeholder="Apellido" value="{{ form.last_name.value }}" required />
     {% if form.last_name.errors %}
-      <div class="alert alert-danger">{{ form.last_name.errors|striptags }}</div>
+    <div class="alert alert-danger">{{ form.last_name.errors|striptags }}</div>
     {% endif %}
+
+    <input type="date" name="fechaNacimiento" placeholder="fechaNacimiento" value="{{ form.fechaNacimiento.value }}" required />
+    {% if form.fechaNacimiento.errors %}
+    <div class="alert alert-danger">{{ form.fechaNacimiento.errors|striptags }}</div>
+    {% endif %}
+
+
+
 
     <!-- Campo: Tipo de Documento -->
     <select name="tipoDocumento" style="width: 100%; padding: 10px; margin-bottom: 10px;" required>
-      <option value="DNI" {% if form.tipoDocumento.value == "DNI" %}selected{% endif %}>DNI</option>
-      <option value="Pasaporte" {% if form.tipoDocumento.value == "Pasaporte" %}selected{% endif %}>Pasaporte</option>
-      <option value="Cédula" {% if form.tipoDocumento.value == "Cédula" %}selected{% endif %}>Cédula</option>
-      <option value="Licencia" {% if form.tipoDocumento.value == "Licencia" %}selected{% endif %}>Licencia de conducir</option>
-      <option value="Otro" {% if form.tipoDocumento.value == "Otro" %}selected{% endif %}>Otro</option>
-    </select>
+    <option value="DNI" {% if form.tipoDocumento.value and form.tipoDocumento.value == "DNI" %}selected{% endif %}>DNI</option>
+    <option value="Pasaporte" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Pasaporte" %}selected{% endif %}>Pasaporte</option>
+    <option value="Cédula" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Cédula" %}selected{% endif %}>Cédula</option>
+    <option value="Licencia" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Licencia" %}selected{% endif %}>Licencia de conducir</option>
+    <option value="Otro" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Otro" %}selected{% endif %}>Otro</option>
+</select>
     {% if form.tipoDocumento.errors %}
-      <div class="alert alert-danger">{{ form.tipoDocumento.errors|striptags }}</div>
+    <div class="alert alert-danger">{{ form.tipoDocumento.errors|striptags }}</div>
     {% endif %}
 
     <!-- Campo: Número de Documento -->
-    <input type="text" name="numDocumento" placeholder="Nro. de documento" value="{{ form.numDocumento.value }}" required />
+    <input type="text" name="numDocumento" placeholder="Nro. de documento" value="{{ form.numDocumento.value }}"
+        required />
     {% if form.numDocumento.errors %}
-      <div class="alert alert-danger">{{ form.numDocumento.errors|striptags }}</div>
+    <div class="alert alert-danger">{{ form.numDocumento.errors|striptags }}</div>
     {% endif %}
 
     <!-- Campo: Email -->
     <input type="email" name="email" placeholder="Correo electrónico" value="{{ form.email.value }}" required />
     {% if form.email.errors %}
-      <div class="alert alert-danger">{{ form.email.errors|striptags }}</div>
+    <div class="alert alert-danger">{{ form.email.errors|striptags }}</div>
     {% endif %}
 
     <!-- Campo: Contraseña -->
     <input type="password" name="password1" placeholder="Contraseña" required />
     {% if form.password1.errors %}
-      <div class="alert alert-danger">{{ form.password1.errors|striptags }}</div>
+    <div class="alert alert-danger">{{ form.password1.errors|striptags }}</div>
     {% endif %}
 
     <!-- Campo: Confirmar Contraseña -->
     <input type="password" name="password2" placeholder="Confirmar Contraseña" required />
     {% if form.password2.errors %}
-      <div class="alert alert-danger">{{ form.password2.errors|striptags }}</div>
+    <div class="alert alert-danger">{{ form.password2.errors|striptags }}</div>
     {% endif %}
 
     <button type="submit">REGISTRARSE</button>
     <p class="message">¿Ya estás registrado? <a href="{% url 'login' %}">Inicia sesión</a></p>
-  </form>
+</form>
 {% endblock %}
