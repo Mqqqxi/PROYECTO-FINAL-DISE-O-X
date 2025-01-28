@@ -130,8 +130,11 @@
 
 /* Diseño de los campos Char y Text */
 
-/* Mejorar el diseño de los campos de texto */
+/* 🎨 Estilos generales para todos los inputs */
 input[type="text"], 
+input[type="number"], 
+input[type="date"], 
+input[type="time"], 
 textarea {
     width: 100%;
     padding: 10px;
@@ -141,25 +144,40 @@ textarea {
     transition: all 0.3s ease-in-out;
 }
 
-/* Cambiar borde cuando se enfoca */
-input[type="text"]:focus, 
+/* ✨ Mejorar interacciones al hacer focus */
+input:focus, 
 textarea:focus {
     border-color: #06c;
     box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
     outline: none;
 }
 
-/* Mejorar el diseño de los placeholders */
+/* 📅 Estilos específicos para fecha y hora */
+input[type="date"], 
+input[type="time"] {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+/* 📊 Estilos para los campos de números */
+input[type="number"] {
+    background-color: #f9f9f9;
+}
+
+/* 📝 Mejorar diseño de textarea */
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* 🏷️ Placeholder más elegante */
 ::placeholder {
     color: #888;
     font-style: italic;
 }
 
-/* Aumentar el tamaño de los Textarea */
-textarea {
-    min-height: 120px;
-    resize: vertical;
-}
 
 
 </style>
