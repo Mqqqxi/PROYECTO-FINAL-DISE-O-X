@@ -22,7 +22,7 @@
     <!-- Galería de imágenes -->
     <div class="gallery" id="gallery">
         {% for comida in comidas %}
-        <div class="gallery-item" onclick="showDetails('{{ comida.idcomida }}')" data-id="{{ comida.idcomida }}"
+        <div class="gallery-item" draggable="true" ondragstart="drag(event)" onclick="showDetails('{{ comida.idcomida }}')" data-id="{{ comida.idcomida }}"
             data-nombre="{{ comida.nombre }}" data-calorias="{{ comida.calorias }}"
             data-proteina="{{ comida.proteina }}" data-colesterol="{{ comida.colesterol }}"
             data-carbohidratos="{{ comida.carbohidratos }}" data-grasaTotales="{{ comida.grasaTotales }}"
@@ -48,6 +48,8 @@
         <p><strong>Categoria:</strong> <span id="detalle-categoria">-</span></p>
         
     </div>
+
+    
 </div>
 
 <!-- Paginación con flechas debajo de las imágenes -->
@@ -55,6 +57,12 @@
     <button id="prevPage" onclick="changePage(-1)">&#8592;</button>
     <span id="currentPage">1</span>
     <button id="nextPage" onclick="changePage(1)">&#8594;</button>
+</div>
+
+<!-- Zona donde se armarán los platos -->
+<h3 class="mt-4">Arrastra los alimentos aquí para formar un plato</h3>
+<div class="dropzone" ondragover="allowDrop(event)" ondrop="drop(event)">
+    <p>Arrastra los alimentos aquí</p>
 </div>
 
 <script>
@@ -131,6 +139,29 @@ document.addEventListener('DOMContentLoaded', function () {
     showPage(currentPage);
 });
 
+
+function drag(event) {
+        event.dataTransfer.setData("text", event.target.id);
+    }
+
+    function allowDrop(event) {
+        event.preventDefault();
+    }
+
+    function drop(event) {
+        event.preventDefault();
+        let comidaId = event.dataTransfer.getData("text");
+        let comidaElement = document.getElementById(comidaId);
+
+        // Clonar el elemento para poder reutilizarlo
+        let clonedElement = comidaElement.cloneNode(true);
+        clonedElement.removeAttribute("id");
+        clonedElement.setAttribute("draggable", "false");
+
+        // Agregar el alimento al plato
+        event.target.appendChild(clonedElement);
+    }
+
     
 </script>
 
@@ -147,6 +178,51 @@ document.addEventListener('DOMContentLoaded', function () {
     *::before,
     *::after {
         box-sizing: border-box;
+    }
+
+    .dropzone {
+        width: 100%;
+        min-height: 200px;
+        border: 2px dashed #ccc;
+        border-radius: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+        background-color: #f8f8f8;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .dropzone img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    /* Botón de eliminar comida */
+    .delete-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: red;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .food-item {
+        position: relative;
+        display: inline-block;
     }
 
     .containerComida {

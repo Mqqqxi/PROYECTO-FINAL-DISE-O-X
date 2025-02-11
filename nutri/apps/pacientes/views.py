@@ -1,7 +1,10 @@
+from django.utils import timezone
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
+from django.db.models import OuterRef, Subquery
+from apps.turno.models import Turno
 from .models import Paciente, ValorAntropometrico, AnalisisLab, Anamnesis, HistoriaClinica
 from .forms import PacienteForm, ValorAntropometricoForm, AnalisisLabForm, AnamnesisForm, HistoriaClinicaForm
 from apps.persona.models import Persona
@@ -105,9 +108,10 @@ def seguimiento_paciente(request):
     return render(request, 'pacientes/seguimiento.html')
 
 
-def listapaciente(request):
-    pacientes = Persona.objects.filter(is_paciente=True)
+def lista_pacientes(request):
+    pacientes = Persona.objects.filter(is_paciente=True).select_related('paciente', 'paciente__turno')
     return render(request, 'pacientes/listapaciente.html', {'pacientes': pacientes})
+
 
 def editar_paciente(request, persona_id):
     paciente = get_object_or_404(Paciente, persona_id=persona_id)
@@ -198,6 +202,13 @@ def editar_paciente(request, persona_id):
 
 def deshabilitar_paciente(request, pk):
     paciente = get_object_or_404(Paciente, pk=pk)
-    paciente.persona.is_active = False
+    paciente.persona.is_active = not paciente.persona.is_active  # Alterna entre activo/inactivo
+    paciente.persona.save()
+    return redirect('pacientes:listapaciente')
+
+
+def habilitar_paciente(request, pk):
+    paciente = get_object_or_404(Paciente, pk=pk)
+    paciente.persona.is_active = True  # Activar al paciente
     paciente.persona.save()
     return redirect('pacientes:listapaciente')

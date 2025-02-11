@@ -23,4 +23,5 @@ def agregar_comida(request):
 
 
 def plato(request):
-    return render(request, 'comida/platocomida.html')
+    comidas = Comida.objects.all()  # Obtén todas las comidas de la base de datos
+    return render(request, 'comida/platocomida.html', {'comidas': comidas})

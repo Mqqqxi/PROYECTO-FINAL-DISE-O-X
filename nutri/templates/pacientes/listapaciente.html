@@ -3,13 +3,13 @@
 {% block title %}LISTA DE PACIENTES{% endblock %}
 {% block content %}
 <section class="container">
-    <div class="section-title">
-        <h2 class="text-center">LISTA DE PACIENTES</h2>
-    </div>
-    <div id="calendar"></div>
+  <div class="section-title">
+    <h2 class="text-center">LISTA DE PACIENTES</h2>
+  </div>
+  <div id="calendar"></div>
 </section>
 <div class="container">
-<table id="miTabla" class="table display">
+  <table id="miTabla" class="table display">
     <thead>
       <tr>
         <th>Nombre</th>
@@ -17,8 +17,9 @@
         <th>DNI</th>
         <th>Email</th>
         <th>Teléfono</th>
+        <th>Turno</th>
         <th>Activo</th>
-		<th>Acciones</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -29,11 +30,32 @@
         <td>{{ paciente.numDocumento }}</td>
         <td>{{ paciente.email }}</td>
         <td>{{ paciente.telefono }}</td>
+        <td>
+          {% if paciente.paciente.turno %}
+            {{ paciente.paciente.turno.dia }} - {{ paciente.paciente.turno.hora }}
+          {% else %}
+            Sin turno
+          {% endif %}
+        </td>
         <td>{{ paciente.is_active }}</td>
-		<td>
-			<a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-sm">Editar</a>
-			<a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger btn-sm">Deshabilitar</a>
-		  </td>
+        <td>
+        {% if paciente.is_active %}
+        <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-sm">
+            <i class="fa fa-pencil"></i>
+        </a>
+        <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger btn-sm">
+            <i class="fa fa-ban"></i>
+        </a>
+        {% else %}
+        <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-sm">
+          <i class="fa fa-pencil"></i>
+        </a>
+        <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success btn-sm">
+          <i class="fa fa-check"></i>
+        </a>
+        {% endif %}
+
+        </td>
       </tr>
       {% endfor %}
     </tbody>
@@ -46,11 +68,11 @@
 <script>
   $(document).ready(function () {
     $('#miTabla').DataTable({
-      paging: true,           
-      ordering: true,         
-      searching: true,        
-      pageLength: 10,         
-      language: {             
+      paging: true,
+      ordering: true,
+      searching: true,
+      pageLength: 10,
+      language: {
         url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
       },
       dom: 'Bfrtip',
@@ -58,6 +80,6 @@
     });
   });
 
-  
+
 </script>
 {% endblock %}

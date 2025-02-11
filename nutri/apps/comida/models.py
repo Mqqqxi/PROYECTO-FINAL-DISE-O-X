@@ -2,21 +2,21 @@ from django.db import models
 
 
 class Comida(models.Model):
-    idcomida = models.AutoField(primary_key=True)  # ID único de comida
-    nombre = models.CharField(max_length=100)  # Nombre de la comida
-    imagen = models.ImageField(upload_to='static/images/comidas/', null=True, blank=True)  # Imagen de la comida
-    calorias = models.IntegerField()  # Calorías de la comida
-    colesterol = models.FloatField()  # Colesterol de la comida
-    proteina = models.FloatField()  # Proteínas de la comida
-    carbohidratos = models.FloatField()  # Carbohidratos de la comida
-    grasaPolinsaturadas = models.FloatField()  # Grasas poliinsaturadas
-    grasaMoninsaturadas = models.FloatField()  # Grasas monoinsaturadas
-    grasaTrans = models.FloatField()  # Grasas trans
-    grasaTotales = models.FloatField()  # Grasas totales
-    grasaSaturadas = models.FloatField()  # Grasas saturadas
-    fibraAlimentaria = models.FloatField()  # Fibra alimentaria
-    sodio = models.FloatField()  # Sodio
-    reqEnergetico = models.FloatField()  # Requerimiento energético
+    idcomida = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    imagen = models.ImageField(upload_to='static/images/comidas/', null=True, blank=True)
+    calorias = models.IntegerField()
+    colesterol = models.FloatField()
+    proteina = models.FloatField()
+    carbohidratos = models.FloatField()
+    grasaPolinsaturadas = models.FloatField()
+    grasaMoninsaturadas = models.FloatField()
+    grasaTrans = models.FloatField()
+    grasaTotales = models.FloatField()
+    grasaSaturadas = models.FloatField()
+    fibraAlimentaria = models.FloatField()
+    sodio = models.FloatField()
+    reqEnergetico = models.FloatField()
     categoria = models.CharField(max_length=100)
 
     class Meta:
@@ -24,25 +24,17 @@ class Comida(models.Model):
 
 
 class Plato(models.Model):
-    idplato = models.AutoField(primary_key=True)  # ID único del plato
-    nombre = models.CharField(max_length=100)  # Nombre del plato
+    idplato = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
     tipo = models.CharField(
         max_length=50,
-        verbose_name="Tipo de Plato",
         choices=[('desayuno', 'Desayuno'), ('almuerzo', 'Almuerzo'), ('cena', 'Cena'), ('merienda', 'Merienda')]
     )
-    descripcion = models.TextField(
-        verbose_name="Descripción del Plato", blank=True, null=True,
-        help_text="Detalles específicos del plato (e.g., ingredientes)"
-    )
-    comida = models.ManyToManyField(Comida, verbose_name="Comida Base")  # Se elimina 'on_delete'
+    descripcion = models.TextField(blank=True, null=True)
 
     def suma_calorias(self):
         """Calcula la suma de calorías de todas las comidas en el plato."""
-        return sum(
-            relacion.calorias_segun_peso()
-            for relacion in self.platocomida_set.all()
-        )
+        return sum(relacion.calorias_segun_peso() for relacion in self.platocomida_set.all())
 
     def __str__(self):
         return f"{self.nombre} ({self.tipo})"
@@ -50,7 +42,7 @@ class Plato(models.Model):
     class Meta:
         verbose_name = "Plato"
         verbose_name_plural = "Platos"
-
+        db_table = 'Plato'
 
 class PlatoComida(models.Model):
     plato = models.ForeignKey(Plato, on_delete=models.CASCADE, related_name="platocomida_set")
@@ -63,3 +55,6 @@ class PlatoComida(models.Model):
 
     def __str__(self):
         return f"{self.comida.nombre} ({self.peso}g) en {self.plato.nombre}"
+    
+    class Meta:
+        db_table = 'PlatoComida'
