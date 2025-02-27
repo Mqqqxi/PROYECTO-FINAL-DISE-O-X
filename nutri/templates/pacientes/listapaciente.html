@@ -19,7 +19,8 @@
         <th>Teléfono</th>
         <th>Turno</th>
         <th>Activo</th>
-        <th>Acciones</th>
+        <th>Datos del paciente</th>
+        <th>Plan nutricional</th>
       </tr>
     </thead>
     <tbody>
@@ -39,32 +40,91 @@
         </td>
         <td>{{ paciente.is_active }}</td>
         <td>
-        {% if paciente.is_active %}
-        <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-sm">
-            <i class="fa fa-pencil"></i>
-        </a>
-        <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger btn-sm">
-            <i class="fa fa-ban"></i>
-        </a>
-        {% else %}
-        <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-sm">
-          <i class="fa fa-pencil"></i>
-        </a>
-        <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success btn-sm">
-          <i class="fa fa-check"></i>
-        </a>
-        {% endif %}
-
+          {% if paciente.is_active %}
+            <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-sm">
+              <i class="fa fa-pencil"></i>
+            </a>
+            <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger btn-sm">
+              <i class="fa fa-ban"></i>
+            </a>
+          {% else %}
+            <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-sm">
+              <i class="fa fa-pencil"></i>
+            </a>
+            <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success btn-sm">
+              <i class="fa fa-check"></i>
+            </a>
+          {% endif %}
         </td>
+
+        <td>
+          {% if paciente.is_active %}
+            {% if paciente.planes_nutricionales.exists %}
+              <!-- Botón para abrir el modal -->
+              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#planExistenteModal">
+                <i class="fa fa-plus"></i>
+              </button>
+            {% else %}
+              <a href="{% url 'plannutricional:crear_plan_nutricional' paciente.pk %}" class="btn btn-info btn-sm">
+                <i class="fa fa-plus"></i>
+              </a>
+            {% endif %}
+            <a href="{% url 'plannutricional:crear_plan_dia' paciente.pk %}" class="btn btn-warning btn-sm">
+              <i class="fa fa-pencil"></i> Crear Plan del Día
+            </a>
+          {% endif %}
+        </td>
+
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
 
+<!-- Modal de Plan Existente -->
+<div class="modal fade" id="planExistenteModal" tabindex="-1" role="dialog" aria-labelledby="planExistenteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="planExistenteModalLabel">Plan Nutricional Existente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Ya se ha asignado un plan nutricional a este paciente.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+
+<!-- Cargar jQuery y Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+<!-- Agregar el script para disparar el modal si viene el parámetro en la URL -->
+{% if request.GET.plan_existente %}
+
+<script>
+  $(document).ready(function(){
+    $('#planExistenteModal').modal('show');
+    $('#planExistenteModal').on('hidden.bs.modal', function () {
+        // Eliminar el parámetro "plan_existente" de la URL sin recargar la página
+        if (window.history.replaceState) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('plan_existente');
+            window.history.replaceState(null, '', url);
+        }
+    });
+  });
+</script>
+{% endif %}
+
+<!-- DataTables -->
 <script>
   $(document).ready(function () {
     $('#miTabla').DataTable({
@@ -79,7 +139,6 @@
       buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
     });
   });
-
-
 </script>
+
 {% endblock %}

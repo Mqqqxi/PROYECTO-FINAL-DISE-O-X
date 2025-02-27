@@ -1,5 +1,5 @@
 from django import forms
-from .models import Comida
+from .models import Comida, Plato
 
 class ComidaForm(forms.ModelForm):
     class Meta:
@@ -12,7 +12,7 @@ class ComidaForm(forms.ModelForm):
         ]
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de la comida'}),
-            'imagen': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'imagen': forms.FileInput(attrs={'class': 'form-control'}),
             'calorias': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Calorías'}),
             'colesterol': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Colesterol'}),
             'proteina': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Proteínas'}),
@@ -26,4 +26,14 @@ class ComidaForm(forms.ModelForm):
             'sodio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Sodio'}),
             'reqEnergetico': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Requerimiento energético'}),
             'categoria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Categoría'}),
+        }
+
+class PlatoForm(forms.ModelForm):
+    class Meta:
+        model = Plato
+        fields = ['nombre', 'tipo', 'descripcion']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del plato'}),
+            'tipo': forms.Select(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripción del plato', 'rows': 3}),
         }

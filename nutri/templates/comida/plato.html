@@ -1,63 +1,98 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}COMIDA{% endblock %}
+{% block title %}PLATOS{% endblock %}
 {% block content %}
 
 <div class="section-title">
-    <h2 class="text-center">LISTA DE COMIDAS</h2>
+    <h2 class="text-center">LISTA DE PLATOS</h2>
 </div>
 
 <div class="containerComida">
     <div class="table-container">
 
-        <a style="margin-bottom: 20px;" href="{%url 'comida:agregar_comida'%}" class="btn btn-success btn-sm">
-            AGREGAR COMIDA
-        </a>
+        <!-- Botón para abrir el modal -->
+        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalAgregarPlato">
+            AGREGAR PLATO
+        </button>
 
         <table id="miTabla" class="table display">
-
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Calorías</th>
-                    <th>Colesterol</th>
-                    <th>Proteínas</th>
-                    <th>Carbohidratos</th>
-                    <th>Grasas Totales</th>
-                    <th>Fibra Alimentaria</th>
-                    <th>Sodio</th>
-                    <th>Req Energético</th>
-                    <th>Categoría</th>
-                    <th>Imagen</th>
+                    <th>Descripción</th>
+                    <th>Tipo</th>
+                    <th>Comidas</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                {% for comida in comidas %}
-                <td>{{ comida.nombre }}</td>
-                <td>{{ comida.calorias }}</td>
-                <td>{{ comida.colesterol }}</td>
-                <td>{{ comida.proteina }}</td>
-                <td>{{ comida.carbohidratos }}</td>
-                <td>{{ comida.grasaTotales }}</td>
-                <td>{{ comida.fibraAlimentaria }}</td>
-                <td>{{ comida.sodio }}</td>
-                <td>{{ comida.reqEnergetico }}</td>
-                <td>{{ comida.categoria }}</td>
-                <td><img src="{{ comida.imagen.url }}" alt="{{ comida.nombre }}" width="50"></td>
-                <td>
-                    <a href="{% url 'comida:editar_comida' comida.pk %}" class="btn btn-warning btn-sm">
-                        <i class="fa fa-pencil"></i>
-                    </a>
-                    <a href="#" class="btn btn-danger btn-sm btn-eliminar" data-plato-id="{{ plato.pk }}" data-comida-id="{{ comida.pk }}">
-                        <i class="fa fa-ban"></i>
-                    </a>
-                </td>
+                {% for plato in platos %}
+                <tr>
+                    <td>{{ plato.nombre }}</td>
+                    <td>{{ plato.descripcion }}</td>
+                    <td>{{ plato.tipo }}</td>
+                    <td>
+                        <ul>
+                            {% for platocomida in plato.platocomida_set.all %}
+                            <li>{{ platocomida.comida.nombre }} ({{ platocomida.peso }}g)</li>
+                            {% empty %}
+                            <li>Sin comidas asignadas</li>
+                            {% endfor %}
+                            <a href="{% url 'comida:agregar_comida_plato' plato.pk %}"
+                                class="btn btn-success btn-sm btn-agregar-comida">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </ul>
+                    </td>
+                    <td>
+                        <a href="{% url 'comida:editar_plato' plato.pk %}" class="btn btn-warning btn-sm">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                        <a href="#" class="btn btn-danger btn-sm btn-eliminar" data-id="{{ plato.pk }}">
+                            <i class="fa fa-ban"></i>
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
 
+
+    </div>
+</div>
+
+<!-- Modal para agregar plato -->
+<div class="modal fade" id="modalAgregarPlato" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Agregar Nuevo Plato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAgregarPlato" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tipo" class="form-label">Tipo</label>
+                        <select class="form-select" id="tipo" name="tipo" required>
+                            <option value="desayuno">Desayuno</option>
+                            <option value="almuerzo">Almuerzo</option>
+                            <option value="merienda">Merienda</option>
+                            <option value="cena">Cena</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Plato</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -74,7 +109,8 @@
                 ¿Estás seguro de que deseas eliminar esta comida?
             </div>
             <div class="modal-footer">
-                <a href="{% url 'comida:comida' %}" class="btn btn-secondary">Cancelar</a>
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button> -->
+                <a href="{% url 'comida:plato' %}" class="btn btn-secondary">Cancelar</a>
                 <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
             </div>
         </div>
@@ -154,56 +190,103 @@
             $("#detalle-categoria").text(categoria);
         });
 
-        // Model de Exito/Error y Confirmación
+        // Manejar clic en el botón de eliminar
+        // $(".btn-eliminar").click(function (event) {
+        //     event.preventDefault(); // Evita la recarga de la página
 
-        let comidaIdAEliminar = null; // Variable global para guardar el ID de la comida
+        //     let platoId = $(this).data("id");
+        //     let confirmar = confirm("¿Estás seguro de que deseas eliminar este plato?");
 
-        $(document).ready(function () {
-            // Evento para abrir el modal de confirmación cuando se quiere eliminar una comida
-            $(".btn-eliminar").click(function (event) {
-                event.preventDefault(); // Evita la recarga de la página
-                const platoId = $(this).data("plato-id");
-                const comidaId = $(this).data("comida-id");
-                $("#modalConfirmacion").modal("show"); // Muestra el modal de confirmación
+        //     if (confirmar) {
+        //         fetch(`/comida/plato/eliminar/${platoId}/`, {
+        //             method: "POST",
+        //             headers: {
+        //                 "X-CSRFToken": "{{ csrf_token }}",
+        //                 "Content-Type": "application/json"
+        //             }
+        //         })
+        //             .then(response => response.json())
+        //             .then(data => {
+        //                 if (data.success) {
+        //                     alert("Plato eliminado con éxito.");
+        //                     location.reload();
+        //                 } else {
+        //                     alert("Error al eliminar el plato.");
+        //                 }
+        //             })
+        //             .catch(error => console.error("Error:", error));
+        //     }
+        // });
+    });
 
-                // Evento para confirmar la eliminación
-                $("#btnConfirmarEliminar").click(function () {
-                    fetch(`/comida/eliminar_comida_plato/${platoId}/${comidaId}/`, {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": "{{ csrf_token }}", // Si usas Django
-                            "Content-Type": "application/json"
-                        }
-                    })
+    document.getElementById('formAgregarPlato').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let formData = new FormData(this);
+
+        fetch("{% url 'comida:agregar_plato' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();  // Recarga la página para ver el nuevo plato
+                } else {
+                    alert("Error al agregar el plato");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    // Model de Exito/Error y Confirmación
+
+    let platoIdAEliminar = null; // Variable global para guardar el ID del plato
+
+    $(document).ready(function () {
+        // Evento para abrir el modal de confirmación cuando se quiere eliminar un plato
+        $(".btn-eliminar").click(function (event) {
+            event.preventDefault(); // Evita la recarga de la página
+            platoIdAEliminar = $(this).data("id"); // Guarda el ID del plato
+            $("#modalConfirmacion").modal("show"); // Muestra el modal de confirmación
+        });
+
+        // Evento para confirmar la eliminación
+        $("#btnConfirmarEliminar").click(function () {
+            if (platoIdAEliminar) {
+                fetch(`/comida/plato/eliminar/${platoIdAEliminar}/`, {  // Verifica la URL
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}", // Si usas Django
+                        "Content-Type": "application/json"
+                    }
+                })
                     .then(response => response.json())
                     .then(data => {
                         $("#modalConfirmacion").modal("hide"); // Cierra el modal de confirmación
                         if (data.success) {
-                            mostrarModal("Éxito", "La comida ha sido eliminada del plato con éxito.");
+                            mostrarModal("Éxito", "El plato ha sido eliminado con éxito.");
                             setTimeout(() => location.reload(), 2000); // Recarga la página después de 2 segundos
                         } else {
-                            mostrarModal("Error", "Hubo un error al eliminar la comida del plato.");
+                            mostrarModal("Error", "Hubo un error al eliminar el plato.");
                         }
                     })
                     .catch(error => {
                         console.error("Error:", error);
                         mostrarModal("Error", "Ocurrió un error inesperado.");
                     });
-                });
-            });
-
-            // Función para mostrar el modal de éxito o error
-            function mostrarModal(titulo, mensaje) {
-                $("#modalMensajeLabel").text(titulo); // Cambia el título del modal
-                $("#modalMensajeBody").text(mensaje); // Cambia el cuerpo del mensaje
-                $("#modalMensaje").modal("show"); // Muestra el modal
             }
         });
 
-
+        // Función para mostrar el modal de éxito o error
+        function mostrarModal(titulo, mensaje) {
+            $("#modalMensajeLabel").text(titulo); // Cambia el título del modal
+            $("#modalMensajeBody").text(mensaje); // Cambia el cuerpo del mensaje
+            $("#modalMensaje").modal("show"); // Muestra el modal
+        }
     });
-
-
 
 
 

@@ -193,12 +193,6 @@
         outline: none;
     }
 
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
     h2,
     h3 {
         color: #333;
@@ -309,63 +303,173 @@
         font-size: 12px;
         cursor: pointer;
     }
+
+    .dropzone .food-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+        max-width: 80px;
+        height: auto;
+        transition: transform 0.3s ease;
+        /* Añadimos transición suave */
+    }
+
+    .dropzone .food-item:hover {
+        transform: scale(1.15);
+        /* Aumenta el tamaño en un 15% al pasar el mouse */
+        z-index: 10;
+        /* Asegura que la imagen expandida aparezca sobre las demás */
+    }
+
+    .dropzone .food-item img {
+        transition: all 0.3s ease-in-out;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    /* Aseguramos que el botón de eliminar se mantenga visible y en posición */
+    .dropzone .food-item:hover .delete-btn {
+        z-index: 11;
+    }
+
+
+
+
+    .btn-save,
+    .btn-cancel {
+        display: inline-block;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .btn-save {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-save:hover {
+        background-color: #218838;
+    }
+
+    .btn-cancel {
+        background-color: #dc3545;
+        color: white;
+        margin-top: 1rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-cancel:hover {
+        background-color: #c82333;
+    }
+
+
+    .form-container {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border: 2px solid #ccc;
+        max-width: 100%;
+        width: 120%;
+        margin: 20px auto;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
 </style>
 
 <div class="container">
-    <h2>AGREGAR COMIDAS A UN PLATO</h2>
+    <h2>AGREGAR COMIDAS A {{plato.nombre}}</h2>
 
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="Buscar por nombre..." onkeyup="filterComidas()"
             class="search-input" />
     </div>
-
-    <h3>Lista de comidas</h3>
-    <div class="carousel-container">
-        <div class="carousel">
-            {% for comida in comidas %}
-            <div class="carousel-item" draggable="true" ondragstart="drag(event)" id="comida-{{ comida.idcomida }}"
-                data-id="{{ comida.idcomida }}" data-nombre="{{ comida.nombre }}" data-calorias="{{ comida.calorias }}"
-                data-proteina="{{ comida.proteina }}" data-colesterol="{{ comida.colesterol }}"
-                data-carbohidratos="{{ comida.carbohidratos }}" data-grasaTotales="{{ comida.grasaTotales }}"
-                data-sodio="{{ comida.sodio }}" data-categoria="{{ comida.categoria }}"
-                onclick="showDetails('{{ comida.idcomida }}')">
-                <img src="{{ comida.imagen.url }}" alt="{{ comida.nombre }}">
-                <div class="carousel-info">{{ comida.nombre }}</div>
+    <div class="container2 mt-5 form-container">
+        <h3>Lista de comidas</h3>
+        <div class="carousel-container">
+            <div class="carousel">
+                {% for comida in comidas %}
+                <div class="carousel-item" draggable="true" ondragstart="drag(event)" id="comida-{{ comida.idcomida }}"
+                    data-id="{{ comida.idcomida }}" data-plato-id="{{ plato.idplato }}"
+                    data-nombre="{{ comida.nombre }}" data-calorias="{{ comida.calorias }}"
+                    data-proteina="{{ comida.proteina }}" data-colesterol="{{ comida.colesterol }}"
+                    data-carbohidratos="{{ comida.carbohidratos }}" data-grasaTotales="{{ comida.grasaTotales }}"
+                    data-sodio="{{ comida.sodio }}" data-categoria="{{ comida.categoria }}"
+                    onclick="showDetails('{{ comida.idcomida }}')">
+                    <img src="{{ comida.imagen.url }}" alt="{{ comida.nombre }}">
+                    <div class="carousel-info">{{ comida.nombre }}</div>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-        <button class="carousel-btn left" onclick="moveSlide(-1)">&#10094;</button>
-        <button class="carousel-btn right" onclick="moveSlide(1)">&#10095;</button>
-    </div>
-
-    <h3 class="mt-4">Arrastra los alimentos aquí para formar un plato</h3>
-
-    <div class="container-flex">
-        <div class="dropzone" ondragover="allowDrop(event)" ondrop="drop(event)">
-            <p>Arrastra los alimentos aquí</p>
+            <button class="carousel-btn left" onclick="moveSlide(-1)">&#10094;</button>
+            <button class="carousel-btn right" onclick="moveSlide(1)">&#10095;</button>
         </div>
 
-        <div class="details">
-            <h2>Detalles de la comida</h2>
-            <p><strong>Nombre:</strong> <span id="detalle-nombre">Selecciona una comida</span></p>
-            <p><strong>Calorías:</strong> <span id="detalle-calorias">-</span></p>
-            <p><strong>Proteínas:</strong> <span id="detalle-proteina">-</span></p>
-            <p><strong>Colesterol:</strong> <span id="detalle-colesterol">-</span></p>
-            <p><strong>Carbohidratos:</strong> <span id="detalle-carbohidratos">-</span></p>
-            <p><strong>Grasas Totales:</strong> <span id="detalle-grasaTotales">-</span></p>
-            <p><strong>Sodio:</strong> <span id="detalle-sodio">-</span></p>
-            <p><strong>Categoria:</strong> <span id="detalle-categoria">-</span></p>
+        <h3 class="mt-4">Arrastra los alimentos aquí para formar un plato</h3>
+        <div class="container-flex">
+            <div class="dropzone" ondragover="allowDrop(event)" ondrop="drop(event)">
+                {% for comida in comidasGuardadas %}
+                <div class="food-item" id="comida-guardada-{{ comida.comida.idcomida }}"
+                    data-plato-id="{{ plato.idplato }}" data-comida-id="{{ comida.comida.idcomida }}"
+                    data-nombre="{{ comida.comida.nombre }}" data-calorias="{{ comida.comida.calorias }}"
+                    data-proteina="{{ comida.comida.proteina }}" data-colesterol="{{ comida.comida.colesterol }}"
+                    data-carbohidratos="{{ comida.comida.carbohidratos }}"
+                    data-grasaTotales="{{ comida.comida.grasaTotales }}" data-sodio="{{ comida.comida.sodio }}"
+                    data-categoria="{{ comida.comida.categoria }}"
+                    onclick="showDetails('{{ comida.comida.idcomida }}')">
+                    <img src="{{ comida.comida.imagen.url }}" alt="{{ comida.comida.nombre }}">
+                    <button class="delete-btn"
+                        onclick="event.stopPropagation(); eliminarComidaGuardada(this)">&#10006;</button>
+
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="details">
+                <h2>Detalles de la comida</h2>
+                <p><strong>Nombre:</strong> <span id="detalle-nombre">Selecciona una comida</span></p>
+                <p><strong>Calorías:</strong> <span id="detalle-calorias">-</span></p>
+                <p><strong>Proteínas:</strong> <span id="detalle-proteina">-</span></p>
+                <p><strong>Colesterol:</strong> <span id="detalle-colesterol">-</span></p>
+                <p><strong>Carbohidratos:</strong> <span id="detalle-carbohidratos">-</span></p>
+                <p><strong>Grasas Totales:</strong> <span id="detalle-grasaTotales">-</span></p>
+                <p><strong>Sodio:</strong> <span id="detalle-sodio">-</span></p>
+                <p><strong>Categoria:</strong> <span id="detalle-categoria">-</span></p>
+            </div>
+
+            <div class="details">
+                <h2>Detalles totales</h2>
+                <p><strong>Calorías totales:</strong> <span id="detalle-total-calorias">-</span></p>
+                <p><strong>Proteínas totales:</strong> <span id="detalle-total-proteina">-</span></p>
+                <p><strong>Colesterol totales:</strong> <span id="detalle-total-colesterol">-</span></p>
+                <p><strong>Carbohidratos totales:</strong> <span id="detalle-total-carbohidratos">-</span></p>
+                <p><strong>Grasas totales:</strong> <span id="detalle-total-grasaTotales">-</span></p>
+                <p><strong>Sodio totales:</strong> <span id="detalle-total-sodio">-</span></p>
+            </div>
         </div>
 
-        <div class="details">
-            <h2>Detalles totales</h2>
-            <p><strong>Calorías totales:</strong> <span id="detalle-total-calorias">-</span></p>
-            <p><strong>Proteínas totales:</strong> <span id="detalle-total-proteina">-</span></p>
-            <p><strong>Colesterol totales:</strong> <span id="detalle-total-colesterol">-</span></p>
-            <p><strong>Carbohidratos totales:</strong> <span id="detalle-total-carbohidratos">-</span></p>
-            <p><strong>Grasas totales:</strong> <span id="detalle-total-grasaTotales">-</span></p>
-            <p><strong>Sodio totales:</strong> <span id="detalle-total-sodio">-</span></p>
-        </div>
+        <form id="guardarPlatoForm" method="post" action="{% url 'comida:guardar_plato' plato.idplato %}">
+
+            <input type="hidden" name="comidas_seleccionadas" id="comidasSeleccionadas">
+
+            {% csrf_token %}
+
+            <ul id="lista-comidas-seleccionadas"></ul>
+
+            <input type="hidden" name="comidas" id="comidasSeleccionadas">
+
+            <button type="submit" class="btn-save">Guardar Plato</button>
+            <button type="button" class="btn-cancel" onclick="cancelarCambios()">Cancelar cambios</button>
+        </form>
     </div>
 </div>
 
@@ -401,56 +505,6 @@
         event.target.classList.add("dragover");
     }
 
-    // function drop(event) {
-    //     event.preventDefault();
-    //     event.target.classList.remove("dragover");
-
-    //     let comidaId = event.dataTransfer.getData("text");
-    //     let comidaElement = document.getElementById(comidaId);
-
-    //     let clonedElement = comidaElement.cloneNode(true);
-    //     let clonedText = clonedElement.querySelector(".carousel-info");
-    //     if (clonedText) {
-    //         clonedText.style.fontSize = "12px";  // Reducir tamaño del texto
-    //         clonedText.style.padding = "2px 5px";
-    //         clonedText.style.top = "auto"; // Ajustar la posición si es necesario
-    //     }
-
-    //     clonedElement.removeAttribute("id");
-    //     clonedElement.setAttribute("draggable", "false");
-
-    //     let foodContainer = document.createElement("div");
-    //     foodContainer.classList.add("food-item");
-
-    //     let deleteButton = document.createElement("button");
-    //     deleteButton.classList.add("delete-btn");
-    //     deleteButton.innerHTML = "&#10006;";
-    //     deleteButton.onclick = function () {
-    //         foodContainer.remove();
-    //         updateTotalDetails();
-    //         adjustImageSize();
-    //         checkEmptyDropzone();
-    //     };
-
-    //     foodContainer.appendChild(clonedElement);
-    //     foodContainer.appendChild(deleteButton);
-    //     document.querySelector(".dropzone").appendChild(foodContainer);
-
-    //     // Oculta el texto al agregar el primer alimento
-    //     document.querySelector(".dropzone p").style.display = "none";
-
-    //     updateTotalDetails();
-    //     adjustImageSize();
-    // }
-
-    // // Función para verificar si la dropzone está vacía
-    // function checkEmptyDropzone() {
-    //     let dropzone = document.querySelector(".dropzone");
-    //     if (dropzone.children.length === 1) {
-    //         document.querySelector(".dropzone p").style.display = "block";
-    //     }
-    // }
-
     function drop(event) {
         event.preventDefault();
         event.target.classList.remove("dragover");
@@ -465,45 +519,47 @@
         // Verificar si el elemento ya está en la dropzone
         let existingItems = dropzone.querySelectorAll(".food-item");
         for (let item of existingItems) {
-            if (item.dataset.id === comidaElement.dataset.id) {
+            if (item.dataset.comidaId === comidaElement.dataset.id) {
                 alert("Esta comida ya fue agregada.");
                 return;
             }
         }
 
-        // Clonar el elemento arrastrado
-        let clonedElement = comidaElement.cloneNode(true);
-        clonedElement.removeAttribute("id");
-        clonedElement.setAttribute("draggable", "false");
+        // Crear nuevo elemento food-item
+        let foodItem = document.createElement("div");
+        foodItem.classList.add("food-item");
+        foodItem.dataset.comidaId = comidaElement.dataset.id;
+        foodItem.dataset.platoId = comidaElement.dataset.platoId;
 
-        // Ajustar el tamaño y posición del texto dentro de la imagen si existe
-        let clonedText = clonedElement.querySelector(".carousel-info");
-        if (clonedText) {
-            clonedText.style.fontSize = "12px";
-            clonedText.style.padding = "2px 5px";
-            clonedText.style.top = "auto";
-        }
+        // Copiar todos los data attributes del elemento original
+        Object.keys(comidaElement.dataset).forEach(key => {
+            foodItem.dataset[key] = comidaElement.dataset[key];
+        });
 
-        // Crear un contenedor para cada alimento
-        let foodContainer = document.createElement("div");
-        foodContainer.classList.add("food-item");
-        foodContainer.dataset.id = comidaElement.dataset.id; // Asigna el ID para evitar duplicados
+        // Agregar el evento onclick
+        foodItem.onclick = function () {
+            showDetails(this.dataset.comidaId);
+        };
 
-        // Botón para eliminar la comida
+        // Clonar la imagen
+        let img = comidaElement.querySelector("img").cloneNode(true);
+
+        // Crear botón de eliminar
         let deleteButton = document.createElement("button");
         deleteButton.classList.add("delete-btn");
         deleteButton.innerHTML = "&#10006;";
-        deleteButton.onclick = function () {
-            foodContainer.remove();
-            checkEmptyDropzone();
+        deleteButton.onclick = function (e) {
+            e.stopPropagation();
+            eliminarComidaGuardada(this);
         };
 
-        foodContainer.appendChild(clonedElement);
-        foodContainer.appendChild(deleteButton);
-        dropzone.appendChild(foodContainer);
+        // Añadir elementos al food-item
+        foodItem.appendChild(img);
+        foodItem.appendChild(deleteButton);
 
-        // Oculta el texto cuando se agrega un alimento
-        document.querySelector(".dropzone p").style.display = "none";
+        dropzone.appendChild(foodItem);
+
+        // Actualizar totales inmediatamente después de agregar
         updateTotalDetails();
         adjustImageSize();
     }
@@ -539,37 +595,47 @@
         });
     }
 
-
-
     function updateTotalDetails() {
         let totalCalorias = 0, totalProteina = 0, totalColesterol = 0;
         let totalCarbohidratos = 0, totalGrasaTotales = 0, totalSodio = 0;
 
-        document.querySelectorAll(".dropzone .food-item .carousel-item").forEach(item => {
-            totalCalorias += parseFloat(item.dataset.calorias) || 0;
-            totalProteina += parseFloat(item.dataset.proteina) || 0;
-            totalColesterol += parseFloat(item.dataset.colesterol) || 0;
-            totalCarbohidratos += parseFloat(item.dataset.carbohidratos) || 0;
-            totalGrasaTotales += parseFloat(item.dataset.grasaTotales) || 0;
-            totalSodio += parseFloat(item.dataset.sodio) || 0;
+        // Seleccionar todos los elementos food-item visibles
+        document.querySelectorAll(".dropzone .food-item:not([style*='display: none'])").forEach(item => {
+            // Obtener valores del dataset
+            const calorias = parseFloat(item.dataset.calorias) || 0;
+            const proteina = parseFloat(item.dataset.proteina) || 0;
+            const colesterol = parseFloat(item.dataset.colesterol) || 0;
+            const carbohidratos = parseFloat(item.dataset.carbohidratos) || 0;
+            const grasaTotales = parseFloat(item.dataset.grasaTotales) || 0;
+            const sodio = parseFloat(item.dataset.sodio) || 0;
+
+            // Sumar al total
+            totalCalorias += calorias;
+            totalProteina += proteina;
+            totalColesterol += colesterol;
+            totalCarbohidratos += carbohidratos;
+            totalGrasaTotales += grasaTotales;
+            totalSodio += sodio;
         });
 
-        document.getElementById("detalle-total-calorias").textContent = totalCalorias;
-        document.getElementById("detalle-total-proteina").textContent = totalProteina;
-        document.getElementById("detalle-total-colesterol").textContent = totalColesterol;
-        document.getElementById("detalle-total-carbohidratos").textContent = totalCarbohidratos;
-        document.getElementById("detalle-total-grasaTotales").textContent = totalGrasaTotales;
-        document.getElementById("detalle-total-sodio").textContent = totalSodio;
+        // Actualizar los elementos en el DOM
+        document.getElementById("detalle-total-calorias").textContent = totalCalorias.toFixed(2);
+        document.getElementById("detalle-total-proteina").textContent = totalProteina.toFixed(2);
+        document.getElementById("detalle-total-colesterol").textContent = totalColesterol.toFixed(2);
+        document.getElementById("detalle-total-carbohidratos").textContent = totalCarbohidratos.toFixed(2);
+        document.getElementById("detalle-total-grasaTotales").textContent = totalGrasaTotales.toFixed(2);
+        document.getElementById("detalle-total-sodio").textContent = totalSodio.toFixed(2);
     }
 
-    function showDetails(id) {
-        let comidaElement = document.getElementById("comida-" + id);
-        if (!comidaElement) return;
+    // Observador de cambios en la dropzone
+    const dropzone = document.querySelector(".dropzone");
+    const observer = new MutationObserver(updateTotalDetails);
 
-        // Evita aplicar transformaciones que agranden la imagen
-        document.querySelectorAll(".carousel-item img").forEach(img => {
-            img.style.transform = "none";
-        });
+    observer.observe(dropzone, { childList: true, subtree: true });
+
+    function showDetails(id) {
+        let comidaElement = document.getElementById("comida-" + id) || document.querySelector(`[data-comida-id="${id}"]`);
+        if (!comidaElement) return;
 
         document.getElementById("detalle-nombre").textContent = comidaElement.dataset.nombre;
         document.getElementById("detalle-calorias").textContent = comidaElement.dataset.calorias;
@@ -591,6 +657,139 @@
         });
     }
 
+    let comidasSeleccionadas = [];
+
+    function agregarComida(id, nombre) {
+        if (!comidasSeleccionadas.includes(id)) {
+            comidasSeleccionadas.push(id);
+            actualizarLista();
+        }
+    }
+
+    function actualizarLista() {
+        let lista = document.getElementById("lista-comidas-seleccionadas");
+        lista.innerHTML = "";
+        comidasSeleccionadas.forEach(id => {
+            let li = document.createElement("li");
+            li.textContent = document.querySelector(`[data-id='${id}']`).textContent;
+            lista.appendChild(li);
+        });
+
+        document.getElementById("comidasSeleccionadas").value = comidasSeleccionadas.join(",");
+    }
+
+    // Agregar variable para mantener registro de elementos a eliminar
+    let comidasParaEliminar = [];
+
+    function eliminarComidaGuardada(button) {
+        const foodItem = button.closest('.food-item');
+        const platoId = foodItem.dataset.platoId;
+        const comidaId = foodItem.dataset.comidaId;
+
+        // Verificar si es un elemento guardado
+        const esElementoGuardado = foodItem.id.includes('comida-guardada-');
+
+        if (esElementoGuardado) {
+            comidasParaEliminar.push({
+                platoId: platoId,
+                comidaId: comidaId
+            });
+            foodItem.style.display = 'none';
+        } else {
+            foodItem.remove();
+        }
+
+        // Actualizar totales inmediatamente después de eliminar
+        updateTotalDetails();
+    }
+
+    // Modificar el evento submit del formulario
+    document.getElementById("guardarPlatoForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        // Obtener todas las comidas visibles actuales
+        let comidas = [];
+        document.querySelectorAll(".dropzone .food-item:not([style*='display: none'])").forEach(function (item) {
+            comidas.push(item.dataset.comidaId);
+        });
+
+        if (comidas.length === 0) {
+            alert("Debes seleccionar al menos una comida.");
+            return;
+        }
+
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        try {
+            // Primero procesar todas las eliminaciones pendientes
+            for (const comida of comidasParaEliminar) {
+                await fetch(`/comida/plato/${comida.platoId}/eliminar-comida/${comida.comidaId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json',
+                    },
+                });
+            }
+
+            // Limpiar la lista de comidas para eliminar
+            comidasParaEliminar = [];
+
+            // Luego guardar el estado actual del plato
+            document.getElementById("comidasSeleccionadas").value = JSON.stringify(comidas);
+
+            // Enviar el formulario
+            this.submit();
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Ocurrió un error al guardar los cambios');
+        }
+    });
+
+    // Agregar función para cancelar eliminaciones
+    function cancelarCambios() {
+        // Restaurar elementos ocultos
+        comidasParaEliminar.forEach(comida => {
+            const elemento = document.querySelector(`#comida-guardada-${comida.comidaId}`);
+            if (elemento) {
+                elemento.style.display = '';
+            }
+        });
+
+        // Limpiar la lista de eliminaciones pendientes
+        comidasParaEliminar = [];
+
+        // Actualizar totales
+        updateTotalDetails();
+    }
+
+    // // Calcular totales cuando la página se carga
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     updateTotalDetails();
+    // });
+
+    // Inicializar los totales cuando se carga la página
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTotalDetails();
+        
+        // Observar cambios en la dropzone
+        const dropzone = document.querySelector(".dropzone");
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' || 
+                    (mutation.type === 'attributes' && mutation.attributeName === 'style')) {
+                    updateTotalDetails();
+                }
+            });
+        });
+
+        observer.observe(dropzone, { 
+            childList: true, 
+            subtree: true, 
+            attributes: true 
+        });
+    });
 
 </script>
 

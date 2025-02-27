@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% block title %}PLAN DIARIO{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Editar Paciente</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="tabset">
+            <!-- Tabs for days -->
+            {% for i in rango_dias %}
+                <input type="radio" name="tabset" id="tab{{ i }}" 
+                    aria-controls="dia{{ i }}" 
+                    {% if forloop.first %}checked{% endif %}>
+                <label for="tab{{ i }}">Día {{ i }}</label>
+            {% endfor %}
+        
+            <div class="tab-panels">
+                {% for i in rango_dias %}
+                    <section id="dia{{ i }}" class="tab-panel">
+                        {% for tipo in tipo_comida %}
+                            <div class="{{ tipo|lower }}">
+                                <h4>{{ tipo }}</h4>
+                                <button type="button" class="btn btn-primary" onclick="agregarPlato('{{ tipo|lower }}', '{{ i }}')">Agregar plato</button>
+                                <button type="button" class="btn btn-secondary" onclick="agregarComida('{{ tipo|lower }}', '{{ i }}')">Agregar comida</button>
+
+                            </div>
+                        {% endfor %}
+                    </section>
+                {% endfor %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Guardar</button>
+        <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-secondary mt-3">Cancelar</a>
+    </form>
+</div>
+
+<style>
+    .container-flex {
+        gap: 2rem;
+        align-items: flex-start;
+        margin-top: 2rem;
+    }
+
+    .details {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 2rem;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        min-width: 30rem;
+    }
+
+    .desayuno, .almuerzo, .merienda, .cena {
+        flex: 1;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 1rem;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        height: 20rem;
+        margin-bottom: 2rem;
+        text-align: left;
+    }
+
+    .tabset > input[type="radio"] {
+        position: absolute;
+        left: -200vw;
+    }
+
+    .tabset .tab-panel {
+        display: none;
+    }
+
+    /* Dynamic tab selector with JS */
+    .tabset > input:checked ~ .tab-panels > .tab-panel {
+        display: none;
+    }
+
+    .tabset > label {
+        position: relative;
+        display: inline-block;
+        padding: 10px 15px;
+        cursor: pointer;
+        font-weight: 600;
+        background: #f8f9fa;
+        border: 1px solid #ccc;
+        border-bottom: none;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .tabset > label:hover,
+    .tabset > input:checked + label {
+        background: #06c;
+        color: white;
+    }
+
+    .tab-panels {
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 0 5px 5px 5px;
+    }
+
+    /* Field styles */
+    input[type="text"], 
+    input[type="number"], 
+    input[type="date"], 
+    input[type="time"], 
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    input:focus, 
+    textarea:focus {
+        border-color: #06c;
+        box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+        outline: none;
+    }
+
+    input[type="date"], 
+    input[type="time"] {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+    }
+
+    input[type="number"] {
+        background-color: #f9f9f9;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    ::placeholder {
+        color: #888;
+        font-style: italic;
+    }
+</style>
+
+<script>
+// Script to handle dynamic number of tabs
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up event listeners for tab radio buttons
+    const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
+    tabInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            // Hide all panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+            
+            // Show the selected panel
+            const panelId = this.getAttribute('aria-controls');
+            document.getElementById(panelId).style.display = 'block';
+        });
+    });
+    
+    // Show the first tab panel initially
+    if(tabInputs.length > 0) {
+        const firstPanelId = tabInputs[0].getAttribute('aria-controls');
+        document.getElementById(firstPanelId).style.display = 'block';
+    }
+    
+    // Handle readonly field if present
+    const obraSocial = document.querySelector('[name="obraSocial"]');
+    if (obraSocial) {
+        obraSocial.setAttribute('readonly', 'readonly');
+    }
+});
+
+// Make sure jQuery is included before this script
+
+function agregarComida(comida, dia) {
+    var comidaContainer = $('<div class="comida-item d-flex align-items-center mb-3"></div>');
+    var selectContainer = $('<div class="select-container flex-grow-1"></div>');
+    
+    var select = $(`  
+        <select class="form-control" 
+                name="comida_dia${dia}_${comida}[]"
+                data-live-search="true">
+            {% for comida in comidas %}
+                <option value="{{ comida.idcomida }}">
+                    {{ comida.nombre }} 
+                    <small class="text-muted">{{ comida.categoria }}</small>
+                </option>
+            {% endfor %}
+        </select>
+    `);
+
+    selectContainer.append(select);
+    comidaContainer.append(selectContainer);
+
+    var deleteButton = $('<button type="button" class="btn btn-danger btn-sm ml-2">Eliminar</button>');
+    deleteButton.click(function() {
+        comidaContainer.remove();
+    });
+
+    comidaContainer.append(deleteButton);
+    
+    // Target the specific day's food section
+    $(`#dia${dia} .${comida}`).append(comidaContainer);
+
+    // Initialize selectpicker if available
+    if ($.fn.selectpicker) {
+        select.selectpicker({
+            liveSearch: true,
+            liveSearchPlaceholder: 'Buscar comida...',
+            showSubtext: true,
+            size: 8
+        });
+    }
+}
+
+function agregarPlato(comida, dia) {
+    // Create container for the dish
+    var platoContainer = $('<div class="plato-item d-flex align-items-center mb-3"></div>');
+    
+    // Create a select with search
+    var selectContainer = $('<div class="select-container flex-grow-1"></div>');
+    var select = $(`
+        <select class="form-control"
+                name="plato_dia${dia}_${comida}[]">
+            {% for plato in platos %}
+                <option value="{{ plato.idplato }}">
+                    {{ plato.nombre }} 
+                </option>
+            {% endfor %}
+        </select>
+    `);
+    
+    selectContainer.append(select);
+    platoContainer.append(selectContainer);
+    
+    // Add button to delete this dish
+    var deleteButton = $('<button type="button" class="btn btn-danger btn-sm ml-2">Eliminar</button>');
+    deleteButton.click(function() {
+        platoContainer.remove();
+    });
+    
+    platoContainer.append(deleteButton);
+    
+    // Add the container to the specific day's food section
+    $(`#dia${dia} .${comida}`).append(platoContainer);
+    
+    // Initialize selectpicker if available
+    if ($.fn.selectpicker) {
+        select.selectpicker();
+    }
+}
+</script>
+{% endblock %}
