@@ -1,6 +1,9 @@
 from django.urls import path
 from . import views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 app_name = 'comida'
 
 urlpatterns = [
@@ -16,4 +19,6 @@ urlpatterns = [
     path('guardar_plato/<int:pk>/', views.guardar_plato, name='guardar_plato'),
     path('plato/<int:plato_id>/eliminar-comida/<int:comida_id>/', views.eliminar_comida_de_plato, name='eliminar_comida_de_plato'),
 
-]
+    path('obtener_comidas_plato/<int:id_plato>/', views.obtener_comidas_plato, name='obtener_comidas_plato'),
+    path('actualizar_peso_plato_comida/', views.actualizar_peso_plato_comida, name='actualizar_peso_plato_comida'),
+] 

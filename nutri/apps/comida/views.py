@@ -174,3 +174,56 @@ def eliminar_comida_de_plato(request, plato_id, comida_id):
         'success': False,
         'error': 'Método no permitido'
     })
+
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+def obtener_comidas_plato(request, id_plato):
+    try:
+        relaciones = PlatoComida.objects.filter(plato_id=id_plato).select_related('comida')
+        if not relaciones.exists():
+            return JsonResponse({'comidas': []})
+        comidas = []
+        for relacion in relaciones:
+            if relacion.comida.imagen:
+                imagen_url = request.build_absolute_uri(relacion.comida.imagen.url)
+            else:
+                imagen_url = None  # O una URL de imagen por defecto
+            
+            comidas.append({
+                'nombre': relacion.comida.nombre,
+                'calorias': relacion.calorias_segun_peso(),
+                'peso': relacion.peso,
+                'imagen': imagen_url,  # Incluir la URL de la imagen
+            })
+        return JsonResponse({'comidas': comidas})
+    except Exception as e:
+        logger.error(f"Error al obtener comidas: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=500)
+    
+
+
+
+
+
+
+def actualizar_peso_plato_comida(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            plato_comida_id = data.get('id')
+            nuevo_peso = data.get('peso')
+
+            plato_comida = get_object_or_404(PlatoComida, id=plato_comida_id)
+            plato_comida.peso = nuevo_peso
+            plato_comida.save()
+
+            return JsonResponse({
+                'success': True,
+                'calorias': plato_comida.calorias_segun_peso()
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=400)

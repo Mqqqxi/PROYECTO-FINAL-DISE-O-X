@@ -13,59 +13,314 @@
                 <input type="radio" name="tabset" id="tab{{ i }}" 
                     aria-controls="dia{{ i }}" 
                     {% if forloop.first %}checked{% endif %}>
-                <label for="tab{{ i }}">Día {{ i }}</label>
+                <label for="tab{{ i }}">Dia {{ i }}</label>
             {% endfor %}
         
             <div class="tab-panels">
+                
                 {% for i in rango_dias %}
                     <section id="dia{{ i }}" class="tab-panel">
-                        {% for tipo in tipo_comida %}
-                            <div class="{{ tipo|lower }}">
-                                <h4>{{ tipo }}</h4>
-                                <button type="button" class="btn btn-primary" onclick="agregarPlato('{{ tipo|lower }}', '{{ i }}')">Agregar plato</button>
-                                <button type="button" class="btn btn-secondary" onclick="agregarComida('{{ tipo|lower }}', '{{ i }}')">Agregar comida</button>
-
+                        
+                        <div class="main-container">
+                            <div>
+                            <div class="button-container">
+                                <button type="button" class="btn btn-primary" onclick="agregarPlato('{{ tipo|lower }}', '{{ i }}')">Lista de platos</button>
+                                <button type="button" class="btn btn-secondary" onclick="agregarComida('{{ tipo|lower }}', '{{ i }}')">Lista de comidas</button>
                             </div>
-                        {% endfor %}
+                            <!-- Barra lateral con lista -->
+                            <div id="listaComidas{{ i }}" class="sidebar hidden">
+                                <input type="text" class="search-box" placeholder="Buscar alimento..." onkeyup="filterList()">
+                                <div class="food-list">
+                                    {% for plato in platos %}
+                                    <button type="button" class="food-item" onclick="seleccionarComida('{{ plato.nombre }}', '{{ i }}')">
+                                        {{ plato.nombre }}
+                                    </button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="sidebar">
+                                
+                                <input type="text" id="searchInput" class="search-box" placeholder="Buscar alimento..." onkeyup="filterList()">
+                                <div class="food-list">
+                                    <div class="category" onclick="toggleCategory(this)">
+                                        <span class="toggle-arrow">▼</span>
+                                        <span>Desayuno</span>
+                                    </div>
+                                    <ul>
+                                        {% for plato in platos %}
+                                            {% if plato.tipo == "desayuno" %}
+                                                <li class="plandiario-li">
+                                                    <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}')">{{ plato.nombre }}</button>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                
+                                    <div class="category" onclick="toggleCategory(this)">
+                                        <span class="toggle-arrow">▼</span>
+                                        <span>Almuerzo</span>
+                                    </div>
+                                    <ul>
+                                        {% for plato in platos %}
+                                            {% if plato.tipo == "almuerzo" %}
+                                                <li class="plandiario-li">
+                                                    <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}')">{{ plato.nombre }}</button>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                
+                                    <div class="category" onclick="toggleCategory(this)">
+                                        <span class="toggle-arrow">▼</span>
+                                        <span>Merienda</span>
+                                    </div>
+                                    <ul>
+                                        {% for plato in platos %}
+                                            {% if plato.tipo == "merienda" %}
+                                                <li class="plandiario-li">
+                                                    <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}')">{{ plato.nombre }}</button>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                
+                                    <div class="category" onclick="toggleCategory(this)">
+                                        <span class="toggle-arrow">▼</span>
+                                        <span>Cena</span>
+                                    </div>
+                                    <ul>
+                                        {% for plato in platos %}
+                                            {% if plato.tipo == "cena" %}
+                                                <li class="plandiario-li">
+                                                    <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}')">{{ plato.nombre }}</button>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                
+                            </div>
+                            </div>
+                            <!-- Tabla de comidas -->
+                            <div class="table-container">
+                                <h2>Plan diario</h2>
+                                <table id="tablaComidas{{ i }}" class="bloqueado"></table>
+                                <table>
+                                    <tr>
+                                        <th>Comida</th>
+                                        <th>Platos/Comidas</th>
+                                        <th>Detalles</th>
+                                    </tr>
+                                    <tr>
+                                        <td class="meal-plan">Desayuno</td>
+                                        <td>
+                                            <button type="button" id="btnDesayuno{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Desayuno')">+</button>
+                                            <div id="platoDesayuno{{ i }}" class="selected-comida"></div>
+                                        </td>
+                                        <td><div id="detallesDesayuno{{ i }}" class="detalles-comida"></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="meal-plan">Almuerzo</td>
+                                        <td>
+                                            <button type="button" id="btnAlmuerzo{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Almuerzo')">+</button>
+                                            <div id="platoAlmuerzo{{ i }}" class="selected-comida"></div>
+                                        </td>
+                                        <td><div id="detallesAlmuerzo{{ i }}" class="detalles-comida"></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="meal-plan">Merienda</td>
+                                        <td>
+                                            <button type="button" id="btnMerienda{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Merienda')">+</button>
+                                            <div id="platoMerienda{{ i }}" class="selected-comida"></div>
+                                        </td>
+                                        <td><div id="detallesMerienda{{ i }}" class="detalles-comida"></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="meal-plan">Cena</td>
+                                        <td>
+                                            <button type="button" id="btnCena{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Cena')">+</button>
+                                            <div id="platoCena{{ i }}" class="selected-comida"></div>
+                                        </td>
+                                        <td><div id="detallesCena{{ i }}" class="detalles-comida"></div></td>
+                                    </tr>
+                                </table>
+                                <div class="button-group">
+                                    <button type="submit" class="btn btn-primary mt-3">Guardar</button>
+                                    <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-danger mt-3">Cancelar</a>
+                                </div>
+                            </div>
+                            <div class="selected-comidas" id="selectedComidas{{ i }}"></div>
+                        </div>
                     </section>
                 {% endfor %}
             </div>
         </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Guardar</button>
-        <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-secondary mt-3">Cancelar</a>
     </form>
+    <div class="modal fade" id="plateModal" tabindex="-1" role="dialog" aria-labelledby="plateModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="plateModalLabel">Seleccione el plato a cargar</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Seleccione el plato a cargar</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para mostrar comidas de un plato -->
+<div class="modal fade" id="modalComidasPlato" tabindex="-1" role="dialog" aria-labelledby="modalComidasPlatoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalComidasPlatoLabel">Comidas del Plato</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="listaComidasPlato">
+                    <!-- Aquí se cargarán las comidas dinámicamente -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="guardarPlatoDesdeModal()">Guardar plato</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
-    .container-flex {
-        gap: 2rem;
-        align-items: flex-start;
-        margin-top: 2rem;
-    }
+        .toggle-arrow {
+            color: #29ca8e;
+        }
 
-    .details {
-        flex: 1;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 2rem;
-        background-color: #fff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        min-width: 30rem;
-    }
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Estilos para la barra lateral */
+        .sidebar {
+            background: #333333;
+            color: white;
+            padding: 20px;
+            width: 250px;
+            border-radius: 10px;
+            margin-right: 20px;
+            min-height: 500px;
+        }
+        
+        /* Estilo para el campo de búsqueda */
+        .search-box {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            background-color: #f0f0f0; /* Fondo gris claro */
+            color: black; /* Texto negro */
+        }
 
-    .desayuno, .almuerzo, .merienda, .cena {
-        flex: 1;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        padding: 1rem;
-        background-color: #fff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        height: 20rem;
-        margin-bottom: 2rem;
-        text-align: left;
-    }
+
+        .food-list, .food-list-modal {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Ancho de la barra de scroll */
+        .food-list::-webkit-scrollbar, .food-list-modal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        /* Fondo de la pista de scroll */
+        .food-list::-webkit-scrollbar-track, .food-list-modal::-webkit-scrollbar-track {
+            background: #555; 
+            border-radius: 10px;
+        }
+
+        /* Color y estilo de la "thumb" (la parte que se mueve) */
+        .food-list::-webkit-scrollbar-thumb, .food-list-modal::-webkit-scrollbar-thumb {
+            background: #29ca8e; 
+            border-radius: 10px;
+            border: 2px solid #333; /* Añade un borde para que se vea con más contraste */
+        }
+
+        /* Opcional: cuando el usuario pasa el mouse por encima */
+        .food-list::-webkit-scrollbar-thumb:hover, .food-list-modal::-webkit-scrollbar-thumb:hover {
+            background: #29ca8e; /* Un poco más claro u oscuro para efecto hover */
+        }
+
+        .category {
+            font-weight: bold;
+            margin: 10px 0;
+            position: relative;
+            cursor: pointer;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .plandiario-li {
+            padding: 5px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #555;
+        }
+        .benefit-bar {
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(to bottom, #29ca8e, #333);
+            border-radius: 10px;
+            position: relative;
+        }
+        .benefit-bar::before, .benefit-bar::after {
+            content: "⬆ Benefit";
+            position: absolute;
+            left: -40px;
+            font-size: 12px;
+            color: white;
+        }
+        .benefit-bar::after {
+            content: "⬇ Harm";
+            top: calc(100% - 15px);
+        }
+
+        /* Estilos para la tabla */
+        .table-container {
+            flex: 1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #29ca8e;
+            color: white;
+        }
+        .meal-plan {
+            font-weight: bold;
+        }
 
     .tabset > input[type="radio"] {
         position: absolute;
@@ -101,163 +356,488 @@
 
     .tab-panels {
         border: 1px solid #ccc;
-        padding: 20px;
+        padding: 10px;
         border-radius: 0 5px 5px 5px;
     }
 
-    /* Field styles */
-    input[type="text"], 
-    input[type="number"], 
-    input[type="date"], 
-    input[type="time"], 
-    textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 16px;
-        transition: all 0.3s ease-in-out;
-    }
+    .button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px; /* Espacio entre los botones y la barra lateral */}
+    
 
-    input:focus, 
-    textarea:focus {
-        border-color: #06c;
-        box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
-        outline: none;
-    }
+    .food-item {
+    width: 100%;
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    font-size: 14px;
+    padding: 8px;
+    cursor: pointer;
+}
 
-    input[type="date"], 
-    input[type="time"] {
-        background-color: #f9f9f9;
-        padding: 10px;
-        border: 1px solid #ccc;
-        cursor: pointer;
-    }
+.food-item:hover {
+    background-color: #29ca8e;
+    border-radius: 5px;
+}
 
-    input[type="number"] {
-        background-color: #f9f9f9;
-    }
+.food-list-modal .food-item {
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+}
 
-    textarea {
-        min-height: 120px;
-        resize: vertical;
-    }
+.food-list-modal .food-item:hover {
+    background-color: #f0f0f0;
+    color: #29ca8e;
+}
 
-    ::placeholder {
-        color: #888;
-        font-style: italic;
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 100px;
+    justify-content: right;
+}
+
+
+.selected-comida {
+    color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: block;
+    margin-left: 5px;
+}
+
+.hidden { display: none; }
+.selected-comidas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+.selected-comida {
+    color: black;
+    padding: 8px 12px;
+    border-radius: 5px;
+    display: block;
+    align-items: center;
+    gap: 5px;
+}
+#tabla-oscura {
+    pointer-events: none;
+    opacity: 0.5; /* Para que se vea visualmente deshabilitada */
+}
+
+/* Añade estos estilos al final de tu sección de estilos */
+
+/* Estilos para el modal de comidas */
+.comida-item {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    margin-bottom: 5px;
+}
+
+.comida-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.comida-detalles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.comida-detalles span {
+    background-color: #f8f9fa;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+/* Para aumentar el tamaño del modal */
+@media (min-width: 576px) {
+    #comidaModal .modal-dialog {
+        max-width: 600px;
     }
+}
+
+/* Mejorar el estilo de la lista de comidas */
+#comidaLista {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.detalles-comida {
+    font-size: 12px;
+    color: #333;
+    padding: 5px;
+    max-width: 200px; /* Ajusta según necesites */
+    word-wrap: break-word;
+}
+
+/* BRAIAN */
+/* Estilos para el contenedor de la comida */
+.comida-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Estilos para la imagen de la comida */
+.comida-imagen {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* Estilos para la información de la comida */
+.comida-info {
+    flex: 1;
+}
+
+/* Estilos para el modal */
+#modalComidasPlato .modal-content {
+    border-radius: 10px;
+}
+
+#modalComidasPlato .modal-header {
+    background-color: #29ca8e;
+    color: white;
+    border-radius: 10px 10px 0 0;
+}
+
+#modalComidasPlato .modal-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#modalComidasPlato .list-group-item {
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+}
+
+#modalComidasPlato .list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
 </style>
 
+
+
 <script>
-// Script to handle dynamic number of tabs
 document.addEventListener('DOMContentLoaded', function() {
-    // Set up event listeners for tab radio buttons
+    // Configurar event listeners para los botones de pestañas
     const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
     tabInputs.forEach(input => {
         input.addEventListener('change', function() {
-            // Hide all panels
+            // Reiniciar el estado al cambiar de pestaña
+            seleccionHabilitada = false;
+            diaSeleccionado = null;
+            comidaSeleccionada = null;
+
+            // Ocultar todos los paneles
             document.querySelectorAll('.tab-panel').forEach(panel => {
                 panel.style.display = 'none';
             });
             
-            // Show the selected panel
+            // Mostrar el panel seleccionado
             const panelId = this.getAttribute('aria-controls');
             document.getElementById(panelId).style.display = 'block';
         });
     });
-    
-    // Show the first tab panel initially
-    if(tabInputs.length > 0) {
+
+    // Mostrar el primer panel inicialmente
+    if (tabInputs.length > 0) {
         const firstPanelId = tabInputs[0].getAttribute('aria-controls');
         document.getElementById(firstPanelId).style.display = 'block';
     }
-    
-    // Handle readonly field if present
-    const obraSocial = document.querySelector('[name="obraSocial"]');
-    if (obraSocial) {
-        obraSocial.setAttribute('readonly', 'readonly');
-    }
 });
 
-// Make sure jQuery is included before this script
+// Variables globales para controlar la selección
+let seleccionHabilitada = false;
+let diaSeleccionado = null;
+let comidaSeleccionada = null;
 
-function agregarComida(comida, dia) {
-    var comidaContainer = $('<div class="comida-item d-flex align-items-center mb-3"></div>');
-    var selectContainer = $('<div class="select-container flex-grow-1"></div>');
+function toggleCategory(categoryElement) {
+    const arrowElement = categoryElement.querySelector('.toggle-arrow');
+    if (arrowElement.innerHTML === "▼") {
+        arrowElement.innerHTML = "▶";
+    } else {
+        arrowElement.innerHTML = "▼";
+    }
+    const categoryItems = categoryElement.nextElementSibling;
+    categoryItems.classList.toggle("hidden");
+}
+
+function filterList() {
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+    const items = document.querySelectorAll('.food-list li');
     
-    var select = $(`  
-        <select class="form-control" 
-                name="comida_dia${dia}_${comida}[]"
-                data-live-search="true">
-            {% for comida in comidas %}
-                <option value="{{ comida.idcomida }}">
-                    {{ comida.nombre }} 
-                    <small class="text-muted">{{ comida.categoria }}</small>
-                </option>
-            {% endfor %}
-        </select>
-    `);
-
-    selectContainer.append(select);
-    comidaContainer.append(selectContainer);
-
-    var deleteButton = $('<button type="button" class="btn btn-danger btn-sm ml-2">Eliminar</button>');
-    deleteButton.click(function() {
-        comidaContainer.remove();
+    if (searchTerm) {
+        document.querySelectorAll('.category-items').forEach(list => {
+            list.classList.add("hidden");
+        });
+    }
+    
+    let visibleCategories = new Set();
+    
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+            item.style.display = "";
+            const categoryList = item.parentElement;
+            visibleCategories.add(categoryList);
+        } else {
+            item.style.display = "none";
+        }
     });
-
-    comidaContainer.append(deleteButton);
     
-    // Target the specific day's food section
-    $(`#dia${dia} .${comida}`).append(comidaContainer);
-
-    // Initialize selectpicker if available
-    if ($.fn.selectpicker) {
-        select.selectpicker({
-            liveSearch: true,
-            liveSearchPlaceholder: 'Buscar comida...',
-            showSubtext: true,
-            size: 8
+    visibleCategories.forEach(categoryList => {
+        categoryList.classList.remove("hidden");
+        const categoryHeader = categoryList.previousElementSibling;
+        const arrow = categoryHeader.querySelector(".toggle-arrow");
+        if (arrow) {
+            arrow.innerHTML = "▼";
+        }
+    });
+    
+    if (!searchTerm) {
+        document.querySelectorAll('.category-items').forEach(list => {
+            list.classList.remove("hidden");
+        });
+        document.querySelectorAll('.toggle-arrow').forEach(arrow => {
+            arrow.innerHTML = "▼";
         });
     }
 }
 
-function agregarPlato(comida, dia) {
-    // Create container for the dish
-    var platoContainer = $('<div class="plato-item d-flex align-items-center mb-3"></div>');
+function habilitarSeleccion(dia, comida) {
+    seleccionHabilitada = true;
+    diaSeleccionado = dia;
+    comidaSeleccionada = comida;
+    console.log(`Habilitado - Día: ${diaSeleccionado}, Comida: ${comidaSeleccionada}`); // Depuración
+}
+
+function seleccionarComida(nombre, dia) {
+    event.preventDefault();
+
+    if (seleccionHabilitada && diaSeleccionado === dia) {
+        let divId = `plato${comidaSeleccionada}${dia}`;
+        let divPlato = document.getElementById(divId);
+
+        if (divPlato) {
+            let platoElement = document.createElement("button");
+            platoElement.setAttribute("type", "button");
+            platoElement.classList.add("selected-comida");
+            platoElement.innerText = nombre;
+            divPlato.appendChild(platoElement);
+            seleccionHabilitada = false;
+            diaSeleccionado = null;
+            comidaSeleccionada = null;
+            console.log(`Comida seleccionada: ${nombre} para Día ${dia}, ${comidaSeleccionada}`); // Depuración
+            $('#plateModal').modal('hide'); // Cerrar el modal tras seleccionar
+        } else {
+            console.error(`No se encontró el elemento con ID: ${divId}`);
+        }
+    } else {
+        console.warn("Selección no habilitada o día incorrecto");
+    }
+}
+
+function openPlateModal(dia, comida) {
+    habilitarSeleccion(dia, comida);
+    console.log(`Abriendo modal para Día: ${dia}, Comida: ${comida}`); // Depuración
+    $('#plateModal').modal('show');
+}
+
+function filterListModal() {
+    const searchTerm = document.getElementById("searchInputModal") ? document.getElementById("searchInputModal").value.toLowerCase() : '';
+    const items = document.querySelectorAll('.food-list-modal .food-list li');
     
-    // Create a select with search
-    var selectContainer = $('<div class="select-container flex-grow-1"></div>');
-    var select = $(`
-        <select class="form-control"
-                name="plato_dia${dia}_${comida}[]">
-            {% for plato in platos %}
-                <option value="{{ plato.idplato }}">
-                    {{ plato.nombre }} 
-                </option>
-            {% endfor %}
-        </select>
-    `);
+    if (searchTerm) {
+        document.querySelectorAll('.food-list-modal .category-items').forEach(list => {
+            list.classList.add("hidden");
+        });
+    }
     
-    selectContainer.append(select);
-    platoContainer.append(selectContainer);
+    let visibleCategories = new Set();
     
-    // Add button to delete this dish
-    var deleteButton = $('<button type="button" class="btn btn-danger btn-sm ml-2">Eliminar</button>');
-    deleteButton.click(function() {
-        platoContainer.remove();
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+            item.style.display = "";
+            const categoryList = item.parentElement;
+            visibleCategories.add(categoryList);
+        } else {
+            item.style.display = "none";
+        }
     });
     
-    platoContainer.append(deleteButton);
+    visibleCategories.forEach(categoryList => {
+        categoryList.classList.remove("hidden");
+        const categoryHeader = categoryList.previousElementSibling;
+        const arrow = categoryHeader.querySelector(".toggle-arrow");
+        if (arrow) arrow.innerHTML = "▼";
+    });
     
-    // Add the container to the specific day's food section
-    $(`#dia${dia} .${comida}`).append(platoContainer);
-    
-    // Initialize selectpicker if available
-    if ($.fn.selectpicker) {
-        select.selectpicker();
+    if (!searchTerm) {
+        document.querySelectorAll('.food-list-modal .category-items').forEach(list => {
+            list.classList.remove("hidden");
+        });
+        document.querySelectorAll('.food-list-modal .toggle-arrow').forEach(arrow => {
+            arrow.innerHTML = "▼";
+        });
     }
+}
+
+$(document).ready(function() {
+    // Asegurarse de que el modal se pueda cerrar con cualquier botón con data-dismiss
+    $(document).on('click', '[data-dismiss="modal"]', function() {
+        $(this).closest('.modal').modal('hide');
+    });
+});
+
+function abrirModalPlato(idPlato, dia, comida) { // Añadimos dia y comida como parámetros opcionales
+    console.log(`Abriendo modal para plato ID: ${idPlato}, Día: ${dia}, Comida: ${comida}`);
+    document.getElementById('listaComidasPlato').innerHTML = 'Cargando...';
+    platoSeleccionadoId = idPlato; // Guardamos el ID del plato seleccionado
+    if (dia && comida) { // Si se pasan día y comida, los almacenamos
+        habilitarSeleccion(dia, comida);
+    }
+    $('#modalComidasPlato').modal('show');
+
+    fetch(`/comida/obtener_comidas_plato/${idPlato}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.comidas && data.comidas.length > 0) {
+                let html = '<ul class="list-group">';
+                data.comidas.forEach(comida => {
+                    html += `
+                        <li class="list-group-item" data-id="${comida.id}">
+                            <div class="comida-container">
+                                <img src="${comida.imagen}" alt="${comida.nombre}" class="comida-imagen">
+
+                                <div class="comida-info">
+                                    <strong>${comida.nombre}</strong><br>
+                                    <small>Calorías: ${comida.calorias} kcal</small><br>
+                                    <small>Peso: 
+                                        <input type="number" class="peso-input" value="${comida.peso}" min="0" step="1" data-id="${comida.id}">
+                                        g
+                                        <button class="btn btn-sm btn-primary guardar-peso" data-id="${comida.id}">Guardar</button>
+                                    </small>
+                                </div>
+                            </div>
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+                document.getElementById('listaComidasPlato').innerHTML = html;
+
+                // Añadir evento para guardar el peso
+                document.querySelectorAll('.guardar-peso').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        const pesoInput = document.querySelector(`.peso-input[data-id="${id}"]`);
+                        const nuevoPeso = pesoInput.value;
+                        guardarPeso(id, nuevoPeso);
+                    });
+                });
+            } else {
+                document.getElementById('listaComidasPlato').innerHTML = 'No hay comidas asociadas a este plato.';
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener las comidas:', error);
+            document.getElementById('listaComidasPlato').innerHTML = 'Error al cargar las comidas.';
+        });
+}
+
+function guardarPlatoDesdeModal() {
+    if (seleccionHabilitada && diaSeleccionado && comidaSeleccionada && platoSeleccionadoId) {
+        // Find the button that opened the modal with the matching plato ID
+        const platoButton = document.querySelector(`button[onclick*="abrirModalPlato('${platoSeleccionadoId}')"]`);
+        const nombrePlato = platoButton ? platoButton.textContent.trim() : "Plato desconocido";
+
+        // Use the existing seleccionarComida function
+        seleccionarComida(nombrePlato, diaSeleccionado);
+
+        // Close the modal
+        $('#modalComidasPlato').modal('hide');
+    } else {
+        console.warn("No se puede guardar el plato: faltan datos de selección");
+        alert("Por favor, selecciona un día para poder guardar.");
+    }
+}
+
+// Modificar los botones en la sidebar para pasar dia y comida
+// Ejemplo para la categoría Desayuno:
+function actualizarBotonesSidebar() {
+    document.querySelectorAll('.food-item').forEach(button => {
+        const idPlato = button.getAttribute('onclick').match(/'(\d+)'/)[1];
+        const dia = button.closest('.tab-panel').id.replace('dia', '');
+        const comida = button.closest('ul').previousElementSibling.querySelector('span:nth-child(2)').textContent;
+        button.setAttribute('onclick', `abrirModalPlato('${idPlato}', '${dia}', '${comida}')`);
+    });
+}
+
+// Llamar a esta función después de cargar el DOM o al cambiar de pestaña
+document.addEventListener('DOMContentLoaded', function() {
+    const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
+    tabInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            seleccionHabilitada = false;
+            diaSeleccionado = null;
+            comidaSeleccionada = null;
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+            const panelId = this.getAttribute('aria-controls');
+            document.getElementById(panelId).style.display = 'block';
+            actualizarBotonesSidebar(); // Actualizar los botones al cambiar de pestaña
+        });
+    });
+
+    if (tabInputs.length > 0) {
+        const firstPanelId = tabInputs[0].getAttribute('aria-controls');
+        document.getElementById(firstPanelId).style.display = 'block';
+        actualizarBotonesSidebar(); // Actualizar los botones al cargar la página
+    }
+});
+
+
+function guardarPeso(id, nuevoPeso) {
+    fetch('/actualizar_peso_plato_comida/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ id: id, peso: nuevoPeso })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Peso actualizado correctamente');
+            // Opcional: Actualizar las calorías mostradas en el modal
+        } else {
+            alert('Error al actualizar el peso: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error al guardar el peso:', error);
+        alert('Error al guardar el peso');
+    });
 }
 </script>
 {% endblock %}

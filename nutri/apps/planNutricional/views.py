@@ -25,6 +25,7 @@ def crear_plan_nutricional(request, persona_id):
             plan.paciente = paciente
             plan.save()
             # También puedes usar messages si lo prefieres
+            messages.success(request, "Plan Nutricional creado exitosamente.")
             return redirect("pacientes:listapaciente")
     else:
         form = PlanNutricionalForm(initial={"paciente": paciente})
@@ -36,7 +37,34 @@ def crear_plan_nutricional(request, persona_id):
 
 
 def crear_plan_dia(request, paciente_id):
-    plan_nutricional = get_object_or_404(PlanNutricional, paciente_id=paciente_id)
+    # Obtenemos todos los planes nutricionales asignados al paciente
+    # Asegúrate que esta consulta esté bien hecha y retorne correctamente los planes
+    try:
+        # Primero verificamos que el paciente exista
+        paciente = get_object_or_404(Paciente, persona_id=paciente_id)
+        # Luego consultamos sus planes usando la relación correcta
+        planes = PlanNutricional.objects.filter(paciente=paciente)
+        cantidad = planes.count()
+        
+        # Registramos para depuración
+        print(f"Paciente ID: {paciente_id}, Nombre: {paciente.persona.first_name}, Planes: {cantidad}")
+        
+        # Si el paciente no tiene ningún plan o tiene más de uno, redirigimos con el parámetro correspondiente
+        if cantidad == 0:
+            # Asegúrate que este caso se identifique correctamente
+            print(f"Paciente sin planes: {paciente_id}")
+            return redirect(f"{reverse('pacientes:listapaciente')}?no_plan=1")
+        elif cantidad > 1:
+            print(f"Paciente con múltiples planes: {paciente_id}")
+            return redirect(f"{reverse('pacientes:listapaciente')}?varios_planes=1")
+            
+    except Exception as e:
+        # Captura cualquier error en la consulta y redirige como "sin plan" por defecto
+        print(f"Error al verificar planes: {str(e)}")
+        return redirect(f"{reverse('pacientes:listapaciente')}?no_plan=1")
+
+    # Si tiene exactamente un plan, lo obtenemos
+    plan_nutricional = planes.first()
     rango_dias = range(1, plan_nutricional.duracion_dias + 1)
     platos = Plato.objects.all()
     comidas = Comida.objects.all()
