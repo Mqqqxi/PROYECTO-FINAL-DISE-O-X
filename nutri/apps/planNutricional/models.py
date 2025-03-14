@@ -3,7 +3,7 @@ from django.utils.timezone import now
 import json
 from apps.pacientes.models import Paciente
 from apps.persona.models import Nutricionista
-from apps.comida.models import PlatoComida
+from apps.comida.models import Plato
 
 class PlanNutricional(models.Model):
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name="planes_nutricionales")
@@ -24,7 +24,7 @@ class PlanDelDia(models.Model):
     plan_nutricional = models.ForeignKey(PlanNutricional, on_delete=models.CASCADE, related_name="planes_dia")
     dia = models.PositiveIntegerField(verbose_name="Día del Plan")
     tipo_comida = models.CharField(max_length=10, choices=TIPO_CHOICES)
-    plato = models.ForeignKey(PlatoComida, on_delete=models.CASCADE, related_name="planes_dia", null=True)
+    plato = models.ForeignKey(Plato, on_delete=models.CASCADE, related_name="planes_dia", null=True)
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción o Detalles")
 
     class Meta:

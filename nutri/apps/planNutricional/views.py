@@ -1,3 +1,4 @@
+from gettext import translation
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -7,6 +8,8 @@ from apps.comida.models import Comida, Plato, PlatoComida
 from apps.pacientes.models import Paciente
 from apps.persona.models import Nutricionista
 from .models import PlanDelDia, PlanNutricional
+
+from django.db import transaction
 
 from django.urls import reverse
 
@@ -35,127 +38,47 @@ def crear_plan_nutricional(request, persona_id):
         "paciente": paciente,
     })
 
-
 def crear_plan_dia(request, paciente_id):
-    # Obtenemos todos los planes nutricionales asignados al paciente
-    # Asegúrate que esta consulta esté bien hecha y retorne correctamente los planes
-    try:
-        # Primero verificamos que el paciente exista
-        paciente = get_object_or_404(Paciente, persona_id=paciente_id)
-        # Luego consultamos sus planes usando la relación correcta
-        planes = PlanNutricional.objects.filter(paciente=paciente)
-        cantidad = planes.count()
-        
-        # Registramos para depuración
-        print(f"Paciente ID: {paciente_id}, Nombre: {paciente.persona.first_name}, Planes: {cantidad}")
-        
-        # Si el paciente no tiene ningún plan o tiene más de uno, redirigimos con el parámetro correspondiente
-        if cantidad == 0:
-            # Asegúrate que este caso se identifique correctamente
-            print(f"Paciente sin planes: {paciente_id}")
-            return redirect(f"{reverse('pacientes:listapaciente')}?no_plan=1")
-        elif cantidad > 1:
-            print(f"Paciente con múltiples planes: {paciente_id}")
-            return redirect(f"{reverse('pacientes:listapaciente')}?varios_planes=1")
-            
-    except Exception as e:
-        # Captura cualquier error en la consulta y redirige como "sin plan" por defecto
-        print(f"Error al verificar planes: {str(e)}")
-        return redirect(f"{reverse('pacientes:listapaciente')}?no_plan=1")
+    paciente = get_object_or_404(Paciente, persona_id=paciente_id)
+    plan_nutricional = get_object_or_404(PlanNutricional, paciente=paciente)
 
-    # Si tiene exactamente un plan, lo obtenemos
-    plan_nutricional = planes.first()
-    rango_dias = range(1, plan_nutricional.duracion_dias + 1)
-    platos = Plato.objects.all()
-    comidas = Comida.objects.all()
-    tipo_comida = ["Desayuno", "Almuerzo", "Merienda", "Cena"]
-    
     if request.method == "POST":
-        # Process form submission
-        for dia in rango_dias:
-            for tipo in tipo_comida:
-                tipo_lower = tipo.lower()
-                
-                # Process platos (dishes)
-                plato_keys = [k for k in request.POST.keys() if k.startswith(f'plato_dia{dia}_{tipo_lower}')]
-                for key in plato_keys:
-                    plato_ids = request.POST.getlist(key)
-                    for plato_id in plato_ids:
-                        if plato_id:  # Check if not empty
-                            try:
-                                plato = get_object_or_404(Plato, idplato=plato_id)
-                                
-                                # Un plato puede tener múltiples comidas asociadas
-                                # Tomamos el primer PlatoComida asociado a este plato
-                                plato_comida = plato.platocomida_set.first()
-                                
-                                if plato_comida:
-                                    # Crear PlanDelDia con este PlatoComida
-                                    PlanDelDia.objects.create(
-                                        plan_nutricional=plan_nutricional,
-                                        dia=dia,
-                                        tipo_comida=tipo.upper(),
-                                        plato=plato_comida,
-                                        descripcion=f"Plato: {plato.nombre}"
-                                    )
-                                else:
-                                    # Si el plato no tiene comidas asociadas, no lo podemos usar
-                                    messages.warning(
-                                        request, 
-                                        f"El plato '{plato.nombre}' no tiene comidas asociadas y no se puede agregar al plan."
-                                    )
-                            except Exception as e:
-                                messages.warning(
-                                    request, 
-                                    f"Error al agregar el plato '{plato_id}': {str(e)}"
-                                )
-                
-                # Process comidas (foods)
-                comida_keys = [k for k in request.POST.keys() if k.startswith(f'comida_dia{dia}_{tipo_lower}')]
-                for key in comida_keys:
-                    comida_ids = request.POST.getlist(key)
-                    for comida_id in comida_ids:
-                        if comida_id:  # Check if not empty
-                            try:
-                                comida = get_object_or_404(Comida, idcomida=comida_id)
-                                
-                                # Para agregar solo una comida, necesitamos:
-                                # 1. Crear un Plato temporal si no queremos reutilizar uno existente
-                                # 2. Crear un PlatoComida que asocie el Plato con la Comida
-                                temp_plato = Plato.objects.create(
-                                    nombre=f"Comida Individual: {comida.nombre}",
-                                    tipo=tipo_lower,
-                                    descripcion=f"Plato generado automáticamente para la comida {comida.nombre}"
-                                )
-                                
-                                # Ahora creamos el PlatoComida
-                                plato_comida = PlatoComida.objects.create(
-                                    plato=temp_plato,
-                                    comida=comida,
-                                    peso=100  # Peso por defecto en gramos
-                                )
-                                
-                                # Finalmente creamos el PlanDelDia
-                                PlanDelDia.objects.create(
-                                    plan_nutricional=plan_nutricional,
-                                    dia=dia,
-                                    tipo_comida=tipo.upper(),
-                                    plato=plato_comida,
-                                    descripcion=f"Comida: {comida.nombre}"
-                                )
-                            except Exception as e:
-                                messages.warning(
-                                    request, 
-                                    f"Error al agregar la comida '{comida_id}': {str(e)}"
-                                )
-        
-        messages.success(request, "¡Plan Nutricional guardado exitosamente!")
-        return redirect("pacientes:listapaciente")
-    
+        try:
+            with transaction.atomic():
+                for i in range(1, plan_nutricional.duracion_dias + 1):
+                    for tipo in ['desayuno', 'almuerzo', 'merienda', 'cena']:
+                        plato_id = request.POST.get(f'plato_dia{i}_{tipo}')
+                        descripcion = request.POST.get(f'descripcion_dia{i}_{tipo}')  # Esto ahora coincide con el HTML
+                        if plato_id:  # Solo crear si se envió un plato
+                            plato = get_object_or_404(Plato, idplato=plato_id)
+                            PlanDelDia.objects.create(
+                                plan_nutricional=plan_nutricional,
+                                dia=i,
+                                tipo_comida=tipo.upper(),
+                                plato=plato,
+                                descripcion=descripcion  # Esto debería funcionar ahora
+                            )
+                messages.success(request, "Plan diario creado exitosamente con nuevas filas.")
+                return redirect("pacientes:listapaciente")
+        except Exception as e:
+            messages.error(request, f"Error al crear el plan diario: {str(e)}")
+            return redirect("pacientes:listapaciente")
+
+    # Código para GET permanece igual
+    platos = Plato.objects.all()
+    rango_dias = range(1, plan_nutricional.duracion_dias + 1)
+    planes_dia = PlanDelDia.objects.filter(plan_nutricional=plan_nutricional)
+
+    planes_data = {}
+    for plan in planes_dia:
+        clave = f"plato_dia{plan.dia}_{plan.tipo_comida.lower()}"
+        planes_data[clave] = plan.plato.idplato
+
     return render(request, "plannutricional/plandiario.html", {
-        "plan_nutricional": plan_nutricional, 
-        "rango_dias": rango_dias, 
-        "platos": platos, 
-        "comidas": comidas,
-        "tipo_comida": tipo_comida,
+        "paciente": paciente,
+        "platos": platos,
+        "rango_dias": rango_dias,
+        "tipo": "Plan",
+        "planes_data": planes_data,
+        "plan_nutricional": plan_nutricional
     })
