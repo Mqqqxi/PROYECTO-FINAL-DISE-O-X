@@ -7,7 +7,7 @@ from .models import PlanDelDia
 class PlanDelDiaForm(forms.ModelForm):
     class Meta:
         model = PlanDelDia
-        fields = ["dia", "tipo_comida", "plato", "descripcion"]
+        fields = ["dia", "tipo_comida", "platos", "descripcion"]
 
 
 class PlanNutricionalForm(forms.ModelForm):

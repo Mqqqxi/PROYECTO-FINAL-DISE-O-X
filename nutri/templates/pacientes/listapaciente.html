@@ -2,11 +2,195 @@
 {% load static %}
 {% block title %}LISTA DE PACIENTES{% endblock %}
 {% block content %}
+<style>
+    /* Google Fonts - Poppins */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+    :root {
+        --primary-color: #31715B;
+        --secondary-color: #EFEBE0;
+        --dark-bg: #1E272E;
+        --dark-text: #D1D8E0;
+        --dark-secondary: #2F3A44;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--secondary-color);
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    section.container{
+        padding-top: 10px;
+        padding-bottom: 25px;
+    }
+
+    .section-title {
+        text-align: left;
+        padding: 40px 20px;
+        margin-bottom: 30px;
+        width: 100%;
+        background-color: var(--secondary-color);
+    }
+    .section-title h2 {
+        color: var(--primary-color);
+        font-weight: 900; /* Extra bold */
+        font-size: 72px; /* Much larger size */
+        line-height: 1;
+        text-transform: uppercase;
+        margin: 0;
+        width: 100%;
+        letter-spacing: 2px;
+    }
+    /* Separate "LISTA DE" and "PACIENTES" on two lines */
+    .section-title h2 span {
+        display: block;
+    }
+
+    #miTabla {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    #miTabla thead th {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    #miTabla tbody td {
+        padding: 10px;
+        border-bottom: 1px solid var(--secondary-color);
+        transition: all 0.3s ease;
+    }
+
+    #miTabla tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .btn {
+        padding: 5px 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        margin-right: 5px;
+    }
+
+    /* Definir un tamaño más pequeño que btn-sm */
+    .btn-xs {
+        padding: 4px 7px; /* Reducir el padding */
+        font-size: 13px; /* Reducir el tamaño de fuente */
+        line-height: 1.5; /* Ajustar la altura de línea */
+    }
+
+    .btn-warning {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background-color: #255747;
+        border-color: #255747;
+    }
+
+    .btn-danger {
+        background-color: var(--secondary-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-danger:hover {
+        background-color: #d9d5cb;
+        border-color: var(--primary-color);
+    }
+
+    .btn-success {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: #255747;
+        border-color: #255747;
+    }
+
+    .btn-info {
+        background-color: var(--secondary-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-info:hover {
+        background-color: #d9d5cb;
+        border-color: var(--primary-color);
+    }
+
+    .modal-content {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .modal-body {
+        background-color: var(--secondary-color);
+        color: var(--primary-color);
+    }
+
+    .modal-footer .btn-secondary {
+        background-color: var(--secondary-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .modal-footer .btn-secondary:hover {
+        background-color: #d9d5cb;
+        border-color: var(--primary-color);
+    }
+
+    #calendar {
+        margin: 20px 0;
+        padding: 10px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    
+
+    /* Ajustar el ancho mínimo de las columnas con botones */
+    #miTabla td:nth-child(8),
+    #miTabla td:nth-child(9) {
+        min-width: 130px; /* Reducido porque los botones son más pequeños */
+    }
+</style>
+
 <section class="container">
   <div class="section-title">
-    <h2 class="text-center">LISTA DE PACIENTES</h2>
+    <h2>
+      <span>LISTA DE</span>
+      <span>PACIENTES</span>
+    </h2>
   </div>
-  <div id="calendar"></div>
 </section>
 <div class="container">
   <table id="miTabla" class="table display">
@@ -40,51 +224,51 @@
         </td>
         <td>{{ paciente.is_active }}</td>
         <td>
-          {% if paciente.is_active %}
-            <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-sm">
-              <i class="fa fa-pencil"></i>
-            </a>
-            {% if paciente.is_active %}
-              <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger btn-sm">
-                <i class="fa fa-ban"></i>
+            <div class="button-group">
+              <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-xs">
+                <i class="fa fa-pencil"></i>
               </a>
-            {% else %}
-              <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success btn-sm">
-                <i class="fa fa-check"></i>
-              </a>
-            {% endif %}
-          {% endif %}
+              {% if paciente.is_active %}
+                <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger btn-xs">
+                  <i class="fa fa-ban"></i>
+                </a>
+              {% else %}
+                <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success btn-xs">
+                  <i class="fa fa-check"></i>
+                </a>
+              {% endif %}
+            </div>
         </td>
-
         <td>
           {% if paciente.is_active %}
-            {# Botón para crear Plan Nutricional o mostrar modal si ya existe #}
-            {% if paciente.planes_nutricionales.exists %}
-              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#planExistenteModal">
-                <i class="fa fa-plus"></i>
-              </button>
-            {% else %}
-              <a href="{% url 'plannutricional:crear_plan_nutricional' paciente.pk %}" class="btn btn-info btn-sm">
-                <i class="fa fa-plus"></i>
-              </a>
-            {% endif %}
+            <div class="button-group">
+              {# Botón para crear Plan Nutricional o mostrar modal si ya existe #}
+              {% if paciente.planes_nutricionales.exists %}
+                <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#planExistenteModal">
+                  <i class="fa fa-plus"></i>
+                </button>
+              {% else %}
+                <a href="{% url 'plannutricional:crear_plan_nutricional' paciente.pk %}" class="btn btn-info btn-xs">
+                  <i class="fa fa-plus"></i>
+                </a>
+              {% endif %}
 
-            {# Botón para Crear Plan del Día: si tiene exactamente 1 plan se redirige, sino se muestra modal #}
-            {% if paciente.planes_nutricionales.count == 1 %}
-              <a href="{% url 'plannutricional:crear_plan_dia' paciente.pk %}" class="btn btn-warning btn-sm">
-                <i class="fa fa-pencil"></i> Crear Plan del Día
-              </a>
-            {% else %}
-              <!-- <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#planDiaModal{{ paciente.pk }}">
-                <i class="fa fa-pencil"></i> Crear Plan del Día
-              </button> -->
-              <a href="{% url 'plannutricional:crear_plan_dia' paciente.pk %}" class="btn btn-warning btn-sm">
-                <i class="fa fa-pencil"></i> Crear Plan del Día
-              </a>
-            {% endif %}
+              {# Botón para Crear Plan del Día: si tiene exactamente 1 plan se redirige, sino se muestra modal #}
+              {% if paciente.planes_nutricionales.count == 1 %}
+                <a href="{% url 'plannutricional:crear_plan_dia' paciente.pk %}" class="btn btn-warning btn-xs">
+                  <i class="fa fa-pencil"></i> Crear Plan del Día
+                </a>
+              {% else %}
+                <a href="{% url 'plannutricional:crear_plan_dia' paciente.pk %}" class="btn btn-warning btn-xs">
+                  <i class="fa fa-pencil"></i> Crear Plan del Día
+                </a>
+                <a href="{% url 'plannutricional:editar_plan_dia' paciente.pk %}" class="btn btn-warning btn-xs">
+                  <i class="fa fa-pencil"></i>
+                </a>
+              {% endif %}
+            </div>
           {% endif %}
         </td>
-        
       </tr>
 
       {# Modal individual para errores de creación de Plan del Día cuando el paciente no tiene exactamente 1 plan #}
@@ -95,7 +279,7 @@
             <div class="modal-header">
               <h5 class="modal-title" id="planDiaModalLabel{{ paciente.pk }}">Plan del Día</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body">
@@ -125,7 +309,7 @@
       <div class="modal-header">
         <h5 class="modal-title" id="planExistenteModalLabel">Plan Nutricional Existente</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true">×</span>
         </button>
       </div>
       <div class="modal-body">
@@ -147,7 +331,7 @@
       <div class="modal-header">
         <h5 class="modal-title" id="errorPlanDiaModalLabel">Plan del Día</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true">×</span>
         </button>
       </div>
       <div class="modal-body">

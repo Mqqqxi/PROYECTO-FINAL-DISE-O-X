@@ -34,6 +34,12 @@ LOGIN_REDIRECT_URL = '/'  # Redirige al inicio después de iniciar sesión
 LOGOUT_REDIRECT_URL = '/'  # Redirige al login después de cerrar sesión
 LOGIN_URL = 'login'  # Vista de login para decoradores como @login_required
 
+
+# Aumentar el límite de campos permitidos en una solicitud POST
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000  # Puedes ajustar este valor según tus necesidades
+
+
+
 # Application definition
 
 INSTALLED_APPS = [
