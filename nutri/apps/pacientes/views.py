@@ -113,84 +113,149 @@ def lista_pacientes(request):
     return render(request, 'pacientes/listapaciente.html', {'pacientes': pacientes})
 
 
+from django.shortcuts import get_object_or_404, render, redirect
+
+# ==============================================================================================================================================================
+# ==============================================================================================================================================================
+# ==============================================================================================================================================================
+# ==============================================================================================================================================================
+# ==============================================================================================================================================================
+# NO BORRAR ESTO, QUE SEGUN MAXI ESTO NO SE BORRA PORQUE AL BORRAR BORRAMOS ESTO QUE NO SE PUEDE BORRAR PORQUE SI BORRAMOS NO ANDA Y LE RE COSTO AL POBRE TIPO 
+# ==============================================================================================================================================================
+# ==============================================================================================================================================================
+# ==============================================================================================================================================================
+# ==============================================================================================================================================================
+# ==============================================================================================================================================================
+
+# def editar_paciente(request, persona_id):
+#     paciente = get_object_or_404(Paciente, persona_id=persona_id)
+
+#     valor_antropometrico = getattr(paciente, 'valores_antropometricos', None)
+#     analisis_lab = getattr(paciente, 'analisis_lab', None)
+#     anamnesis = getattr(paciente, 'anamnesis', None)
+#     historia_clinica = getattr(paciente, 'historia_clinica', None)
+
+#     if request.method == 'POST':
+#         paciente_form = PacienteForm(request.POST, instance=paciente)
+#         valor_antropometrico_form = ValorAntropometricoForm(request.POST, instance=valor_antropometrico)
+#         analisis_lab_form = AnalisisLabForm(request.POST, instance=analisis_lab)
+#         anamnesis_form = AnamnesisForm(request.POST, instance=anamnesis)
+#         historia_clinica_form = HistoriaClinicaForm(request.POST, instance=historia_clinica)
+
+#         # Verificar que todos los formularios sean válidos
+#         forms_validos = (paciente_form.is_valid() and
+#                          valor_antropometrico_form.is_valid() and
+#                          analisis_lab_form.is_valid() and
+#                          anamnesis_form.is_valid() and
+#                          historia_clinica_form.is_valid())
+
+#         if forms_validos:
+#             paciente_form.save()
+
+#             valor_antropometrico_instance = valor_antropometrico_form.save(commit=False)
+#             if not valor_antropometrico:
+#                 valor_antropometrico_instance.paciente = paciente
+#             valor_antropometrico_form.save()
+
+#             analisis_lab_instance = analisis_lab_form.save(commit=False)
+#             if not analisis_lab:
+#                 analisis_lab_instance.paciente = paciente
+#             analisis_lab_form.save()
+
+#             anamnesis_instance = anamnesis_form.save(commit=False)
+#             if not anamnesis:
+#                 anamnesis_instance.paciente = paciente
+#             anamnesis_form.save()
+
+#             historia_clinica_instance = historia_clinica_form.save(commit=False)
+#             if not historia_clinica:
+#                 historia_clinica_instance.paciente = paciente
+#             historia_clinica_form.save()
+
+#             messages.success(request, "¡Todos los datos han sido guardados correctamente!")
+#             return redirect('pacientes:listapaciente')
+#         else:
+#             messages.error(request, "Por favor, corrige los errores en los campos.")
+#     else:
+#         paciente_form = PacienteForm(instance=paciente)
+#         valor_antropometrico_form = ValorAntropometricoForm(instance=valor_antropometrico)
+#         analisis_lab_form = AnalisisLabForm(instance=analisis_lab)
+#         anamnesis_form = AnamnesisForm(instance=anamnesis)
+#         historia_clinica_form = HistoriaClinicaForm(instance=historia_clinica)
+
+#     return render(request, 'pacientes/editar_perfil_paciente.html', {
+#         'paciente_form': paciente_form,
+#         'valor_antropometrico_form': valor_antropometrico_form,
+#         'analisis_lab_form': analisis_lab_form,
+#         'anamnesis_form': anamnesis_form,
+#         'historia_clinica_form': historia_clinica_form,
+#         'paciente': paciente,
+#     })
+
+from django.http import JsonResponse
+
 def editar_paciente(request, persona_id):
     paciente = get_object_or_404(Paciente, persona_id=persona_id)
-    try:
-        valor_antropometrico = paciente.valores_antropometricos
-    except ValorAntropometrico.DoesNotExist:
-        valor_antropometrico = None
 
-    try:
-        analisis_lab = paciente.analisis_lab
-    except AnalisisLab.DoesNotExist:
-        analisis_lab = None
+    valor_antropometrico = getattr(paciente, 'valores_antropometricos', None)
+    analisis_lab = getattr(paciente, 'analisis_lab', None)
+    anamnesis = getattr(paciente, 'anamnesis', None)
+    historia_clinica = getattr(paciente, 'historia_clinica', None)
 
-    try:
-        anamnesis = paciente.anamnesis
-    except Anamnesis.DoesNotExist:
-        anamnesis = None
-
-    try:
-        historia_clinica = paciente.historia_clinica
-    except HistoriaClinica.DoesNotExist:
-        historia_clinica = None
-    
     if request.method == 'POST':
         paciente_form = PacienteForm(request.POST, instance=paciente)
-        
-        # Pasamos el paciente por defecto a los formularios correspondientes
         valor_antropometrico_form = ValorAntropometricoForm(request.POST, instance=valor_antropometrico)
-        if valor_antropometrico_form.instance:
-            valor_antropometrico_form.instance.paciente = paciente
-
         analisis_lab_form = AnalisisLabForm(request.POST, instance=analisis_lab)
-        if analisis_lab_form.instance:
-            analisis_lab_form.instance.paciente = paciente
-
         anamnesis_form = AnamnesisForm(request.POST, instance=anamnesis)
-        if anamnesis_form.instance:
-            anamnesis_form.instance.paciente = paciente
-
         historia_clinica_form = HistoriaClinicaForm(request.POST, instance=historia_clinica)
-        if historia_clinica_form.instance:
-            historia_clinica_form.instance.paciente = paciente
 
-        if all([paciente_form.is_valid(), valor_antropometrico_form.is_valid(), 
-                analisis_lab_form.is_valid(), anamnesis_form.is_valid(), historia_clinica_form.is_valid()]):
+        # Verificar que todos los formularios sean válidos
+        forms_validos = (paciente_form.is_valid() and
+                         valor_antropometrico_form.is_valid() and
+                         analisis_lab_form.is_valid() and
+                         anamnesis_form.is_valid() and
+                         historia_clinica_form.is_valid())
 
+        if forms_validos:
             paciente_form.save()
+
+            valor_antropometrico_instance = valor_antropometrico_form.save(commit=False)
+            if not valor_antropometrico:
+                valor_antropometrico_instance.paciente = paciente
             valor_antropometrico_form.save()
+
+            analisis_lab_instance = analisis_lab_form.save(commit=False)
+            if not analisis_lab:
+                analisis_lab_instance.paciente = paciente
             analisis_lab_form.save()
+
+            anamnesis_instance = anamnesis_form.save(commit=False)
+            if not anamnesis:
+                anamnesis_instance.paciente = paciente
             anamnesis_form.save()
+
+            historia_clinica_instance = historia_clinica_form.save(commit=False)
+            if not historia_clinica:
+                historia_clinica_instance.paciente = paciente
             historia_clinica_form.save()
-            
-            return redirect('pacientes:listapaciente')  # Redirigir a la lista de pacientes después de guardar
+
+            # Si es una solicitud AJAX, devolvemos un JSON
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': True})
+            messages.success(request, "¡Todos los datos han sido guardados correctamente!")
+            return redirect('pacientes:listapaciente')
         else:
-            print("Errores en los formularios:")
-            print(paciente_form.errors)
-            print(valor_antropometrico_form.errors)
-            print(analisis_lab_form.errors)
-            print(anamnesis_form.errors)
-            print(historia_clinica_form.errors)
+            # Si es una solicitud AJAX, devolvemos un JSON con error
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False})
+            messages.error(request, "Por favor, corrige los errores en los campos.")
+
     else:
         paciente_form = PacienteForm(instance=paciente)
-        
-        # Asignar el paciente por defecto en la carga inicial de los formularios
         valor_antropometrico_form = ValorAntropometricoForm(instance=valor_antropometrico)
-        if valor_antropometrico_form.instance:
-            valor_antropometrico_form.instance.paciente = paciente
-
         analisis_lab_form = AnalisisLabForm(instance=analisis_lab)
-        if analisis_lab_form.instance:
-            analisis_lab_form.instance.paciente = paciente
-
         anamnesis_form = AnamnesisForm(instance=anamnesis)
-        if anamnesis_form.instance:
-            anamnesis_form.instance.paciente = paciente
-
         historia_clinica_form = HistoriaClinicaForm(instance=historia_clinica)
-        if historia_clinica_form.instance:
-            historia_clinica_form.instance.paciente = paciente
 
     return render(request, 'pacientes/editar_perfil_paciente.html', {
         'paciente_form': paciente_form,
@@ -198,6 +263,7 @@ def editar_paciente(request, persona_id):
         'analisis_lab_form': analisis_lab_form,
         'anamnesis_form': anamnesis_form,
         'historia_clinica_form': historia_clinica_form,
+        'paciente': paciente,
     })
 
 def deshabilitar_paciente(request, pk):
@@ -212,3 +278,69 @@ def habilitar_paciente(request, pk):
     paciente.persona.is_active = True  # Activar al paciente
     paciente.persona.save()
     return redirect('pacientes:listapaciente')
+
+from django.http import JsonResponse
+
+def crear_datos_paciente(request, persona_id):
+    paciente = get_object_or_404(Paciente, persona_id=persona_id)
+
+    if request.method == 'POST':
+        paciente_form = PacienteForm(request.POST, instance=paciente)
+        valor_antropometrico_form = ValorAntropometricoForm(request.POST)
+        analisis_lab_form = AnalisisLabForm(request.POST)
+        anamnesis_form = AnamnesisForm(request.POST)
+        historia_clinica_form = HistoriaClinicaForm(request.POST)
+
+        # Verificamos que TODOS los formularios sean válidos
+        forms_validos = (paciente_form.is_valid() and
+                         valor_antropometrico_form.is_valid() and
+                         analisis_lab_form.is_valid() and
+                         anamnesis_form.is_valid() and
+                         historia_clinica_form.is_valid())
+
+        if forms_validos:
+            # Guardamos los datos
+            paciente_form.save()  # Guarda obraSocial en Paciente
+
+            valor_antropometrico_instance = valor_antropometrico_form.save(commit=False)
+            valor_antropometrico_instance.paciente = paciente
+            valor_antropometrico_instance.save()
+
+            analisis_lab_instance = analisis_lab_form.save(commit=False)
+            analisis_lab_instance.paciente = paciente
+            analisis_lab_instance.save()
+
+            anamnesis_instance = anamnesis_form.save(commit=False)
+            anamnesis_instance.paciente = paciente
+            anamnesis_instance.save()
+
+            historia_clinica_instance = historia_clinica_form.save(commit=False)
+            historia_clinica_instance.paciente = paciente
+            historia_clinica_instance.save()
+
+            # Si es una solicitud AJAX, devolvemos un JSON
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': True})
+            messages.success(request, "¡Todos los datos han sido guardados correctamente!")
+            return redirect('pacientes:listapaciente')
+        else:
+            # Si es una solicitud AJAX, devolvemos un JSON con error
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False})
+            messages.error(request, "Por favor, completa todos los campos en todas las secciones.")
+
+    else:
+        paciente_form = PacienteForm(instance=paciente)
+        valor_antropometrico_form = ValorAntropometricoForm()
+        analisis_lab_form = AnalisisLabForm()
+        anamnesis_form = AnamnesisForm()
+        historia_clinica_form = HistoriaClinicaForm()
+
+    return render(request, 'pacientes/crear_datos_paciente.html', {
+        'paciente_form': paciente_form,
+        'valor_antropometrico_form': valor_antropometrico_form,
+        'analisis_lab_form': analisis_lab_form,
+        'anamnesis_form': anamnesis_form,
+        'historia_clinica_form': historia_clinica_form,
+        'paciente': paciente,
+    })

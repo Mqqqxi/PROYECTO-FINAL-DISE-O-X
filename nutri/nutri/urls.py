@@ -31,9 +31,9 @@ urlpatterns = [
 
     path("comida/", include("apps.comida.urls")),
     path("plannutricional/", include("apps.planNutricional.urls")),
+    path("progreso/", include("apps.progreso.urls")),
     # path("pacientes/", include("apps.pacientes.urls")),
     # path("persona/", include("apps.persona.urls")),
-    # path("progreso/", include("apps.progreso.urls")),
     
 ]
 

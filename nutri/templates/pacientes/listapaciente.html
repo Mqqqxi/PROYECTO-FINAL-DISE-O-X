@@ -26,7 +26,7 @@
         margin: 0 auto;
     }
 
-    section.container{
+    section.container {
         padding-top: 10px;
         padding-bottom: 25px;
     }
@@ -40,15 +40,14 @@
     }
     .section-title h2 {
         color: var(--primary-color);
-        font-weight: 900; /* Extra bold */
-        font-size: 72px; /* Much larger size */
+        font-weight: 900;
+        font-size: 72px;
         line-height: 1;
         text-transform: uppercase;
         margin: 0;
         width: 100%;
         letter-spacing: 2px;
     }
-    /* Separate "LISTA DE" and "PACIENTES" on two lines */
     .section-title h2 span {
         display: block;
     }
@@ -89,11 +88,10 @@
         margin-right: 5px;
     }
 
-    /* Definir un tamaño más pequeño que btn-sm */
     .btn-xs {
-        padding: 4px 7px; /* Reducir el padding */
-        font-size: 13px; /* Reducir el tamaño de fuente */
-        line-height: 1.5; /* Ajustar la altura de línea */
+        padding: 4px 7px;
+        font-size: 13px;
+        line-height: 1.5;
     }
 
     .btn-warning {
@@ -140,6 +138,17 @@
         border-color: var(--primary-color);
     }
 
+    .btn-primary {
+        background-color: #255747;
+        border-color: #255747;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #1e4a3a;
+        border-color: #1e4a3a;
+    }
+
     .modal-content {
         border-radius: 10px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -175,12 +184,9 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    
-
-    /* Ajustar el ancho mínimo de las columnas con botones */
     #miTabla td:nth-child(8),
     #miTabla td:nth-child(9) {
-        min-width: 130px; /* Reducido porque los botones son más pequeños */
+        min-width: 130px;
     }
 </style>
 
@@ -192,6 +198,7 @@
     </h2>
   </div>
 </section>
+
 <div class="container">
   <table id="miTabla" class="table display">
     <thead>
@@ -205,6 +212,7 @@
         <th>Activo</th>
         <th>Datos del paciente</th>
         <th>Plan nutricional</th>
+        <th>Progreso</th>
       </tr>
     </thead>
     <tbody>
@@ -224,166 +232,194 @@
         </td>
         <td>{{ paciente.is_active }}</td>
         <td>
-            <div class="button-group">
-              <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-xs">
-                <i class="fa fa-pencil"></i>
+          <div class="button-group">
+            {% if not paciente.paciente.valores_antropometricos %}
+              <a href="{% url 'pacientes:crear_datos_paciente' paciente.pk %}" class="btn btn-success btn-xs">
+                <i class="fa fa-plus"></i> 
               </a>
-              {% if paciente.is_active %}
-                <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger btn-xs">
-                  <i class="fa fa-ban"></i>
-                </a>
-              {% else %}
-                <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success btn-xs">
-                  <i class="fa fa-check"></i>
-                </a>
-              {% endif %}
-            </div>
+            {% endif %}
+            {% if paciente.paciente.valores_antropometricos %}
+            <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning btn-xs">
+              <i class="fa fa-pencil"></i>
+            </a>
+            {% endif %}
+            {% if paciente.is_active %}
+              <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger btn-xs">
+                <i class="fa fa-ban"></i>
+              </a>
+            {% else %}
+              <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success btn-xs">
+                <i class="fa fa-check"></i>
+              </a>
+            {% endif %}
+          </div>
         </td>
+        
+
         <td>
           {% if paciente.is_active %}
-            <div class="button-group">
-              {# Botón para crear Plan Nutricional o mostrar modal si ya existe #}
-              {% if paciente.planes_nutricionales.exists %}
-                <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#planExistenteModal">
-                  <i class="fa fa-plus"></i>
-                </button>
-              {% else %}
-                <a href="{% url 'plannutricional:crear_plan_nutricional' paciente.pk %}" class="btn btn-info btn-xs">
-                  <i class="fa fa-plus"></i>
+            {% if not paciente.paciente.planes_nutricionales.exists %}
+              {# --- NO existe plan => mostrar el botón "+" que abre el modal --- #}
+              <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#crearPlanModal{{ paciente.pk }}">
+                <i class="fa fa-plus"></i>
+              </button>
+        
+              {# === Modal para CREAR el plan nutricional (3 campos) === #}
+              <div class="modal fade" id="crearPlanModal{{ paciente.pk }}" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <!-- Formulario que envía al view "crear_plan_nutricional_modal" -->
+                  <form method="POST" action="{% url 'plannutricional:crear_plan_nutricional_modal' paciente.pk %}">
+                    {% csrf_token %}
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Crear Plan Nutricional</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Campo 1: Fecha inicio -->
+                        <div class="form-group">
+                          <label for="fecha_inicio_{{ paciente.pk }}">Fecha Inicio</label>
+                          <input type="date" class="form-control" id="fecha_inicio_{{ paciente.pk }}" name="fecha_inicio">
+                        </div>
+                        <!-- Campo 2: Duración en días -->
+                        <div class="form-group">
+                          <label for="duracion_dias_{{ paciente.pk }}">Duración (días)</label>
+                          <input type="number" class="form-control" id="duracion_dias_{{ paciente.pk }}" name="duracion_dias" value="30">
+                        </div>
+                        <!-- Campo 3: Recomendación -->
+                        <div class="form-group">
+                          <label for="recomendacion_{{ paciente.pk }}">Recomendación</label>
+                          <textarea class="form-control" id="recomendacion_{{ paciente.pk }}" name="recomendacion"></textarea>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+        
+            {% else %}
+              {# --- SÍ existe plan => mostrar botón para Editar y Eliminar --- #}
+              {% with plan=paciente.paciente.planes_nutricionales.first %}
+                <a href="{% url 'plannutricional:editar_plan_dia' plan.idPlanN %}" class="btn btn-primary btn-xs">
+                  <i class="fa fa-edit"></i>
                 </a>
-              {% endif %}
-
-              {# Botón para Crear Plan del Día: si tiene exactamente 1 plan se redirige, sino se muestra modal #}
-              {% if paciente.planes_nutricionales.count == 1 %}
-                <a href="{% url 'plannutricional:crear_plan_dia' paciente.pk %}" class="btn btn-warning btn-xs">
-                  <i class="fa fa-pencil"></i> Crear Plan del Día
-                </a>
-              {% else %}
-                <a href="{% url 'plannutricional:crear_plan_dia' paciente.pk %}" class="btn btn-warning btn-xs">
-                  <i class="fa fa-pencil"></i> Crear Plan del Día
-                </a>
-                <a href="{% url 'plannutricional:editar_plan_dia' paciente.pk %}" class="btn btn-warning btn-xs">
-                  <i class="fa fa-pencil"></i>
-                </a>
-              {% endif %}
-            </div>
+                <form action="{% url 'plannutricional:eliminar_plan_nutricional' plan.idPlanN %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('¿Seguro que deseas eliminar este plan nutricional?');">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </form>
+              {% endwith %}
+            {% endif %}
           {% endif %}
         </td>
-      </tr>
+        
+        <td>
+          <a href="{% url 'progreso:crear_progreso' paciente.pk %}" class="btn btn-primary btn-xs">
+            <i class="fa fa-plus"></i>
+        </td>
 
-      {# Modal individual para errores de creación de Plan del Día cuando el paciente no tiene exactamente 1 plan #}
-      {% if paciente.planes_nutricionales.count != 1 %}
-      <div class="modal fade" id="planDiaModal{{ paciente.pk }}" tabindex="-1" role="dialog" aria-labelledby="planDiaModalLabel{{ paciente.pk }}" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="planDiaModalLabel{{ paciente.pk }}">Plan del Día</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              {% if paciente.planes_nutricionales.count == 0 %}
-                Este paciente no tiene asignado ningún plan nutricional. Por favor, asigne un plan nutricional primero.
-              {% else %}
-                Este paciente tiene más de un plan nutricional asignado. Por favor, verifique la asignación.
-              {% endif %}
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endif %}
+
+
+      </tr>
+  
       {% endfor %}
     </tbody>
   </table>
-</div>
-
-{# Modal global para Plan Nutricional Existente (activado vía parámetro GET) #}
-{% if request.GET.plan_existente %}
-<div class="modal fade" id="planExistenteModal" tabindex="-1" role="dialog" aria-labelledby="planExistenteModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="planExistenteModalLabel">Plan Nutricional Existente</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        Ya se ha asignado un plan nutricional a este paciente.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+  </div>
+  
+  {# = MODAL GLOBAL PARA “PLAN EXISTENTE” = #}
+  <div class="modal fade" id="planExistenteModal" tabindex="-1" role="dialog" 
+       aria-labelledby="planExistenteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="planExistenteModalLabel">Plan Nutricional Existente</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Este paciente ya tiene un plan nutricional asignado. Si deseas editarlo, utiliza las opciones de
+          “Crear/Editar Plan del Día” o elimina el plan actual para asignar uno nuevo.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-{% endif %}
-
-{# Modal global para errores de Plan del Día (activado vía parámetros GET: no_plan o varios_planes) #}
-{% if request.GET.no_plan or request.GET.varios_planes %}
-<div class="modal fade" id="errorPlanDiaModal" tabindex="-1" role="dialog" aria-labelledby="errorPlanDiaModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="errorPlanDiaModalLabel">Plan del Día</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        {% if request.GET.no_plan %}
-          Este paciente no tiene asignado ningún plan nutricional. Por favor, asigne un plan nutricional primero.
-        {% elif request.GET.varios_planes %}
-          Este paciente tiene más de un plan nutricional asignado. Por favor, verifique la asignación.
-        {% endif %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+  
+  {# = MODAL GLOBAL PARA ERRORES DE PLAN DEL DÍA (PARÁMETROS GET) = #}
+  {% if request.GET.no_plan or request.GET.varios_planes %}
+  <div class="modal fade" id="errorPlanDiaModal" tabindex="-1" role="dialog"
+       aria-labelledby="errorPlanDiaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorPlanDiaModalLabel">Plan del Día</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {% if request.GET.no_plan %}
+            Este paciente no tiene asignado ningún plan nutricional. Por favor, asigne un plan nutricional primero.
+          {% elif request.GET.varios_planes %}
+            Este paciente tiene más de un plan nutricional asignado. Por favor, verifique la asignación.
+          {% endif %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-{% endif %}
-
-{# Cargar jQuery y Bootstrap JS #}
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-{# Script para mostrar el modal global y limpiar parámetros de la URL sin recargar #}
-{% if request.GET.plan_existente %}
-<script>
-  $(document).ready(function(){
-    $('#planExistenteModal').modal('show');
-    $('#planExistenteModal').on('hidden.bs.modal', function () {
-      if (window.history.replaceState) {
-          const url = new URL(window.location.href);
-          url.searchParams.delete('plan_existente');
-          window.history.replaceState(null, '', url);
-      }
-    });
-  });
-</script>
-{% endif %}
-
-{% if request.GET.no_plan or request.GET.varios_planes %}
-<script>
-  $(document).ready(function(){
-    $('#errorPlanDiaModal').modal('show');
-    $('#errorPlanDiaModal').on('hidden.bs.modal', function () {
-      if (window.history.replaceState) {
+  {% endif %}
+  
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+  {# Mostrar modal global de error si corresponde #}
+  {% if request.GET.no_plan or request.GET.varios_planes %}
+  <script>
+    $(document).ready(function(){
+      $('#errorPlanDiaModal').modal('show');
+      // Elimina los parámetros de la URL al cerrar
+      $('#errorPlanDiaModal').on('hidden.bs.modal', function () {
+        if (window.history.replaceState) {
           const url = new URL(window.location.href);
           url.searchParams.delete('no_plan');
           url.searchParams.delete('varios_planes');
           window.history.replaceState(null, '', url);
-      }
+        }
+      });
     });
-  });
-</script>
-{% endif %}
+  </script>
+  {% endif %}
+  
+  {# Mostrar modal global de plan existente si corresponde #}
+  {% if request.GET.plan_existente %}
+  <script>
+    $(document).ready(function(){
+      $('#planExistenteModal').modal('show');
+      // Elimina el parámetro de la URL al cerrar
+      $('#planExistenteModal').on('hidden.bs.modal', function () {
+        if (window.history.replaceState) {
+          const url = new URL(window.location.href);
+          url.searchParams.delete('plan_existente');
+          window.history.replaceState(null, '', url);
+        }
+      });
+    });
+  </script>
+  {% endif %}
 
 {# DataTables #}
 <script>
@@ -400,5 +436,16 @@
       buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
     });
   });
+  
+</script>
+
+
+<script>
+  function redirectToEditPlan(selectElement, pacientePk) {
+      const planId = selectElement.value;
+      if (planId) {
+          window.location.href = "{% url 'plannutricional:editar_plan_dia' 0 %}".replace('0', planId);
+      }
+  }
 </script>
 {% endblock %}

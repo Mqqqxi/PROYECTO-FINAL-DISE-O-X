@@ -2,16 +2,20 @@
 {% load static %}
 {% block title %}PLATOS{% endblock %}
 {% block content %}
+<section class="container">
+    <div class="section-title">
+        <h2>
+            <span>LISTA DE</span>
+            <span>PLATOS</span>
+          </h2>
+    </div>
+</section>
 
-<div class="section-title">
-    <h2 class="text-center">LISTA DE PLATOS</h2>
-</div>
-
-<div class="containerComida">
+<div class="container">
     <div class="table-container">
 
         <!-- Botón para abrir el modal -->
-        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalAgregarPlato">
+        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalAgregarPlato" style="margin-bottom: 20px;">
             AGREGAR PLATO
         </button>
 
@@ -152,8 +156,6 @@
         }
     }
 
-
-
     $(document).ready(function () {
         $('#miTabla').DataTable({
             paging: true,
@@ -287,39 +289,56 @@
             $("#modalMensaje").modal("show"); // Muestra el modal
         }
     });
-
-
-
-
 </script>
 
 <style>
-    @import url(https://fonts.googleapis.com/css?family=Montserrat:500);
-
+    /* Google Fonts - Poppins */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
     :root {
-        /* Base font size */
-        font-size: 10px;
+        --primary-color: #31715B;
+        --secondary-color: #EFEBE0;
+        --dark-bg: #1E272E;
+        --dark-text: #D1D8E0;
+        --dark-secondary: #2F3A44;
     }
 
-    *,
-    *::before,
-    *::after {
-        box-sizing: border-box;
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--secondary-color);
+        color: var(--primary-color);
+        transition: all 0.3s ease;
     }
 
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
 
+    section.container {
+        padding-top: 10px;
+        padding-bottom: 25px;
+    }
 
-    .containerComida {
-        display: flex;
-        gap: 2rem;
-        max-width: 100rem;
-        /* Limita el ancho máximo del contenedor */
-        margin-bottom: 50px;
-        padding: 0 2rem;
-        /* Espacio interno a los lados */
-        align-items: center;
-        justify-content: center;
+    .section-title {
+        text-align: left;
+        padding: 40px 20px;
+        margin-bottom: 30px;
+        width: 100%;
+        background-color: var(--secondary-color);
+    }
+    .section-title h2 {
+        color: var(--primary-color);
+        font-weight: 900;
+        font-size: 72px;
+        line-height: 1;
+        text-transform: uppercase;
+        margin: 0;
+        width: 100%;
+        letter-spacing: 2px;
+    }
+    .section-title h2 span {
+        display: block;
     }
 
     .heading {
@@ -373,18 +392,6 @@
         box-sizing: border-box;
     }
 
-    .containerComida {
-        display: flex;
-        justify-content: center;
-        /* Centra el contenido horizontalmente */
-        align-items: flex-start;
-        max-width: 100%;
-        /* Asegura que el contenedor no se expanda más allá del ancho permitido */
-        margin-bottom: 50px;
-        padding: 0 2rem;
-        gap: 2rem;
-    }
-
     .table-container {
         width: 100%;
         max-width: 1200px;
@@ -419,6 +426,140 @@
         /* Gris más intenso */
     }
 
+    #miTabla {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    #miTabla thead th {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    #miTabla tbody td {
+        padding: 10px;
+        border-bottom: 1px solid var(--secondary-color);
+        transition: all 0.3s ease;
+    }
+
+    #miTabla tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+    
+    /* Solo para las celdas que contienen botones */
+    #miTabla tbody td a {
+        display: inline-block;
+        margin-right: 1px;
+    }
+
+    .btn {
+        padding: 5px 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        margin-right: 5px;
+    }
+
+    .btn-xs {
+        padding: 4px 7px;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .btn-warning {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background-color: #255747;
+        border-color: #255747;
+    }
+
+    .btn-danger {
+        background-color: var(--secondary-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-danger:hover {
+        background-color: #d9d5cb;
+        border-color: var(--primary-color);
+    }
+
+    .btn-success {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: #255747;
+        border-color: #255747;
+    }
+
+    .btn-info {
+        background-color: var(--secondary-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-info:hover {
+        background-color: #d9d5cb;
+        border-color: var(--primary-color);
+    }
+
+    .btn-primary {
+        background-color: #255747;
+        border-color: #255747;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #1e4a3a;
+        border-color: #1e4a3a;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .modal-body {
+        background-color: var(--secondary-color);
+        color: var(--primary-color);
+    }
+
+    .modal-footer .btn-secondary {
+        background-color: var(--secondary-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .modal-footer .btn-secondary:hover {
+        background-color: #d9d5cb;
+        border-color: var(--primary-color);
+    }
+
+    #miTabla td:nth-child(8),
+    #miTabla td:nth-child(9) {
+        min-width: 130px;
+    }
     /* Responsividad: apila la galería y los detalles en pantallas pequeñas */
     @media (max-width: 768px) {
         .containerComida {

@@ -1,3 +1,4 @@
+from datetime import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from apps.persona.models import Persona
@@ -8,6 +9,19 @@ from django.db import models
 class Paciente(models.Model):
     persona = models.OneToOneField(Persona, on_delete=models.CASCADE, db_column='Persona_idPersona', primary_key=True)
     obraSocial = models.CharField(max_length=45, null=True)
+    objetivo = models.CharField(
+        max_length=50,
+        choices=[
+            ('perder_peso', 'Perder peso'),
+            ('ganar_masa', 'Ganar masa muscular'),
+            ('mantener', 'Mantener peso'),
+            ('no_definido', 'No definido'),
+        ],
+        default='no_definido'
+    )  # Objetivo del paciente
+    creado = models.DateTimeField(auto_now_add=True)
+    actualizado = models.DateTimeField(auto_now=True)
+
 
     class Meta:
         managed= True
@@ -15,8 +29,6 @@ class Paciente(models.Model):
 
     def __str__(self):
         return f"{self.persona.first_name} {self.persona.last_name}"
-
-
 
 
 

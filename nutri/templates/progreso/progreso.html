@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}PROGRESO{% endblock %}
+{% block content %}
+
+<!-- Sección de Título y Calendario -->
+<section class="container">
+    <div class="section-title">
+        <h2 class="text-center">PROGRESO</h2>
+    </div>
+    <div id="calendar"></div>
+</section>
+
+<!-- Contenedor Principal -->
+<div class="container">
+    <div class="row">
+        <!-- Sección de Perfil -->
+        <div class="col-md-4">
+            <!-- Selectpicker para fechas -->
+            
+            <!-- Sección de Perfil -->
+        
+            <div class="card profile-section">
+                <img src="https://via.placeholder.com/100" alt="Foto de perfil de {{ paciente.nombre }} {{ paciente.apellido }}" class="profile-img">
+                <h5>{{ paciente.nombre }} {{ paciente.apellido }}</h5>
+                <div class="profile-stats">
+                    <div>
+                        <strong>Peso</strong><br>52.9 kg <!-- Actualiza esto dinámicamente si tienes el dato -->
+                    </div>
+                    <div>
+                        <strong>Altura</strong><br>151 cm <!-- Ajusta según modelo Paciente -->
+                    </div>
+                    <div>
+                        <strong>Objetivo</strong><br><span class="objective">55 kg</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Selectpicker para fechas -->
+            <div class="card form-section">
+                <h4><i class="fa fa-calendar" aria-hidden="true"></i> Seleccionar Fecha</h4>
+                <select class="form-control selectpicker" id="fechaSelect" onchange="cargarDatos()">
+                    <option value="">Selecciona una fecha</option>
+                    {% for fecha in fechas %}
+                        <option value="{{ fecha|date:'Y-m-d' }}">{{ fecha|date:'d/m/Y' }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Contenedor para mostrar datos -->
+            <div class="card form-section" id="datosContainer">
+                <h4><i class="fa fa-heartbeat" aria-hidden="true"></i> Datos de Evolución</h4>
+                <div id="datosProgreso">
+                    <p>Selecciona una fecha para ver los datos.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Evolución y Fotos -->
+        <div class="col-md-8">
+            <!-- Datos Desplegables -->
+            <div class="card form-section">
+                <h4><i class="fa fa-heartbeat" aria-hidden="true"></i> Evolución</h4>
+                <button class="btn-toggle" type="button" data-toggle="collapse" data-target="#datosEvolucion" aria-expanded="false" aria-controls="datosEvolucion">
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i> Actualizar Datos
+                </button>
+                <div id="datosEvolucion" class="collapse collapse-section">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="evolucion">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="altura" class="form-label">Altura:</label>
+                                <input type="text" class="form-control" id="altura" name="altura" placeholder="Altura">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="peso" class="form-label">Peso:</label>
+                                <input type="text" class="form-control" id="peso" name="peso" placeholder="Peso">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="perimetro_pecho" class="form-label">Perímetro pecho:</label>
+                                <input type="text" class="form-control" id="perimetro_pecho" name="perimetro_pecho" placeholder="Perímetro pecho">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="indice_grasa_corporal" class="form-label">Índice de grasa corporal:</label>
+                                <input type="text" class="form-control" id="indice_grasa_corporal" name="indice_grasa_corporal" placeholder="Índice de grasa">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="masa_muscular" class="form-label">Masa muscular:</label>
+                                <input type="text" class="form-control" id="masa_muscular" name="masa_muscular" placeholder="Masa muscular">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="agua_corporal" class="form-label">Agua corporal:</label>
+                                <input type="text" class="form-control" id="agua_corporal" name="agua_corporal" placeholder="Agua corporal">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="perimetro_cintura" class="form-label">Perímetro cintura:</label>
+                                <input type="text" class="form-control" id="perimetro_cintura" name="perimetro_cintura" placeholder="Perímetro cintura">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="perimetro_cadera" class="form-label">Perímetro cadera:</label>
+                                <input type="text" class="form-control" id="perimetro_cadera" name="perimetro_cadera" placeholder="Perímetro cadera">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="perimetro_muslo" class="form-label">Perímetro muslo:</label>
+                                <input type="text" class="form-control" id="perimetro_muslo" name="perimetro_muslo" placeholder="Perímetro muslo">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="perimetro_brazo" class="form-label">Perímetro brazo:</label>
+                                <input type="text" class="form-control" id="perimetro_brazo" name="perimetro_brazo" placeholder="Perímetro brazo">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tension_arterial_maxima" class="form-label">Tensión arterial máxima:</label>
+                                <input type="text" class="form-control" id="tension_arterial_maxima" name="tension_arterial_maxima" placeholder="Tensión arterial máxima">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tension_arterial_minima" class="form-label">Tensión arterial mínima:</label>
+                                <input type="text" class="form-control" id="tension_arterial_minima" name="tension_arterial_minima" placeholder="Tensión arterial mínima">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="comentario" class="form-label">Comentario:</label>
+                                <textarea class="form-control" id="comentario" name="comentario" rows="3" placeholder="Comentario opcional"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fecha" class="form-label">Fecha:</label>
+                                <input type="date" class="form-control" id="fecha" name="fecha" value="2024-02-23">
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-3">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-save">
+                                    <i class="fa fa-save" aria-hidden="true"></i> Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Fotos de Progreso Desplegables -->
+            <div class="card form-section">
+                <h4><i class="fa fa-camera" aria-hidden="true"></i> Fotos de Progreso</h4>
+                <button class="btn-toggle" type="button" data-toggle="collapse" data-target="#fotosProgreso" aria-expanded="false" aria-controls="fotosProgreso">
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i> Actualizar Imágenes
+                </button>
+                <div id="fotosProgreso" class="collapse collapse-section">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="fotos">
+                        <div class="photo-upload">
+                            <div>
+                                <label for="fotoEspalda" class="form-label">Espalda</label>
+                                <input type="file" accept="image/*" class="form-control" name="foto_espalda" id="fotoEspalda" onchange="previewImage(this, 'previewEspalda')">
+                                <div id="previewEspalda" class="image-preview">
+                                    <span class="placeholder-text">Vista previa</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="fotoLado" class="form-label">Lado</label>
+                                <input type="file" accept="image/*" class="form-control" name="foto_lado" id="fotoLado" onchange="previewImage(this, 'previewLado')">
+                                <div id="previewLado" class="image-preview">
+                                    <span class="placeholder-text">Vista previa</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="fotoFrente" class="form-label">Frente</label>
+                                <input type="file" accept="image/*" class="form-control" name="foto_frente" id="fotoFrente" onchange="previewImage(this, 'previewFrente')">
+                                <div id="previewFrente" class="image-preview">
+                                    <span class="placeholder-text">Vista previa</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-save">
+                                <i class="fa fa-save" aria-hidden="true"></i> Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos CSS -->
+<style>
+    body {
+        background: linear-gradient(135deg, #f0f4f5 0%, #ffffff 100%);
+        font-family: 'Poppins', sans-serif;
+        color: #2c3e50;
+    }
+    .container {
+        max-width: 1200px;
+        margin-top: 40px;
+    }
+    .card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        padding: 20px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+    .profile-section {
+        text-align: center;
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 25px;
+    }
+    .profile-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid #87b992;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .profile-img:hover {
+        transform: scale(1.05);
+    }
+    .profile-stats {
+        display: flex;
+        justify-content: space-around;
+        gap: 10px;
+        margin-top: 20px;
+        font-size: 15px;
+    }
+    .profile-stats div {
+        background: #eef4f5;
+        padding: 12px;
+        border-radius: 12px;
+        flex: 1;
+    }
+    .objective {
+        color: #e67e22;
+        font-weight: 600;
+    }
+    .form-section h4 {
+        color: #2e7d32;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 10px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #87b992;
+        box-shadow: 0 0 6px rgba(135, 185, 146, 0.4);
+        outline: none;
+    }
+    .btn-toggle {
+        background: linear-gradient(45deg, #87b992, #2e7d32);
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        transition: all 0.3s ease;
+    }
+    .btn-toggle:hover {
+        background: linear-gradient(45deg, #2e7d32, #87b992);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .collapse-section {
+        margin-top: 20px;
+    }
+    .photo-upload {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .photo-upload div {
+        flex: 1;
+        min-width: 200px;
+    }
+    .image-preview {
+        width: 100%;
+        padding-bottom: 100%;
+        background: #f1f3f5;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        position: relative;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+    .image-preview img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+        transition: transform 0.3s ease;
+    }
+    .image-preview:hover img {
+        transform: scale(1.03);
+    }
+    .placeholder-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #7f8c8d;
+        font-size: 14px;
+    }
+    .loading-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        color: #87b992;
+        animation: spin 1s infinite linear;
+    }
+    @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    .btn-save {
+        background: linear-gradient(45deg, #87b992, #2e7d32);
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-save:hover {
+        background: linear-gradient(45deg, #2e7d32, #87b992);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    @media (max-width: 768px) {
+        .photo-upload {
+            flex-direction: column;
+        }
+        .image-preview {
+            padding-bottom: 75%;
+        }
+        .profile-stats {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+</style>
+
+<!-- Dependencias Externas -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        preview.innerHTML = '<i class="fa fa-spinner loading-icon" aria-hidden="true"></i>';
+
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            if (!file.type.match('image.*')) {
+                alert("Por favor, selecciona una imagen válida.");
+                input.value = '';
+                preview.innerHTML = '<span class="placeholder-text">Vista previa</span>';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Previsualización de ${input.name}">`;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.innerHTML = '<span class="placeholder-text">Vista previa</span>';
+        }
+    }
+
+    $(document).ready(function() {
+        $('.collapse').on('show.bs.collapse', function() {
+            $(this).siblings('.btn-toggle').find('i').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        });
+        $('.collapse').on('hide.bs.collapse', function() {
+            $(this).siblings('.btn-toggle').find('i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        });
+
+        // Inicializar el selectpicker
+        $('.selectpicker').selectpicker();
+    });
+
+    function cargarDatos() {
+        const fecha = $('#fechaSelect').val();
+        if (fecha) {
+            $.ajax({
+                url: `/progreso/obtener_datos_progreso/{{ paciente.pk }}/${fecha}/`,
+                method: 'GET',
+                success: function(data) {
+                    let html = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Peso:</strong> ${data.peso || '-'} kg</p>
+                                <p><strong>Índice de grasa corporal:</strong> ${data.indice_grasa_corporal || '-'} %</p>
+                                <p><strong>Perímetro cintura:</strong> ${data.perimetro_cintura || '-'} cm</p>
+                                <p><strong>Perímetro cadera:</strong> ${data.perimetro_cadera || '-'} cm</p>
+                                <p><strong>Perímetro muslo:</strong> ${data.perimetro_muslo || '-'} cm</p>
+                                <p><strong>Perímetro brazo:</strong> ${data.perimetro_brazo || '-'} cm</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Perímetro pecho:</strong> ${data.perimetro_pecho || '-'} cm</p>
+                                <p><strong>Masa muscular:</strong> ${data.masa_muscular || '-'} kg</p>
+                                <p><strong>Agua corporal:</strong> ${data.agua_corporal || '-'} %</p>
+                                <p><strong>Tensión arterial:</strong> ${data.tension_arterial_maxima || '-'} / ${data.tension_arterial_minima || '-'} mmHg</p>
+                                <p><strong>Comentario:</strong> ${data.comentario || '-'}</p>
+                            </div>
+                        </div>
+                    `;
+                    if (data.fotos && data.fotos.length > 0) {
+                        html += '<h5>Fotos:</h5><div class="photo-upload">';
+                        data.fotos.forEach(foto => {
+                            html += `
+                                <div>
+                                    <label>${foto.descripcion}</label>
+                                    <div class="image-preview">
+                                        <img src="${foto.url}" alt="${foto.descripcion}">
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    }
+                    $('#datosProgreso').html(html);
+                },
+                error: function() {
+                    $('#datosProgreso').html('<p>Error al cargar los datos.</p>');
+                }
+            });
+        } else {
+            $('#datosProgreso').html('<p>Selecciona una fecha para ver los datos.</p>');
+        }
+    }
+</script>
+
+{% endblock %}

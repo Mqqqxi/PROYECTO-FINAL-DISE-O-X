@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}PLAN DIARIO{% endblock %}
+{% block title %}EDITAR PLAN DIARIO{% endblock %}
 {% block content %}
 
 <div class="container">
     <div class="section-title">
         <h2>
-            <span>PLAN</span>
+            <span>EDITAR PLAN</span>
             <span>DIARIO</span>
         </h2>
     </div>
@@ -14,12 +14,12 @@
         {% csrf_token %}
         
         <div class="tabset">
-            <!-- Tabs for days -->
+            <!-- Pestañas para los días -->
             {% for i in rango_dias %}
                 <input type="radio" name="tabset" id="tab{{ i }}" 
                     aria-controls="dia{{ i }}" 
                     {% if forloop.first %}checked{% endif %}>
-                <label for="tab{{ i }}">Dia {{ i }}</label>
+                <label for="tab{{ i }}">Día {{ i }}</label>
             {% endfor %}
         
             <div class="tab-panels">
@@ -41,7 +41,7 @@
                                         {% endfor %}
                                     </div>
                                 </div>
-                                <!-- Sidebar visible con categorías -->
+                                <!-- Barra lateral visible con categorías -->
                                 <div class="sidebar">
                                     <input type="text" id="searchInput" class="search-box" placeholder="Buscar alimento..." onkeyup="filterList()">
                                     <div class="food-list">
@@ -126,53 +126,141 @@
                                         <td class="meal-plan">Desayuno</td>
                                         <td>
                                             <button type="button" id="btnDesayuno{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Desayuno')">+</button>
-                                            <div id="platoDesayuno{{ i }}" class="selected-comida"></div>
+                                            <div id="platoDesayuno{{ i }}" class="selected-comida">
+                                                {% for plan in planes_dia %}
+                                                    {% if plan.dia == i and plan.tipo_comida == "DESAYUNO" %}
+                                                        {% for plato_id in plan.platos %}
+                                                            {% for plato in platos %}
+                                                                {% if plato.idplato == plato_id %}
+                                                                    <button type="button" class="selected-comida">
+                                                                        {{ plato.nombre }}
+                                                                        <span class="remove-plato" onclick="this.parentElement.remove();">×</span>
+                                                                        <input type="hidden" name="plato_dia{{ i }}_desayuno" value="{{ plato.idplato }}">
+                                                                    </button>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
                                             <input type="hidden" name="plato_dia{{ i }}_desayuno" id="input_platoDesayuno{{ i }}" value="">
                                         </td>
                                         <td>
                                             <div id="detallesDesayuno{{ i }}" class="detalles-comida"></div>
-                                            <textarea class="form-control" name="descripcion_dia{{ i }}_desayuno" rows="2" placeholder="Descripción para el desayuno"></textarea>
+                                            {% for plan in planes_dia %}
+                                            {% if plan.dia == i and plan.tipo_comida == "DESAYUNO" %}
+                                                {% with descripcion=plan.descripcion|default:"" %}
+                                                    <textarea class="form-control" name="descripcion_dia{{ i }}_desayuno" rows="1" placeholder="Descripción para el desayuno">{{ descripcion }}</textarea>
+                                                {% endwith %}
+                                            {% endif %}
+                                            {% endfor %}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="meal-plan">Almuerzo</td>
                                         <td>
                                             <button type="button" id="btnAlmuerzo{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Almuerzo')">+</button>
-                                            <div id="platoAlmuerzo{{ i }}" class="selected-comida"></div>
+                                            <div id="platoAlmuerzo{{ i }}" class="selected-comida">
+                                                {% for plan in planes_dia %}
+                                                    {% if plan.dia == i and plan.tipo_comida == "ALMUERZO" %}
+                                                        {% for plato_id in plan.platos %}
+                                                            {% for plato in platos %}
+                                                                {% if plato.idplato == plato_id %}
+                                                                    <button type="button" class="selected-comida">
+                                                                        {{ plato.nombre }}
+                                                                        <span class="remove-plato" onclick="this.parentElement.remove();">×</span>
+                                                                        <input type="hidden" name="plato_dia{{ i }}_almuerzo" value="{{ plato.idplato }}">
+                                                                    </button>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
                                             <input type="hidden" name="plato_dia{{ i }}_almuerzo" id="input_platoAlmuerzo{{ i }}" value="">
                                         </td>
                                         <td>
                                             <div id="detallesAlmuerzo{{ i }}" class="detalles-comida"></div>
-                                            <textarea class="form-control" name="descripcion_dia{{ i }}_almuerzo" rows="2" placeholder="Descripción para el almuerzo"></textarea>
+                                            {% for plan in planes_dia %}
+                                            {% if plan.dia == i and plan.tipo_comida == "ALMUERZO" %}
+                                                {% with descripcion=plan.descripcion|default:"" %}
+                                                    <textarea class="form-control" name="descripcion_dia{{ i }}_almuerzo" rows="1" placeholder="Descripción para el almuerzo">{{ descripcion }}</textarea>
+                                                {% endwith %}
+                                            {% endif %}
+                                            {% endfor %}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="meal-plan">Merienda</td>
                                         <td>
                                             <button type="button" id="btnMerienda{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Merienda')">+</button>
-                                            <div id="platoMerienda{{ i }}" class="selected-comida"></div>
+                                            <div id="platoMerienda{{ i }}" class="selected-comida">
+                                                {% for plan in planes_dia %}
+                                                    {% if plan.dia == i and plan.tipo_comida == "MERIENDA" %}
+                                                        {% for plato_id in plan.platos %}
+                                                            {% for plato in platos %}
+                                                                {% if plato.idplato == plato_id %}
+                                                                    <button type="button" class="selected-comida">
+                                                                        {{ plato.nombre }}
+                                                                        <span class="remove-plato" onclick="this.parentElement.remove();">×</span>
+                                                                        <input type="hidden" name="plato_dia{{ i }}_merienda" value="{{ plato.idplato }}">
+                                                                    </button>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
                                             <input type="hidden" name="plato_dia{{ i }}_merienda" id="input_platoMerienda{{ i }}" value="">
                                         </td>
                                         <td>
                                             <div id="detallesMerienda{{ i }}" class="detalles-comida"></div>
-                                            <textarea class="form-control" name="descripcion_dia{{ i }}_merienda" rows="2" placeholder="Descripción para la merienda"></textarea>
+                                            {% for plan in planes_dia %}
+                                            {% if plan.dia == i and plan.tipo_comida == "MERIENDA" %}
+                                                {% with descripcion=plan.descripcion|default:"" %}
+                                                    <textarea class="form-control" name="descripcion_dia{{ i }}_merienda" rows="1" placeholder="Descripción para la merienda">{{ descripcion }}</textarea>
+                                                {% endwith %}
+                                            {% endif %}
+                                            {% endfor %}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="meal-plan">Cena</td>
                                         <td>
                                             <button type="button" id="btnCena{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Cena')">+</button>
-                                            <div id="platoCena{{ i }}" class="selected-comida"></div>
+                                            <div id="platoCena{{ i }}" class="selected-comida">
+                                                {% for plan in planes_dia %}
+                                                    {% if plan.dia == i and plan.tipo_comida == "CENA" %}
+                                                        {% for plato_id in plan.platos %}
+                                                            {% for plato in platos %}
+                                                                {% if plato.idplato == plato_id %}
+                                                                    <button type="button" class="selected-comida">
+                                                                        {{ plato.nombre }}
+                                                                        <span class="remove-plato" onclick="this.parentElement.remove();">×</span>
+                                                                        <input type="hidden" name="plato_dia{{ i }}_cena" value="{{ plato.idplato }}">
+                                                                    </button>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
                                             <input type="hidden" name="plato_dia{{ i }}_cena" id="input_platoCena{{ i }}" value="">
                                         </td>
                                         <td>
                                             <div id="detallesCena{{ i }}" class="detalles-comida"></div>
-                                            <textarea class="form-control" name="descripcion_dia{{ i }}_cena" rows="2" placeholder="Descripción para la cena"></textarea>
+                                            {% for plan in planes_dia %}
+                                            {% if plan.dia == i and plan.tipo_comida == "CENA" %}
+                                                {% with descripcion=plan.descripcion|default:"" %}
+                                                    <textarea class="form-control" name="descripcion_dia{{ i }}_cena" rows="1" placeholder="Descripción para la cena">{{ descripcion }}</textarea>
+                                                {% endwith %}
+                                            {% endif %}
+                                            {% endfor %}
                                         </td>
                                     </tr>
                                 </table>
                                 <div class="button-group">
-                                    <button type="submit" class="btn btn-success mt-3">Guardar Plato</button>
+                                    <button type="submit" class="btn btn-success mt-3">Guardar Cambios</button>
                                     <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-danger mt-3">Cancelar</a>
                                 </div>
                             </div>
@@ -209,7 +297,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalComidasPlatoLabel">Comidas del Plato</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -226,8 +314,7 @@
 </div>
 
 <style>
-
-/* Google Fonts - Poppins */
+/* Estilos (mismos que en plandiario.html) */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 :root {
@@ -244,239 +331,203 @@ body {
     color: var(--primary-color);
 }
 
-        .section-title {
-            text-align: left;
-            padding: 40px 20px;
-            margin-bottom: 30px;
-            width: 100%;
-            background-color: var(--secondary-color);
-        }
-        .section-title h2 {
-            color: var(--primary-color);
-            font-weight: 900; /* Extra bold */
-            font-size: 72px; /* Much larger size */
-            line-height: 1;
-            text-transform: uppercase;
-            margin: 0;
-            width: 100%;
-            letter-spacing: 2px;
-        }
-        /* Separate "LISTA DE" and "PACIENTES" on two lines */
-        .section-title h2 span {
-            display: block;
-        }
+.section-title {
+    text-align: left;
+    padding: 40px 20px;
+    margin-bottom: 30px;
+    width: 100%;
+    background-color: var(--secondary-color);
+}
 
-        section.tab-panel{
-            padding: 20px 0 20px 0;
-        }
+.section-title h2 {
+    color: var(--primary-color);
+    font-weight: 900;
+    font-size: 72px;
+    line-height: 1;
+    text-transform: uppercase;
+    margin: 0;
+    width: 100%;
+    letter-spacing: 2px;
+}
 
-        
-        .toggle-arrow {
-            color: #31715B;
-        }
+.section-title h2 span {
+    display: block;
+}
 
-        .main-container {
-            display: flex;
-            flex-direction: row;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Estilos para la barra lateral */
-        .sidebar {
-            background: #333333;
-            color: white;
-            padding: 20px;
-            width: 250px;
-            border-radius: 10px;
-            margin-right: 20px;
-            min-height: 500px;
-        }
-        
-        /* Estilo para el campo de búsqueda */
-        .search-box {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-            background-color: #f0f0f0; /* Fondo gris claro */
-            color: black; /* Texto negro */
-        }
+section.tab-panel {
+    padding: 20px 0 20px 0;
+}
 
-        #miTabla {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: white;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+.toggle-arrow {
+    color: #31715B;
+}
 
-    #miTabla thead th {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 12px;
-        text-align: left;
-        font-weight: 600;
-    }
+.main-container {
+    display: flex;
+    flex-direction: row;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
 
-    #miTabla tbody td {
-        padding: 10px;
-        border-bottom: 1px solid var(--secondary-color);
-        transition: all 0.3s ease;
-    }
+.sidebar {
+    background: #333333;
+    color: white;
+    padding: 20px;
+    width: 250px;
+    border-radius: 10px;
+    margin-right: 20px;
+    min-height: 500px;
+}
 
-    #miTabla tbody tr:hover {
-        background-color: #f5f5f5;
-    }
+.search-box {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    color: black;
+}
 
-        .btn-success {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
-        color: white;
-    }
+#miTabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
-    .btn-success:hover {
-        background-color: #255747;
-        border-color: #255747;
-    }
+#miTabla thead th {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
 
-        .food-list, .food-list-modal {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
+#miTabla tbody td {
+    padding: 10px;
+    border-bottom: 1px solid var(--secondary-color);
+    transition: all 0.3s ease;
+}
 
-        /* Ancho de la barra de scroll */
-        .food-list::-webkit-scrollbar, .food-list-modal::-webkit-scrollbar {
-            width: 8px;
-        }
+#miTabla tbody tr:hover {
+    background-color: #f5f5f5;
+}
 
-        /* Fondo de la pista de scroll */
-        .food-list::-webkit-scrollbar-track, .food-list-modal::-webkit-scrollbar-track {
-            background: #555; 
-            border-radius: 10px;
-        }
+.btn-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
 
-        /* Color y estilo de la "thumb" (la parte que se mueve) */
-        .food-list::-webkit-scrollbar-thumb, .food-list-modal::-webkit-scrollbar-thumb {
-            background: #31715B; 
-            border-radius: 10px;
-            border: 2px solid #333; /* Añade un borde para que se vea con más contraste */
-        }
+.btn-success:hover {
+    background-color: #255747;
+    border-color: #255747;
+}
 
-        /* Opcional: cuando el usuario pasa el mouse por encima */
-        .food-list::-webkit-scrollbar-thumb:hover, .food-list-modal::-webkit-scrollbar-thumb:hover {
-            background: #31715B; /* Un poco más claro u oscuro para efecto hover */
-        }
+.food-list, .food-list-modal {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
 
-        .category {
-            font-weight: bold;
-            margin: 10px 0;
-            position: relative;
-            cursor: pointer;
-        }
-        ul {
-            list-style-type: none;
-            padding-left: 20px;
-        }
-        .plandiario-li {
-            padding: 5px 0;
-            font-size: 14px;
-            border-bottom: 1px solid #555;
-        }
-        .benefit-bar {
-            width: 20px;
-            height: 100%;
-            background: linear-gradient(to bottom, #29ca8e, #333);
-            border-radius: 10px;
-            position: relative;
-        }
-        .benefit-bar::before, .benefit-bar::after {
-            content: "⬆ Benefit";
-            position: absolute;
-            left: -40px;
-            font-size: 12px;
-            color: white;
-        }
-        .benefit-bar::after {
-            content: "⬇ Harm";
-            top: calc(100% - 15px);
-        }
+.food-list::-webkit-scrollbar, .food-list-modal::-webkit-scrollbar {
+    width: 8px;
+}
 
-        /* Estilos para la tabla */
-        .table-container {
-            flex: 1;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 14px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #31715B;
-            color: white;
-        }
-        .meal-plan {
-            font-weight: bold;
-        }
+.food-list::-webkit-scrollbar-track, .food-list-modal::-webkit-scrollbar-track {
+    background: #555;
+    border-radius: 10px;
+}
 
-    .tabset > input[type="radio"] {
-        position: absolute;
-        left: -200vw;
-    }
+.food-list::-webkit-scrollbar-thumb, .food-list-modal::-webkit-scrollbar-thumb {
+    background: #31715B;
+    border-radius: 10px;
+    border: 2px solid #333;
+}
 
-    .tabset .tab-panel {
-        display: none;
-    }
+.food-list::-webkit-scrollbar-thumb:hover, .food-list-modal::-webkit-scrollbar-thumb:hover {
+    background: #31715B;
+}
 
-    /* Dynamic tab selector with JS */
-    .tabset > input:checked ~ .tab-panels > .tab-panel {
-        display: none;
-    }
+.category {
+    font-weight: bold;
+    margin: 10px 0;
+    position: relative;
+    cursor: pointer;
+}
 
-    .tabset > label {
-        position: relative;
-        display: inline-block;
-        padding: 10px 15px;
-        cursor: pointer;
-        font-weight: 600;
-        background: #f8f9fa;
-        border: 1px solid #ccc;
-        border-bottom: none;
-        border-radius: 5px 5px 0 0;
-    }
+ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
 
-    .tabset > label:hover,
-    .tabset > input:checked + label {
-        background: #31715B;
-        color: white;
-    }
+.plandiario-li {
+    padding: 5px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #555;
+}
 
-    .tab-panels {
-        
-        padding: 10px 10px 10px 0;
-        border-radius: 0 5px 5px 5px;
-    }
+.benefit-bar {
+    width: 20px;
+    height: 100%;
+    background: linear-gradient(to bottom, #29ca8e, #333);
+    border-radius: 10px;
+    position: relative;
+}
 
-    .button-container {
+.benefit-bar::before, .benefit-bar::after {
+    content: "⬆ Benefit";
+    position: absolute;
+    left: -40px;
+    font-size: 12px;
+    color: white;
+}
+
+.benefit-bar::after {
+    content: "⬇ Harm";
+    top: calc(100% - 15px);
+}
+
+.table-container {
+    flex: 1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #31715B;
+    color: white;
+}
+
+.meal-plan {
+    font-weight: bold;
+}
+
+.button-container {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px; /* Espacio entre los botones y la barra lateral */}
-    
+    margin-bottom: 10px;
+}
 
-    .food-item {
+.food-item {
     width: 100%;
     background: none;
     border: none;
@@ -510,7 +561,6 @@ body {
     justify-content: right;
 }
 
-
 .selected-comida {
     color: black;
     padding: 5px 10px;
@@ -520,12 +570,14 @@ body {
 }
 
 .hidden { display: none; }
+
 .selected-comidas {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 10px;
 }
+
 .selected-comida {
     color: black;
     padding: 8px 12px;
@@ -534,14 +586,12 @@ body {
     align-items: center;
     gap: 5px;
 }
+
 #tabla-oscura {
     pointer-events: none;
-    opacity: 0.5; /* Para que se vea visualmente deshabilitada */
+    opacity: 0.5;
 }
 
-/* Añade estos estilos al final de tu sección de estilos */
-
-/* Estilos para el modal de comidas */
 .comida-item {
     border-bottom: 1px solid #eee;
     padding: 10px 0;
@@ -568,14 +618,12 @@ body {
     border-radius: 4px;
 }
 
-/* Para aumentar el tamaño del modal */
 @media (min-width: 576px) {
     #comidaModal .modal-dialog {
         max-width: 600px;
     }
 }
 
-/* Mejorar el estilo de la lista de comidas */
 #comidaLista {
     list-style-type: none;
     padding-left: 0;
@@ -585,19 +633,16 @@ body {
     font-size: 12px;
     color: #333;
     padding: 5px;
-    max-width: 200px; /* Ajusta según necesites */
+    max-width: 200px;
     word-wrap: break-word;
 }
 
-/* BRAIAN */
-/* Estilos para el contenedor de la comida */
 .comida-container {
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
-/* Estilos para la imagen de la comida */
 .comida-imagen {
     width: 100px;
     height: 100px;
@@ -605,12 +650,10 @@ body {
     object-fit: cover;
 }
 
-/* Estilos para la información de la comida */
 .comida-info {
     flex: 1;
 }
 
-/* Estilos para el modal */
 #modalComidasPlato .modal-content {
     border-radius: 10px;
 }
@@ -635,8 +678,6 @@ body {
 #modalComidasPlato .list-group-item:hover {
     background-color: #f8f9fa;
 }
-
-/* MODERNIZACION */
 
 /* Estilos modernos para los tabs de días */
 .tabset {
@@ -771,15 +812,14 @@ body {
 
 .tab-panel.active {
     opacity: 1;
+    display: block;
 }
-
 </style>
 
 <script>
     let platoSeleccionadoId = null;
     
     document.addEventListener('DOMContentLoaded', function() {
-        // (Estilos adicionales para la X de eliminar)
         const style = document.createElement('style');
         style.textContent = `
             .selected-comida {
@@ -800,25 +840,94 @@ body {
         `;
         document.head.appendChild(style);
 
-        // Configurar event listeners para tabs
         const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
+        
         tabInputs.forEach(input => {
             input.addEventListener('change', function() {
                 seleccionHabilitada = false;
                 diaSeleccionado = null;
                 comidaSeleccionada = null;
+                
+                // Ocultar todos los paneles y quitar la clase active
                 document.querySelectorAll('.tab-panel').forEach(panel => {
                     panel.style.display = 'none';
+                    panel.classList.remove('active');
                 });
+                
+                // Mostrar el panel seleccionado
                 const panelId = this.getAttribute('aria-controls');
-                document.getElementById(panelId).style.display = 'block';
+                const targetPanel = document.getElementById(panelId);
+                targetPanel.style.display = 'block';
+                
+                // Forzar un reflow para que la transición funcione
+                void targetPanel.offsetWidth;
+                
+                // Añadir la clase active para la animación
+                targetPanel.classList.add('active');
+                
+                // Efecto de "ripple" en el tab seleccionado
+                createRippleEffect(this.nextElementSibling, event);
             });
         });
-        // Mostrar el primer panel inicialmente
+        
+        // Mostrar el primer panel inicialmente con animación
         if (tabInputs.length > 0) {
             const firstPanelId = tabInputs[0].getAttribute('aria-controls');
-            document.getElementById(firstPanelId).style.display = 'block';
+            const firstPanel = document.getElementById(firstPanelId);
+            firstPanel.style.display = 'block';
+            
+            // Pequeño retraso para que la animación se vea
+            setTimeout(() => {
+                firstPanel.classList.add('active');
+            }, 50);
         }
+        
+        // Función para crear efecto de onda al hacer clic en un tab
+        function createRippleEffect(element, e) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            
+            // Posicionamos el elemento en función del evento de clic
+            const rect = element.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e ? e.clientX - rect.left - size / 2 : rect.width / 2;
+            const y = e ? e.clientY - rect.top - size / 2 : rect.height / 2;
+            
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            
+            element.appendChild(ripple);
+            
+            // Eliminamos el efecto después de la animación
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+        
+        // Añadir estilos para el efecto ripple
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            .tabset > label {
+                position: relative;
+                overflow: hidden;
+            }
+            .ripple {
+                position: absolute;
+                background-color: rgba(49, 113, 91, 0.3);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple-effect 0.6s ease-out;
+                pointer-events: none;
+            }
+            @keyframes ripple-effect {
+                to {
+                    transform: scale(2.5);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
     });
     
     let seleccionHabilitada = false;
@@ -875,62 +984,55 @@ body {
     }
     
     function seleccionarComida(nombre, dia) {
-    event.preventDefault();
-    if (seleccionHabilitada && diaSeleccionado === dia) {
-        let divId = `plato${comidaSeleccionada}${dia}`;
-        let inputName = `plato_dia${dia}_${comidaSeleccionada.toLowerCase()}`;
-        let divPlato = document.getElementById(divId);
+        event.preventDefault();
+        if (seleccionHabilitada && diaSeleccionado === dia) {
+            let divId = `plato${comidaSeleccionada}${dia}`;
+            let inputName = `plato_dia${dia}_${comidaSeleccionada.toLowerCase()}`;
+            let divPlato = document.getElementById(divId);
 
-        if (divPlato) {
-            // Creamos un botón que muestra el nombre del plato seleccionado
-            let platoElement = document.createElement("button");
-            platoElement.setAttribute("type", "button");
-            platoElement.classList.add("selected-comida");
-            platoElement.innerText = nombre;
+            if (divPlato) {
+                let platoElement = document.createElement("button");
+                platoElement.setAttribute("type", "button");
+                platoElement.classList.add("selected-comida");
+                platoElement.innerText = nombre;
 
-            // Botón para eliminar
-            let removeBtn = document.createElement("span");
-            removeBtn.classList.add("remove-plato");
-            removeBtn.innerHTML = "×";
-            removeBtn.onclick = function (e) {
-                e.stopPropagation();
-                platoElement.remove();
-                // Eliminamos el input oculto correspondiente
-                document.querySelector(`input[name="${inputName}"][value="${platoSeleccionadoId}"]`).remove();
-            };
-            platoElement.appendChild(removeBtn);
+                let removeBtn = document.createElement("span");
+                removeBtn.classList.add("remove-plato");
+                removeBtn.innerHTML = "×";
+                removeBtn.onclick = function (e) {
+                    e.stopPropagation();
+                    platoElement.remove();
+                    document.querySelector(`input[name="${inputName}"][value="${platoSeleccionadoId}"]`).remove();
+                };
+                platoElement.appendChild(removeBtn);
 
-            // Insertamos el botón en el div
-            divPlato.appendChild(platoElement);
+                divPlato.appendChild(platoElement);
 
-            // Creamos un input oculto para el plato seleccionado
-            let inputHidden = document.createElement("input");
-            inputHidden.type = "hidden";
-            inputHidden.name = inputName;
-            inputHidden.value = platoSeleccionadoId;
-            divPlato.appendChild(inputHidden);
+                let inputHidden = document.createElement("input");
+                inputHidden.type = "hidden";
+                inputHidden.name = inputName;
+                inputHidden.value = platoSeleccionadoId;
+                divPlato.appendChild(inputHidden);
 
-            // Deshabilitamos la selección
-            seleccionHabilitada = false;
-            diaSeleccionado = null;
-            comidaSeleccionada = null;
-            $('#plateModal').modal('hide');
-            $('#modalComidasPlato').modal('hide');
+                seleccionHabilitada = false;
+                diaSeleccionado = null;
+                comidaSeleccionada = null;
+                $('#plateModal').modal('hide');
+                $('#modalComidasPlato').modal('hide');
+            }
         }
     }
-}
 
     function openPlateModal(dia, comida) {
-    habilitarSeleccion(dia, comida);
-    console.log(`Abriendo modal "plateModal" para Día: ${dia}, Comida: ${comida}`);
-    $('#plateModal').modal('show');
-    
-    // Mostrar el botón "Guardar" del modal cuando se hace clic en "+"
-    const guardarModalBtn = document.getElementById('guardarModalBtn');
-    if (guardarModalBtn) {
-        guardarModalBtn.classList.remove('hidden');
+        habilitarSeleccion(dia, comida);
+        console.log(`Abriendo modal "plateModal" para Día: ${dia}, Comida: ${comida}`);
+        $('#plateModal').modal('show');
+        
+        const guardarModalBtn = document.getElementById('guardarModalBtn');
+        if (guardarModalBtn) {
+            guardarModalBtn.classList.remove('hidden');
+        }
     }
-}
     
     function abrirModalPlato(idPlato, dia, comida) {
         console.log(`Abriendo modalComidasPlato para plato ID: ${idPlato}, Día: ${dia}, Comida: ${comida}`);
@@ -964,15 +1066,6 @@ body {
                     });
                     html += '</ul>';
                     document.getElementById('listaComidasPlato').innerHTML = html;
-
-                    // Añadir evento para guardar el peso
-                    document.querySelectorAll('.guardar-peso').forEach(button => {
-                        button.addEventListener('click', function() {
-                            const id = this.getAttribute('data-id');
-                            const pesoInput = document.querySelector(`.peso-input[data-id="${id}"]`);
-                            guardarPeso(id, pesoInput.value);
-                        });
-                    });
                 } else {
                     document.getElementById('listaComidasPlato').innerHTML = 'No hay comidas asociadas a este plato.';
                 }
@@ -983,331 +1076,20 @@ body {
             });
     }
 
-    function guardarPeso(id, nuevoPeso) {
-        fetch('/actualizar_peso_plato_comida/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify({ id: id, peso: nuevoPeso })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Peso actualizado correctamente');
-            } else {
-                alert('Error al actualizar el peso: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error al guardar el peso:', error);
-            alert('Error al guardar el peso');
-        });
-    }
-    
     function guardarPlatoDesdeModal() {
-    if (seleccionHabilitada && diaSeleccionado && comidaSeleccionada && platoSeleccionadoId) {
-        const platoButton = document.querySelector(`button[onclick*="abrirModalPlato('${platoSeleccionadoId}'"]`);
-        const nombrePlato = platoButton ? platoButton.textContent.trim() : "Plato desconocido";
-        seleccionarComida(nombrePlato, diaSeleccionado);
-        
-        // Opcional: Ocultar el botón "Guardar" después de guardar
-        const guardarModalBtn = document.getElementById('guardarModalBtn');
-        if (guardarModalBtn) {
-            guardarModalBtn.classList.add('hidden');
-        }
-    } else {
-        console.warn("No se puede guardar el plato: faltan datos de selección");
-        alert("Por favor, selecciona un día y comida para poder guardar.");
-    }
-}
-    
-    // Si en algún momento quieres actualizar la sidebar dinámicamente:
-    function actualizarBotonesSidebar() {
-        document.querySelectorAll('.food-item').forEach(button => {
-            const idPlato = button.getAttribute('onclick').match(/'(\d+)'/)[1];
-            const dia = button.closest('.tab-panel').id.replace('dia', '');
-            const comida = button.closest('ul').previousElementSibling.querySelector('span:nth-child(2)').textContent;
-            button.setAttribute('onclick', `abrirModalPlato('${idPlato}', '${dia}', '${comida}')`);
-        });
-    }
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-    // Configurar event listeners para tabs con animación
-    const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
-    
-    tabInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            seleccionHabilitada = false;
-            diaSeleccionado = null;
-            comidaSeleccionada = null;
+        if (seleccionHabilitada && diaSeleccionado && comidaSeleccionada && platoSeleccionadoId) {
+            const platoButton = document.querySelector(`button[onclick*="abrirModalPlato('${platoSeleccionadoId}'"]`);
+            const nombrePlato = platoButton ? platoButton.textContent.trim() : "Plato desconocido";
+            seleccionarComida(nombrePlato, diaSeleccionado);
             
-            // Primero, eliminamos la clase active de todos los paneles
-            document.querySelectorAll('.tab-panel').forEach(panel => {
-                panel.style.display = 'none';
-                panel.classList.remove('active');
-            });
-            
-            // Obtenemos el panel que debemos mostrar
-            const panelId = this.getAttribute('aria-controls');
-            const targetPanel = document.getElementById(panelId);
-            
-            // Configuramos el panel como visible pero con opacidad 0
-            targetPanel.style.display = 'block';
-            
-            // Forzamos un reflow para que la transición funcione
-            void targetPanel.offsetWidth;
-            
-            // Añadimos la clase active para animar la opacidad
-            targetPanel.classList.add('active');
-            
-            // Efecto de "ripple" en el tab seleccionado
-            createRippleEffect(this.nextElementSibling, event);
-        });
-    });
-    
-    // Mostrar el primer panel inicialmente con animación
-    if (tabInputs.length > 0) {
-        const firstPanelId = tabInputs[0].getAttribute('aria-controls');
-        const firstPanel = document.getElementById(firstPanelId);
-        firstPanel.style.display = 'block';
-        
-        // Pequeño retraso para que la animación se vea
-        setTimeout(() => {
-            firstPanel.classList.add('active');
-        }, 50);
-    }
-    
-    // Función para crear efecto de onda al hacer clic en un tab
-    function createRippleEffect(element, e) {
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
-        
-        // Posicionamos el elemento en función del evento de clic
-        const rect = element.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e ? e.clientX - rect.left - size / 2 : rect.width / 2;
-        const y = e ? e.clientY - rect.top - size / 2 : rect.height / 2;
-        
-        ripple.style.width = ripple.style.height = `${size}px`;
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        
-        element.appendChild(ripple);
-        
-        // Eliminamos el efecto después de la animación
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
-    }
-    
-    // Añadir estilos para el efecto ripple
-    const rippleStyle = document.createElement('style');
-    rippleStyle.textContent = `
-        .tabset > label {
-            position: relative;
-            overflow: hidden;
-        }
-        .ripple {
-            position: absolute;
-            background-color: rgba(49, 113, 91, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-effect 0.6s ease-out;
-            pointer-events: none;
-        }
-        @keyframes ripple-effect {
-            to {
-                transform: scale(2.5);
-                opacity: 0;
+            const guardarModalBtn = document.getElementById('guardarModalBtn');
+            if (guardarModalBtn) {
+                guardarModalBtn.classList.add('hidden');
             }
+        } else {
+            console.warn("No se puede guardar el plato: faltan datos de selección");
+            alert("Por favor, selecciona un día y comida para poder guardar.");
         }
-    `;
-    document.head.appendChild(rippleStyle);
-    
-    // El resto del código existente...
-    // (Estilos adicionales para la X de eliminar)
-    const style = document.createElement('style');
-    style.textContent = `
-        .selected-comida {
-            position: relative;
-            padding-right: 25px !important;
-            margin: 5px;
-            display: inline-block;
-        }
-        .remove-plato {
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            font-weight: bold;
-            color: red;
-        }
-    `;
-    document.head.appendChild(style);
-});
-
-// El resto de las funciones existentes permanecen igual...
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Configurar event listeners para tabs con animación
-    const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
-    
-    tabInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            seleccionHabilitada = false;
-            diaSeleccionado = null;
-            comidaSeleccionada = null;
-            
-            // Reset all tabs to default state
-            document.querySelectorAll('.tabset > label').forEach(label => {
-                label.classList.remove('active-tab');
-            });
-            
-            // Add active class to the selected tab
-            this.nextElementSibling.classList.add('active-tab');
-            
-            // Primero, eliminamos la clase active de todos los paneles
-            document.querySelectorAll('.tab-panel').forEach(panel => {
-                panel.style.display = 'none';
-                panel.classList.remove('active');
-            });
-            
-            // Obtenemos el panel que debemos mostrar
-            const panelId = this.getAttribute('aria-controls');
-            const targetPanel = document.getElementById(panelId);
-            
-            // Configuramos el panel como visible pero con opacidad 0
-            targetPanel.style.display = 'block';
-            
-            // Forzamos un reflow para que la transición funcione
-            void targetPanel.offsetWidth;
-            
-            // Añadimos la clase active para animar la opacidad
-            targetPanel.classList.add('active');
-            
-            // Efecto de "ripple" en el tab seleccionado
-            createRippleEffect(this.nextElementSibling, event);
-        });
-    });
-    
-    // Mostrar el primer panel inicialmente con animación
-    if (tabInputs.length > 0) {
-        const firstPanelId = tabInputs[0].getAttribute('aria-controls');
-        const firstPanel = document.getElementById(firstPanelId);
-        firstPanel.style.display = 'block';
-        
-        // Add active class to the first tab
-        tabInputs[0].nextElementSibling.classList.add('active-tab');
-        
-        // Pequeño retraso para que la animación se vea
-        setTimeout(() => {
-            firstPanel.classList.add('active');
-        }, 50);
     }
-    
-    // Add indicator dot to all tab labels
-    document.querySelectorAll('.tabset > label').forEach(label => {
-        const indicator = document.createElement('span');
-        indicator.classList.add('tab-indicator');
-        label.appendChild(indicator);
-    });
-    
-    // Función para crear efecto de onda al hacer clic en un tab
-    function createRippleEffect(element, e) {
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
-        
-        // Posicionamos el elemento en función del evento de clic
-        const rect = element.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e ? e.clientX - rect.left - size / 2 : rect.width / 2;
-        const y = e ? e.clientY - rect.top - size / 2 : rect.height / 2;
-        
-        ripple.style.width = ripple.style.height = `${size}px`;
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        
-        element.appendChild(ripple);
-        
-        // Eliminamos el efecto después de la animación
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
-    }
-    
-    // Añadir estilos para el efecto ripple y tab activo
-    const additionalStyles = document.createElement('style');
-    additionalStyles.textContent = `
-        .tabset > label {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .tabset > label.active-tab {
-            transform: scale(1.05);
-            z-index: 2;
-            box-shadow: 0 4px 20px rgba(49, 113, 91, 0.3);
-        }
-        
-        .tab-indicator {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 10px;
-            height: 10px;
-            background-color: transparent;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .active-tab .tab-indicator {
-            background-color: #ff3333;
-            box-shadow: 0 0 5px #ff3333, 0 0 10px rgba(255, 51, 51, 0.5);
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7);
-            }
-            
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 5px rgba(255, 51, 51, 0);
-            }
-            
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(255, 51, 51, 0);
-            }
-        }
-        
-        .ripple {
-            position: absolute;
-            background-color: rgba(49, 113, 91, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-effect 0.6s ease-out;
-            pointer-events: none;
-        }
-        
-        @keyframes ripple-effect {
-            to {
-                transform: scale(2.5);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(additionalStyles);
-    
-    // El resto del código existente...
-});
-
 </script>
 {% endblock %}

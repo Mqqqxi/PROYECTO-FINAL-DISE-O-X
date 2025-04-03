@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% block title %}Crear Datos del Paciente{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Añadir Datos del Paciente</h2>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'pacientes:crear_datos_paciente' paciente.persona_id %}" id="pacienteForm">
+        {% csrf_token %}
+        <div class="tabset">
+            <input type="radio" name="tabset" id="tab1" aria-controls="paciente" checked>
+            <label for="tab1">Datos del Paciente</label>
+            <input type="radio" name="tabset" id="tab2" aria-controls="antropometria">
+            <label for="tab2">Valores Antropométricos</label>
+            <input type="radio" name="tabset" id="tab3" aria-controls="laboratorio">
+            <label for="tab3">Análisis de Laboratorio</label>
+            <input type="radio" name="tabset" id="tab4" aria-controls="anamnesis">
+            <label for="tab4">Anamnesis</label>
+            <input type="radio" name="tabset" id="tab5" aria-controls="historia">
+            <label for="tab5">Historia Clínica</label>
+            <div class="tab-panels">
+                <section id="paciente" class="tab-panel">
+                    <h3>Datos del Paciente</h3>
+                    {{ paciente_form.as_p }}
+                </section>
+                <section id="antropometria" class="tab-panel">
+                    <h3>Valores Antropométricos</h3>
+                    {{ valor_antropometrico_form.as_p }}
+                </section>
+                <section id="laboratorio" class="tab-panel">
+                    <h3>Análisis de Laboratorio</h3>
+                    {{ analisis_lab_form.as_p }}
+                </section>
+                <section id="anamnesis" class="tab-panel">
+                    <h3>Anamnesis</h3>
+                    {{ anamnesis_form.as_p }}
+                </section>
+                <section id="historia" class="tab-panel">
+                    <h3>Historia Clínica</h3>
+                    {{ historia_clinica_form.as_p }}
+                </section>
+            </div>
+        </div>
+        <button type="button" id="submitBtn" class="btn btn-primary mt-3">Guardar</button>
+        <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-secondary mt-3">Cancelar</a>
+    </form>
+
+    <!-- Success Modal (Bootstrap 3.3.6) -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="successModalLabel">Éxito</h4>
+                </div>
+                <div class="modal-body">
+                    ¡Se ha guardado exitosamente!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="successModalRedirect">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal (Bootstrap 3.3.6) -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="errorModalLabel">Error</h4>
+                </div>
+                <div class="modal-body">
+                    Por favor, completa todos los campos en todas las secciones.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Copia aquí el mismo CSS que usas en editar_perfil_paciente.html para mantener consistencia */
+.tabset > input[type="radio"] {
+    position: absolute;
+    left: -200vw;
+}
+
+.tabset .tab-panel {
+    display: none;
+}
+
+.tabset > input:first-child:checked ~ .tab-panels > .tab-panel:first-child,
+.tabset > input:nth-child(3):checked ~ .tab-panels > .tab-panel:nth-child(2),
+.tabset > input:nth-child(5):checked ~ .tab-panels > .tab-panel:nth-child(3),
+.tabset > input:nth-child(7):checked ~ .tab-panels > .tab-panel:nth-child(4),
+.tabset > input:nth-child(9):checked ~ .tab-panels > .tab-panel:nth-child(5) {
+    display: block;
+}
+
+.tabset > label {
+    position: relative;
+    display: inline-block;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: 600;
+    background: #f8f9fa;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+}
+
+.tabset > label:hover,
+.tabset > input:checked + label {
+    background: #06c;
+    color: white;
+}
+
+.tab-panels {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 0 5px 5px 5px;
+}
+
+input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+input:focus, textarea:focus {
+    border-color: #06c;
+    box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+    outline: none;
+}
+
+input[type="date"], input[type="time"] {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+input[type="number"] {
+    background-color: #f9f9f9;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+/* Estilo para campos requeridos */
+.required-field {
+    border-color: #dc3545;
+}
+
+/* Asegurarse de que los modales se muestren correctamente */
+.modal {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+    display: block;
+}
+</style>
+
+<script>
+
+// Define la URL en una variable para evitar problemas de sintaxis
+const redirectUrl = "{% url 'pacientes:listapaciente' %}";
+
+// Agrega el evento de redireccionamiento al botón del modal
+document.getElementById('successModalRedirect').addEventListener('click', function() {
+    window.location.href = redirectUrl;
+});
+
+// Ensure jQuery is loaded (required for Bootstrap 3.3.6 modals and AJAX)
+document.getElementById('submitBtn').addEventListener('click', function() {
+    // Get the form
+    const form = document.getElementById('pacienteForm');
+    const formData = new FormData(form);
+
+    // Client-side validation: Check if all fields are filled
+    let allFieldsFilled = true;
+    const inputs = form.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        if (!input.value.trim() && input.hasAttribute('required')) {
+            allFieldsFilled = false;
+            input.classList.add('required-field');
+        } else {
+            input.classList.remove('required-field');
+        }
+    });
+
+    // If client-side validation fails, show error modal immediately
+    if (!allFieldsFilled) {
+        $('#errorModal').modal('show');
+        return;
+    }
+
+    // If all fields are filled, proceed with AJAX submission
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest' // Indicate AJAX request
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success modal
+            $('#successModal').modal('show');
+        } else {
+            // Show error modal
+            $('#errorModal').modal('show');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        $('#errorModal').modal('show');
+    });
+});
+</script>
+{% endblock %}

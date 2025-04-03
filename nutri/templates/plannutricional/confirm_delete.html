@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 40px;">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-danger text-white">
+          <h4>Confirmar Eliminación</h4>
+        </div>
+        <div class="card-body">
+          <p>¿Estás seguro de que deseas eliminar el plan nutricional asignado a <strong>{{ plan.paciente.first_name }} {{ plan.paciente.last_name }}</strong> (ID: <strong>{{ plan.idPlanN }}</strong>)?</p>
+          <p>Esta acción no se puede deshacer.</p>
+          <form method="post">
+            {% csrf_token %}
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-danger">Eliminar</button>
+              <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
