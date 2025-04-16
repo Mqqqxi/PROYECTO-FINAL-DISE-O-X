@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import crear_datos_paciente, registro_paciente, login_paciente, editar_perfil_paciente, seguimiento_paciente,lista_pacientes, editar_paciente, deshabilitar_paciente, habilitar_paciente
+from .views import crear_datos_paciente, listapacientenuevo, registro_paciente, login_paciente, editar_perfil_paciente, seguimiento_paciente,lista_pacientes, editar_paciente, deshabilitar_paciente, habilitar_paciente, listapacientenuevo, infopaciente
 
 app_name = 'pacientes'
 
@@ -13,4 +13,6 @@ urlpatterns = [
     path('deshabilitar/<int:pk>/', deshabilitar_paciente, name='deshabilitar_paciente'),
     path('habilitar/<int:pk>/', habilitar_paciente, name='habilitar_paciente'),
     path('crear-datos/<int:persona_id>/', crear_datos_paciente, name='crear_datos_paciente'),  # Nueva URL
+    path('listapacientenuevo/',listapacientenuevo, name='listapacientenuevo'),
+    path('infopaciente/<int:persona_id>/', infopaciente, name='infopaciente'),  # Nueva ruta
 ]

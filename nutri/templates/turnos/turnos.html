@@ -1,198 +1,554 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}TURNOS{% endblock %}
+{% block title %}Reservar Turno{% endblock %}
 {% block content %}
-<section class="container">
+<section class="container2">
     <div class="section-title">
-        <h2 class="text-center">CALENDARIO DE TURNOS</h2>
+        <h2>Reserva tu <span>Turno</span></h2>
+        <p>Elige un día y horario para tu consulta con nuestra nutricionista.</p>
     </div>
-    <div id="calendar"></div>
+    <div class="calendar-wrapper">
+        <div id="calendar"></div>
+    </div>
 </section>
 
-<!-- Modal para seleccionar horarios -->
-<!-- Modal para seleccionar horarios -->
-<div id="modal"
-    style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #ccc; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">
-    <h3>Horarios disponibles</h3>
-    <div id="available-times">
-        <!-- Aquí se cargarán los horarios dinámicamente -->
+<!-- Modal for Time Selection -->
+<div class="modal" id="time-modal" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('time-modal')">&times;</button>
+        <h3>Horarios Disponibles</h3>
+        <p id="modal-date" class="modal-subtitle"></p>
+        <div class="time-grid" id="available-times"></div>
+        <div class="reserved-turn" id="reserved-turn" style="display: none;">
+            <h4>Tu Turno Reservado</h4>
+            <p id="reserved-details"></p>
+            <button class="btn btn-secondary" id="cancel-turn-btn">Cancelar Turno</button>
+        </div>
     </div>
-    <div id="reserved-turn" style="margin-top: 20px; display: none;">
-        <h4>Tu turno reservado:</h4>
-        <p id="reserved-details"></p>
-        <button id="cancel-turn-btn">Cancelar turno</button>
+</div>
+
+<!-- Modal for Reason Selection -->
+<div class="modal" id="reason-modal" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('reason-modal')">&times;</button>
+        <h3>Motivo de la Consulta</h3>
+        <select id="reason-select" class="form-control" aria-label="Seleccionar motivo de la consulta">
+            <option value="" disabled selected>Seleccione un motivo</option>
+            <option value="Consulta general">Consulta general</option>
+            <option value="Chequeo médico">Chequeo médico</option>
+            <option value="Resultados de análisis">Resultados de análisis</option>
+            <option value="Consulta de seguimiento">Consulta de seguimiento</option>
+            <option value="Otro">Otro</option>
+        </select>
+        <div class="modal-actions">
+            <button class="btn btn-primary" id="reserve-btn">Reservar Turno</button>
+            <button class="btn btn-secondary" id="close-reason-modal-btn">Cancelar</button>
+        </div>
     </div>
-
-    <button id="close-modal-btn">Cerrar</button>
 </div>
 
-<!-- Modal para seleccionar motivo -->
-<div id="reason-modal"
-    style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #ccc; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); z-index: 1001;">
-    <h3>Seleccione el motivo de la consulta</h3>
-    <select id="reason-select" style="width: 100%; padding: 10px; margin-bottom: 10px;">
-        <option value="" disabled selected>Seleccione un motivo</option>
-        <option value="Consulta general">Consulta general</option>
-        <option value="Chequeo médico">Chequeo médico</option>
-        <option value="Resultados de análisis">Resultados de análisis</option>
-        <option value="Consulta de seguimiento">Consulta de seguimiento</option>
-        <option value="Otro">Otro</option>
-    </select>
-    <button id="reserve-btn">Reservar</button>
-    <button id="close-reason-modal-btn">Cerrar</button>
-</div>
+<!-- Modal Overlay -->
+<div class="modal-overlay" id="modal-overlay" style="display: none;"></div>
 
-<!-- Fondo del modal -->
-<div id="modal-overlay"
-    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;">
-</div>
+<style>
+/* Modernized Styles for 2025 */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+:root {
+    --primary-color: #2A9D8F; /* Teal for health and trust */
+    --secondary-color: #F4F1DE; /* Soft cream background */
+    --accent-color: #E9C46A; /* Warm yellow for highlights */
+    --text-color: #264653; /* Deep blue-gray for text */
+    --card-bg: rgba(255, 255, 255, 0.9); /* Glassmorphism effect */
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --backdrop: blur(12px);
+}
 
-<script>
-    // Función global para cerrar los modales
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        const modalOverlay = document.getElementById('modal-overlay');
-        modal.style.display = 'none';
-        modalOverlay.style.display = 'none';
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, var(--secondary-color), #EAF4F4);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container2 {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Section Title */
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title h2 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.section-title h2 span {
+    color: var(--accent-color);
+}
+
+.section-title p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* Calendar */
+.calendar-wrapper {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    backdrop-filter: var(--backdrop);
+}
+
+.fc {
+    font-family: 'Inter', sans-serif;
+}
+
+.fc .fc-daygrid-day {
+    transition: all 0.3s ease;
+}
+
+.fc .fc-daygrid-day:hover {
+    background: rgba(42, 157, 143, 0.1);
+}
+
+.fc .fc-daygrid-day-top {
+    padding: 10px;
+}
+
+.fc .fc-button {
+    background: var(--primary-color);
+    border: none;
+    border-radius: 50px;
+    padding: 8px 16px;
+    text-transform: capitalize;
+    transition: all 0.3s ease;
+}
+
+.fc .fc-button:hover {
+    background: #21867a;
+    box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+    background: rgba(233, 196, 106, 0.2);
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    backdrop-filter: var(--backdrop);
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: var(--shadow);
+    position: relative;
+    transform: translateY(50px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.modal.active .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: var(--primary-color);
+}
+
+.modal h3 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.modal-subtitle {
+    font-size: 1rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 20px;
+}
+
+.time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.time-btn {
+    padding: 10px;
+    background: var(--card-bg);
+    border: 1px solid rgba(42, 157, 143, 0.2);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.time-btn:hover {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.time-btn:disabled {
+    background: #ddd;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.reserved-turn {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(233, 196, 106, 0.1);
+    border-radius: 8px;
+}
+
+.reserved-turn h4 {
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.reserved-turn p {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+/* Form Control */
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(42, 157, 143, 0.2);
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    background: var(--card-bg);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #21867a;
+    box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
+}
+
+.btn-secondary {
+    background: #E9C46A;
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background: #d4a548;
+}
+
+/* Modal Actions */
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #21867a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container2 {
+        padding: 20px;
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const calendarEl = document.getElementById('calendar');
-        const modal = document.getElementById('modal');
-        const reasonModal = document.getElementById('reason-modal');
-        const modalOverlay = document.getElementById('modal-overlay');
-        const availableTimes = document.getElementById('available-times');
-        const reasonSelect = document.getElementById('reason-select');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const closeReasonModalBtn = document.getElementById('close-reason-modal-btn');
-        const reserveBtn = document.getElementById('reserve-btn');
-        // Variables y elementos
-        const reservedTurnDiv = document.getElementById('reserved-turn');
-        const reservedDetails = document.getElementById('reserved-details');
-        const cancelTurnBtn = document.getElementById('cancel-turn-btn');
+    .section-title h2 {
+        font-size: 2rem;
+    }
 
+    .modal-content {
+        max-width: 90%;
+    }
 
+    .time-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    }
+}
+</style>
 
-        let selectedDate = null;
-        let selectedTime = null;
+<script>
+// Modal Control
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const modalOverlay = document.getElementById('modal-overlay');
+    modal.classList.remove('active');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modalOverlay.style.display = 'none';
+    }, 300);
+}
 
-        // Definición de selectTime como una función global
-        window.selectTime = function (time) {
-            selectedTime = time; // Guarda el horario seleccionado
-            closeModal('modal'); // Cierra el modal de horarios
-            reasonModal.style.display = 'block'; // Muestra el modal para seleccionar el motivo
-        };
+function openModal(modalId, dateStr) {
+    const modal = document.getElementById(modalId);
+    const modalOverlay = document.getElementById('modal-overlay');
+    modal.style.display = 'flex';
+    modalOverlay.style.display = 'block';
+    setTimeout(() => {
+        modal.classList.add('active');
+    }, 10);
+    if (dateStr && modalId === 'time-modal') {
+        const date = new Date(dateStr);
+        document.getElementById('modal-date').textContent = date.toLocaleDateString('es-ES', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+}
 
+document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const availableTimes = document.getElementById('available-times');
+    const reasonSelect = document.getElementById('reason-select');
+    const reserveBtn = document.getElementById('reserve-btn');
+    const cancelTurnBtn = document.getElementById('cancel-turn-btn');
+    const reservedTurnDiv = document.getElementById('reserved-turn');
+    const reservedDetails = document.getElementById('reserved-details');
 
+    let selectedDate = null;
+    let selectedTime = null;
 
-        // Función para generar horarios en intervalos de 30 minutos dentro de un rango dado
-        function generarHorarios(rangos) {
-            const horarios = [];
-            rangos.forEach(rango => {
-                let horaActual = new Date(`1970-01-01T${rango.inicio}:00`);
-                const horaFin = new Date(`1970-01-01T${rango.fin}:00`);
-                while (horaActual < horaFin) {
-                    const horaString = horaActual.toLocaleTimeString('es-ES', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                    });
-                    horarios.push(horaString);
-                    horaActual.setMinutes(horaActual.getMinutes() + 30);
-                }
-            });
-            return horarios;
-        }
+    // Generate time slots
+    function generarHorarios(rangos) {
+        const horarios = [];
+        rangos.forEach(rango => {
+            let horaActual = new Date(`1970-01-01T${rango.inicio}:00`);
+            const horaFin = new Date(`1970-01-01T${rango.fin}:00`);
+            while (horaActual < horaFin) {
+                const horaString = horaActual.toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                });
+                horarios.push(horaString);
+                horaActual.setMinutes(horaActual.getMinutes() + 30);
+            }
+        });
+        return horarios;
+    }
 
-
-
-
-        // Función para cargar turno reservado
-        function cargarTurnoReservado() {
-            fetch('{% url "turnos:obtener_turno" %}')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.turno) {
-                        reservedTurnDiv.style.display = 'block';
-                        reservedDetails.innerHTML = `
+    // Load reserved appointment
+    function cargarTurnoReservado() {
+        fetch('{% url "turnos:obtener_turno" %}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.turno) {
+                    reservedTurnDiv.style.display = 'block';
+                    reservedDetails.innerHTML = `
                         Día: ${data.turno.dia}<br>
                         Hora: ${data.turno.hora}<br>
                         Motivo: ${data.turno.motivo}
                     `;
-                    } else {
+                } else {
+                    reservedTurnDiv.style.display = 'none';
+                }
+            })
+            .catch(error => console.error('Error al cargar turno reservado:', error));
+    }
+
+    // Load available times
+    function cargarHorarios(rangos, horariosOcupados) {
+        const horarios = generarHorarios(rangos);
+        availableTimes.innerHTML = horarios
+            .map(horario => {
+                const disabled = horariosOcupados.includes(horario) || reservedTurnDiv.style.display === 'block';
+                return `<button class="time-btn" ${disabled ? 'disabled' : ''} data-horario="${horario}" aria-label="Seleccionar horario ${horario}">${horario}</button>`;
+            })
+            .join('');
+
+        document.querySelectorAll('.time-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                selectedTime = this.getAttribute('data-horario');
+                closeModal('time-modal');
+                openModal('reason-modal');
+            });
+        });
+    }
+
+    // Cancel appointment
+    cancelTurnBtn.addEventListener('click', function () {
+        if (confirm('¿Estás seguro de que deseas cancelar este turno?')) {
+            fetch('{% url "turnos:cancelar_turno" %}', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
                         reservedTurnDiv.style.display = 'none';
+                        cargarHorarios(
+                            [
+                                { inicio: '08:00', fin: '12:00' },
+                                { inicio: '16:00', fin: '20:00' }
+                            ],
+                            []
+                        );
+                    } else {
+                        alert(data.error || 'No se pudo cancelar el turno.');
                     }
                 })
-                .catch(error => console.error('Error al cargar turno reservado:', error));
+                .catch(error => console.error('Error al cancelar turno:', error));
+        }
+    });
+
+    // Reserve appointment
+    reserveBtn.addEventListener('click', function () {
+        const motivo = reasonSelect.value;
+        if (!motivo) {
+            alert('Por favor, seleccione un motivo de la consulta.');
+            return;
         }
 
-        // Función para cancelar el turno
-        // Función para cancelar el turno y habilitar botones
-        cancelTurnBtn.addEventListener('click', function () {
-            if (confirm('¿Estás seguro de que deseas cancelar este turno?')) {
-                fetch('{% url "turnos:cancelar_turno" %}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                    },
+        if (confirm(`¿Confirmar reserva para el ${selectedDate} a las ${selectedTime} con el motivo: "${motivo}"?`)) {
+            fetch('{% url "turnos:reservar_turno" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    dia: selectedDate,
+                    hora: selectedTime,
+                    motivo: motivo
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            reservedTurnDiv.style.display = 'none';
-                            cargarHorarios(
-                                [
-                                    { inicio: '08:00', fin: '12:00' },
-                                    { inicio: '16:00', fin: '20:00' }
-                                ],
-                                [] // Ningún horario ocupado tras cancelar el turno
-                            );
-                        } else {
-                            alert(data.error || 'No se pudo cancelar el turno.');
-                        }
-                    })
-                    .catch(error => console.error('Error al cancelar turno:', error));
-            }
-        });
-
-
-
-        // Función para cargar horarios con deshabilitación
-        function cargarHorarios(rangos, horariosOcupados) {
-            const horarios = generarHorarios(rangos);
-            availableTimes.innerHTML = horarios
-                .map(horario => {
-                    const disabled = horariosOcupados.includes(horario) || reservedTurnDiv.style.display === 'block';
-                    return `<button class="time-btn" ${disabled ? 'disabled' : ''} data-horario="${horario}">${horario}</button>`;
+            })
+                .then(response => {
+                    if (!response.ok) throw response.json();
+                    return response.json();
                 })
-                .join('');
-
-            // Asignar eventos después de renderizar los botones
-            document.querySelectorAll('.time-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const horario = this.getAttribute('data-horario');
-                    selectTime(horario); // Invoca la función global
+                .then(data => {
+                    if (data.success) {
+                        const [year, month, day] = selectedDate.split('-');
+                        alert(`Turno guardado exitosamente para el día ${day}-${month}-${year} a las ${selectedTime}.`);
+                        closeModal('reason-modal');
+                        cargarTurnoReservado();
+                    } else {
+                        alert(data.error || 'No se pudo guardar el turno.');
+                    }
+                })
+                .catch(async error => {
+                    const errorData = await error;
+                    alert('Error al reservar el turno: ' + (errorData.error || 'Error desconocido.'));
                 });
-            });
         }
+    });
 
-        // Cargar turno reservado al abrir el modal
-        document.getElementById('calendar').addEventListener('click', cargarTurnoReservado);
+    // Initialize FullCalendar
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        validRange: { start: new Date().toISOString().split('T')[0] },
+        dateClick: function (info) {
+            const selected = new Date(info.dateStr);
+            const today = new Date();
+            if (selected < today.setHours(0, 0, 0, 0)) {
+                alert('No se puede reservar para fechas pasadas o el día de hoy.');
+                return;
+            }
+            selectedDate = info.dateStr;
+            openModal('time-modal', info.dateStr);
 
-        // Función para abrir el modal de horarios con verificación de estado
-        function openModal(date) {
-            selectedDate = date;
-
-            // Obtener horarios ocupados para la fecha seleccionada
-            fetch(`{% url "turnos:obtener_horarios_ocupados" %}?dia=${date}`)
+            // Fetch occupied times
+            fetch(`{% url "turnos:obtener_horarios_ocupados" %}?dia=${info.dateStr}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         const horariosOcupados = data.horarios_ocupados.map(hora =>
                             new Date(`1970-01-01T${hora}`).toLocaleTimeString('es-ES', {
                                 hour: '2-digit',
-                                minute: '2-digit',
+                                minute: '2-digit'
                             })
                         );
                         cargarHorarios(
@@ -208,83 +564,16 @@
                 })
                 .catch(error => console.error('Error al cargar horarios ocupados:', error));
 
-            cargarTurnoReservado(); // Actualizar el estado del turno reservado
-            modal.style.display = 'block';
-            modalOverlay.style.display = 'block';
+            cargarTurnoReservado();
         }
-
-        // Función para reservar turno
-        reserveBtn.addEventListener('click', function () {
-            const motivo = reasonSelect.value;
-            if (!motivo) {
-                alert('Por favor, seleccione un motivo de la consulta.');
-                return;
-            }
-
-            if (confirm(`¿Confirmar reserva para el ${selectedDate} a las ${selectedTime} con el motivo: "${motivo}"?`)) {
-                fetch('{% url "turnos:reservar_turno" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}',
-                    },
-                    body: JSON.stringify({
-                        dia: selectedDate,
-                        hora: selectedTime,
-                        motivo: motivo,
-                    }),
-                })
-                    .then(response => {
-                        if (!response.ok) throw response.json();
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            const [year, month, day] = selectedDate.split('-');
-                            alert(`Turno guardado exitosamente para el día ${day}-${month}-${year} a las ${selectedTime}.`);
-                        } else {
-                            alert(data.error || 'No se pudo guardar el turno.');
-                        }
-                        reasonSelect.value = ''; // Restablecer select
-                        closeModal('reason-modal');
-                    })
-                    .catch(async error => {
-                        const errorData = await error;
-                        alert('Error al reservar el turno: ' + (errorData.error || 'Error desconocido.'));
-                    });
-            }
-        });
-
-        // Asigna eventos para cerrar los modales
-        closeModalBtn.addEventListener('click', () => closeModal('modal'));
-        closeReasonModalBtn.addEventListener('click', () => closeModal('reason-modal'));
-        modalOverlay.addEventListener('click', () => {
-            closeModal('modal');
-            closeModal('reason-modal');
-        });
-
-        // Inicialización del calendario
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            validRange: {
-                start: new Date().toISOString().split('T')[0], // Desde hoy
-            },
-            dateClick: function (info) {
-                const selectedDate = new Date(info.dateStr);
-                const today = new Date();
-
-                // Evitar seleccionar fechas pasadas o el día actual
-                if (selectedDate < today.setHours(0, 0, 0, 0)) {
-                    alert('No se puede reservar para fechas pasadas o el día de hoy.');
-                    return;
-                }
-
-                openModal(info.dateStr); // Abrir el modal para fechas válidas
-            },
-        });
-        calendar.render();
     });
+    calendar.render();
 
-
+    // Close modals on overlay click
+    modalOverlay.addEventListener('click', () => {
+        closeModal('time-modal');
+        closeModal('reason-modal');
+    });
+});
 </script>
 {% endblock %}

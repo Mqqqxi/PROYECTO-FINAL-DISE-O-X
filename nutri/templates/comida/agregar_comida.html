@@ -1,112 +1,444 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}COMIDA{% endblock %}
+{% block title %}Agregar Comida{% endblock %}
 {% block content %}
 
-<div class="containerComida">
-    <div class="table-container shadow-box">
-        <h2>Agregar nueva comida</h2>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.as_p }}
+<div class="nutri-page">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+    
+    <div class="content-wrapper">
+        <div class="form-container">
+            <div class="form-header">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <h2>Crear Receta Nutritiva</h2>
+                <p class="subtitle">Comparte tu receta saludable con la comunidad</p>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-        </form>
+
+            <form method="POST" enctype="multipart/form-data" class="smart-form">
+                {% csrf_token %}
+                <div class="form-fields">
+                    {{ form.as_p }}
+                </div>
+                <div class="form-action">
+                    <button type="submit" class="btn-submit">
+                        <span>Guardar Receta</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-
 <style>
-/* Contenedor principal centrado */
-.containerComida {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    max-width: 100%;
-    margin-bottom: 50px;
-    padding: 0 2rem;
-    gap: 2rem;
+:root {
+    /* Paleta de colores moderna 2025 */
+    --primary: #7F5AF0; /* Púrpura vibrante */
+    --primary-light: #A78BFA; /* Púrpura claro */
+    --secondary: #2CB67D; /* Verde menta */
+    --secondary-light: #6EE7B7; /* Verde agua */
+    --surface: #FFFFFE; /* Blanco puro */
+    --background: #F2F5F9; /* Gris ultra claro */
+    --text: #16161A; /* Negro suavizado */
+    --text-light: #72757E; /* Gris medio */
+    --accent: #FF8E3C; /* Naranja durazno */
+    
+    /* Sombras y efectos */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.1);
+    --glow: 0 0 30px rgba(127, 90, 240, 0.2);
+    
+    /* Bordes y radios */
+    --radius-sm: 12px;
+    --radius-md: 24px;
+    --radius-lg: 32px;
+    --radius-full: 9999px;
 }
 
-/* Contenedor de la tabla con bordes y sombras */
-.table-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    border: 2px solid #ddd; /* Borde del cuadro */
-    border-radius: 8px;
-    padding: 1rem;
-    background-color: #fff;
+/* Base y reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal con fondo dinámico */
+.nutri-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(120deg, #f0f4ff, #f9f9ff);
+    padding: 2rem;
     overflow: hidden;
 }
 
-/* Nuevo cuadro con sombras más notorias */
-.shadow-box {
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Sombras más fuertes */
-    padding: 1.5rem;
-    border-radius: 10px;
-    background-color: white;
-}
-
-/* Estilos del título */
-.table-container h2 {
-    margin-top: 0;
-    font-size: 2rem;
-    color: #333;
-    text-align: center;
-}
-
-/* Aseguramos que el formulario ocupe el ancho completo */
-.table-container form {
+/* Formas flotantes de fondo */
+.floating-shapes {
+    position: absolute;
     width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.5;
+}
+
+.shape-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--secondary-light);
+    top: -100px;
+    right: -100px;
+    animation: float-slow 15s infinite alternate;
+}
+
+.shape-2 {
+    width: 300px;
+    height: 300px;
+    background: var(--primary-light);
+    bottom: -50px;
+    left: -100px;
+    animation: float-slow 18s infinite alternate-reverse;
+}
+
+.shape-3 {
+    width: 200px;
+    height: 200px;
+    background: var(--accent);
+    top: 30%;
+    right: 10%;
+    opacity: 0.3;
+    animation: float-slow 12s infinite alternate;
+}
+
+.shape-4 {
+    width: 250px;
+    height: 250px;
+    background: var(--primary);
+    bottom: 20%;
+    left: 15%;
+    opacity: 0.2;
+    animation: float-slow 20s infinite alternate-reverse;
+}
+
+@keyframes float-slow {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(40px, 40px) scale(1.1);
+    }
+}
+
+/* Contenedor del contenido */
+.content-wrapper {
+    width: 100%;
+    max-width: 680px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Contenedor del formulario */
+.form-container {
+    background: var(--surface);
+    padding: 3rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transition: all 0.4s ease;
+}
+
+.form-container:hover {
+    box-shadow: var(--shadow-lg), var(--glow);
+    transform: translateY(-5px);
+}
+
+/* Estilo del encabezado */
+.form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.icon-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-badge svg {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.icon-badge::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    opacity: 0.3;
+    filter: blur(8px);
+    z-index: 0;
+}
+
+.form-header h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: var(--text-light);
+    margin-bottom: 0;
+}
+
+/* Formulario inteligente */
+.smart-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 2rem;
 }
 
-/* Ajustamos los campos del formulario */
-.table-container form p {
+.form-fields {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.form-fields p {
     margin: 0;
+    position: relative;
 }
 
-/* Inputs, selects y textareas con diseño uniforme */
-.table-container form input,
-.table-container form select,
-.table-container form textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
+.form-fields label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+    transition: all 0.3s ease;
 }
 
-/* Botón estilizado */
-.table-container form button {
+.form-fields input,
+.form-fields select,
+.form-fields textarea {
     width: 100%;
-    padding: 0.7rem;
+    padding: 1rem 1.25rem;
+    background: rgba(242, 245, 249, 0.8);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
     font-size: 1rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.form-fields input:focus,
+.form-fields select:focus,
+.form-fields textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(127, 90, 240, 0.15);
+}
+
+/* Estilo personalizado para select */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2316161A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
+}
+
+/* Botón de acción */
+.form-action {
+    margin-top: 1rem;
+}
+
+.btn-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1.1rem 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+    letter-spacing: 0.5px;
 }
 
-.table-container form button:hover {
-    background-color: #0056b3;
+.btn-submit span {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
 }
 
-/* Responsivo */
+.btn-submit svg {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.btn-submit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.btn-submit:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.btn-submit:hover::before {
+    opacity: 1;
+}
+
+.btn-submit:hover svg {
+    transform: translateX(4px);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Estilo para input type file */
+input[type="file"] {
+    padding: 0.8rem;
+    font-size: 0.95rem;
+}
+
+input[type="file"]::file-selector-button {
+    padding: 0.8rem 1.2rem;
+    margin-right: 1rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: var(--primary-light);
+}
+
+/* Responsividad */
 @media (max-width: 768px) {
-    .containerComida {
-        flex-direction: column;
+    .form-container {
+        padding: 2rem;
     }
+    
+    .icon-badge {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .icon-badge svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .form-header h2 {
+        font-size: 1.8rem;
+    }
+}
 
-    .table-container {
-        max-width: 100%;
+@media (max-width: 480px) {
+    .nutri-page {
+        padding: 1rem;
+    }
+    
+    .form-container {
         padding: 1.5rem;
+    }
+    
+    .icon-badge {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 1rem;
+    }
+    
+    .icon-badge svg {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .form-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .form-fields input,
+    .form-fields select,
+    .form-fields textarea {
+        padding: 0.9rem 1rem;
+    }
+    
+    .btn-submit {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
     }
 }
 </style>

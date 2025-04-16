@@ -7,23 +7,23 @@ from django.db import models
 
 # Manager personalizado
 class PersonaManager(BaseUserManager):
-    def create_user(self, email, fechaNacimiento,numDocumento, tipoDocumento, password=None, **extra_fields):
+    def create_user(self, email, fechaNacimiento,numDocumento, tipoDocumento, genero, password=None, **extra_fields):
         if not email:
             raise ValueError('El email es obligatorio.')
         if not numDocumento:
             raise ValueError('El número de documento es obligatorio.')
 
         email = self.normalize_email(email)
-        user = self.model(email=email, fechaNacimiento=fechaNacimiento, numDocumento=numDocumento, tipoDocumento=tipoDocumento, **extra_fields)
+        user = self.model(email=email, fechaNacimiento=fechaNacimiento, numDocumento=numDocumento, tipoDocumento=tipoDocumento, genero=genero, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email,fechaNacimiento, numDocumento, tipoDocumento, password=None, **extra_fields):
+    def create_superuser(self, email, fechaNacimiento, numDocumento, tipoDocumento, genero, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user(email,fechaNacimiento, numDocumento, tipoDocumento, password, **extra_fields)
+        return self.create_user(email, fechaNacimiento, numDocumento, tipoDocumento, genero, password, **extra_fields)
 
 class Persona(AbstractUser):
     username=None
@@ -35,6 +35,7 @@ class Persona(AbstractUser):
     fechaNacimiento = models.DateField(null=True, blank=True)
     numDocumento = models.CharField(max_length=20, unique=True)  # Número de documento (DNI, cédula, etc.)
     tipoDocumento = models.CharField(max_length=10)  # Tipo de documento (DNI, pasaporte, etc.)
+    genero = models.CharField(max_length=20)
     is_paciente = models.BooleanField(default=False)  # Indica si es un paciente
     is_nutricionista = models.BooleanField(default=False)  # Indica si es un nutricionista
     
@@ -43,7 +44,7 @@ class Persona(AbstractUser):
 
     # Si prefieres usar el correo electrónico en lugar del username
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'fechaNacimiento' ,'numDocumento']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'fechaNacimiento' ,'numDocumento', 'genero']
 
 
     class Meta:

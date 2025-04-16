@@ -5,7 +5,7 @@ from .models import Paciente, ValorAntropometrico, AnalisisLab, Anamnesis, Histo
 class RegistroPacienteForm(UserCreationForm):
     class Meta:
         model = Persona
-        fields = ['email', 'first_name', 'last_name','fechaNacimiento', 'numDocumento', 'tipoDocumento', 'password1', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'fechaNacimiento', 'numDocumento', 'genero',  'tipoDocumento', 'password1', 'password2']
 
     def save(self, commit=True):
         user = super().save(commit=False)

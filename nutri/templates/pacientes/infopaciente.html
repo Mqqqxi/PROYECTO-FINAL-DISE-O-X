@@ -1,0 +1,1155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Información del Paciente{% endblock %}
+
+{% block content %}
+<style>
+  /* Estilos modernos para 2025 - Aplicación de nutricionista */
+:root {
+  /* Esquema de colores */
+  --primary-color: #4ECDC4; /* Verde/turquesa vibrante */
+  --secondary-color: #35B5AA; /* Verde/turquesa más oscuro */
+  --accent-color: #FF6B6B; /* Rojo coral para contraste */
+  --accent-secondary: #F8CB2E; /* Amarillo cálido */
+  --success-color: #7ABD7E; /* Verde éxito */
+  --warning-color: #FFD166; /* Amarillo advertencia */
+  --danger-color: #EF476F; /* Rojo peligro */
+  --background-light: #F5F7FA; /* Fondo claro */
+  --card-bg: #FFFFFF; /* Blanco para tarjetas */
+  --gray-light: #EFF1F3; /* Gris claro */
+  --gray-medium: #D8DEE3; /* Gris medio */
+  --text-primary: #212B36; /* Texto principal */
+  --text-secondary: #637381; /* Texto secundario */
+  /* Sombras */
+  --card-shadow: 0 8px 24px rgba(149, 157, 165, 0.15);
+  --hover-shadow: 0 12px 32px rgba(149, 157, 165, 0.25);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  /* Bordes y transiciones */
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* Gradientes */
+  --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+body {
+  font-family: 'Inter', 'Montserrat', sans-serif;
+  background-color: var(--background-light);
+  color: var(--text-primary);
+  line-height: 1.7;
+  margin: 0;
+  padding: 0;
+}
+
+/* Contenedor principal */
+.container2 {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header del paciente */
+.patient-profile-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  background: linear-gradient(135deg, var(--card-bg), var(--gray-light));
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 35px;
+  margin-bottom: 35px;
+  margin-top: 100px;
+  transition: var(--transition);
+}
+
+.patient-profile-header:hover {
+  box-shadow: var(--hover-shadow);
+  transform: translateY(-4px);
+}
+
+.patient-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.patient-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 18px;
+  background: var(--gradient-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+}
+
+.patient-details h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.patient-details p {
+  margin: 4px 0 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.patient-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.weight-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.weight-box {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.weight-box:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--hover-shadow);
+}
+
+.weight-box h4 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.weight-box p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.appointment-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.appointment-box {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.appointment-box:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--hover-shadow);
+}
+
+.appointment-box .date {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.appointment-box .time {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+}
+
+.appointment-box p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Navegación principal */
+.main-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 30px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  background-color: var(--card-bg);
+}
+
+.main-tab {
+  flex: 1;
+  padding: 18px 15px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+
+.main-tab.active {
+  color: white;
+  font-weight: 600;
+  background: var(--gradient-bg);
+}
+
+.main-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--gradient-bg);
+}
+
+.main-tab:hover {
+  background: var(--secondary-color);
+  color: white;
+}
+
+.main-tab i {
+  font-size: 20px;
+}
+
+/* Sub-navegación */
+.clinical-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.clinical-tab {
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.clinical-tab:hover {
+  background: var(--secondary-color);
+  color: white;
+}
+
+.clinical-tab.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--card-shadow);
+}
+
+.clinical-tab-icon {
+  font-size: 16px;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-buttons .btn {
+  padding: 10px;
+  border-radius: var(--border-radius);
+  background: var(--primary-color);
+  color: white;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.action-buttons .btn:hover {
+  background: var(--accent-color);
+  transform: translateY(-2px);
+}
+
+/* Contenido */
+.tab-content {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tab-content.visible {
+  opacity: 1;
+}
+
+.content-section {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 30px;
+  min-height: 300px;
+  border: 1px solid rgba(235, 238, 241, 0.8);
+  transition: var(--transition);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.content-section:hover {
+  box-shadow: var(--hover-shadow);
+}
+
+.content-card h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+}
+
+.data-row {
+  display: flex;
+  margin-bottom: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gray-medium);
+  transition: var(--transition);
+}
+
+.data-row:hover {
+  background-color: var(--gray-light);
+  padding: 8px;
+  margin: -8px -8px 8px -8px;
+  border-radius: var(--border-radius-sm);
+}
+
+.data-row:last-child {
+  border-bottom: none;
+}
+
+.data-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex: 1;
+}
+
+.data-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 2;
+}
+
+/* Gráfico de progreso */
+.progress-chart {
+  height: 350px;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 25px;
+  transition: var(--transition);
+}
+
+.progress-chart:hover {
+  box-shadow: var(--hover-shadow);
+}
+
+/* Indicadores de progreso */
+.progress-indicator {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.progress-step::after {
+  content: '';
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background-color: var(--gray-medium);
+  z-index: 1;
+}
+
+.progress-step:last-child::after {
+  display: none;
+}
+
+.progress-step.completed::after {
+  background-color: var(--primary-color);
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--card-bg);
+  border: 3px solid var(--gray-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 2;
+  transition: var(--transition);
+}
+
+.progress-step.completed .step-icon {
+  border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.step-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.progress-step.completed .step-label {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* Chat */
+.chat-container {
+  height: 400px;
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--gray-medium);
+  background: var(--card-bg);
+  overflow: hidden;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  padding: 12px 18px;
+  border-radius: 20px;
+  max-width: 75%;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  line-height: 1.5;
+}
+
+.message.nutricionista {
+  background: var(--gradient-bg);
+  color: white;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.message.paciente {
+  background: var(--gray-light);
+  color: var(--text-primary);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-input {
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid var(--gray-medium);
+  background: var(--card-bg);
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 15px;
+  border: 1px solid var(--gray-medium);
+  border-radius: 30px;
+  margin-right: 10px;
+  transition: var(--transition);
+}
+
+.chat-input input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+}
+
+.chat-input button {
+  padding: 0 25px;
+  background: var(--gradient-bg);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.chat-input button:hover {
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+  transform: translateY(-2px);
+}
+
+/* Botones */
+button,
+.btn {
+  padding: 12px 24px;
+  background: var(--gradient-bg);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+button:hover,
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--danger-color), #F27999);
+}
+
+.btn-danger:hover {
+  box-shadow: 0 5px 15px rgba(239, 71, 111, 0.3);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-color), #5A9E5A);
+}
+
+.btn-success:hover {
+  box-shadow: 0 5px 15px rgba(122, 189, 126, 0.3);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--warning-color), #FFBA08);
+  color: var(--text-primary);
+}
+
+.btn-warning:hover {
+  box-shadow: 0 5px 15px rgba(255, 209, 102, 0.3);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividad */
+@media (max-width: 1024px) {
+  .patient-profile-header {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .weight-info {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .content-section {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .weight-info,
+  .appointment-info {
+    grid-template-columns: 1fr;
+  }
+
+  .main-tabs {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .main-tab {
+    flex-basis: 100%;
+  }
+
+  .clinical-tabs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .clinical-tab {
+    flex-basis: 50%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .action-buttons {
+    margin-top: 15px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container2">
+  <!-- Header del paciente -->
+  <div class="patient-profile-header">
+    <div class="patient-info">
+      <div class="patient-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="patient-details">
+        <h3>{{ paciente.persona.first_name }} {{ paciente.persona.last_name }}</h3>
+        <p>Edad: {{ paciente.historia_clinica.edad|default:"--" }} | Género: {{ paciente.persona.genero|default:"--" }}
+          | Objetivo: {{ paciente.objetivo|default:"--" }}</p>
+      </div>
+    </div>
+
+    <div class="patient-stats">
+      <div class="weight-info">
+        <div class="weight-box">
+          <h4>{{ peso_actual|default:"--" }} kg</h4>
+          <p>Peso Actual</p>
+        </div>
+        <div class="weight-box">
+          <h4>{{ peso_inicial|default:"--" }} kg</h4>
+          <p>Peso Inicial</p>
+        </div>
+        <div class="weight-box">
+          <h4>{{ peso_meta|default:"--" }} kg</h4>
+          <p>Peso Meta</p>
+        </div>
+      </div>
+      <div class="appointment-info">
+        <div class="appointment-box">
+          <p class="date">{{ proximo_turno.dia|default:"--" }}</p>
+          <p class="time">{{ proximo_turno.hora|time:"H:i"|default:"--" }}</p>
+          <p>Próximo Turno</p>
+        </div>
+        <div class="appointment-box">
+          <p class="date">{{ ultimo_turno.dia|default:"--" }}</p>
+          <p class="time">{{ ultimo_turno.hora|time:"H:i"|default:"--" }}</p>
+          <p>Última Visita</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navegación principal -->
+  <div class="main-tabs">
+    <div class="main-tab active" data-tab="info">
+      <i class="fas fa-info-circle"></i>
+      <span>Información</span>
+    </div>
+    <div class="main-tab" data-tab="plan">
+      <i class="fas fa-clipboard-list"></i>
+      <span>Plan Actual</span>
+    </div>
+  </div>
+
+  <!-- Contenedor de pestañas de información -->
+  <div id="info-content" class="tab-content visible">
+    <div class="clinical-tabs">
+      <div class="clinical-tab active" data-tab="paciente">
+        <i class="fas fa-user clinical-tab-icon"></i> Paciente
+      </div>
+      <div class="clinical-tab" data-tab="antropometrico">
+        <i class="fas fa-weight clinical-tab-icon"></i> Antropométrico
+      </div>
+      <div class="clinical-tab" data-tab="analisis">
+        <i class="fas fa-flask clinical-tab-icon"></i> Análisis
+      </div>
+      <div class="clinical-tab" data-tab="anamnesis">
+        <i class="fas fa-clipboard-list clinical-tab-icon"></i> Anamnesis
+      </div>
+      <div class="clinical-tab" data-tab="historia">
+        <i class="fas fa-file-medical clinical-tab-icon"></i> Historia
+      </div>
+      <div class="spacer"></div>
+      <div class="action-buttons">
+        {% if not paciente.valores_antropometricos %}
+        <a href="{% url 'pacientes:crear_datos_paciente' paciente.pk %}" class="btn btn-success">
+          <i class="fa fa-plus"></i>
+        </a>
+        {% else %}
+        <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning">
+          <i class="fa fa-pencil"></i>
+        </a>
+        {% endif %}
+        {% if paciente.persona.is_active %}
+        <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger">
+          <i class="fa fa-ban"></i>
+        </a>
+        {% else %}
+        <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success">
+          <i class="fa fa-check"></i>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Contenido de Paciente -->
+    <div id="paciente-content" class="content-section">
+      <div class="content-card">
+        <h4>Información Personal</h4>
+        <div class="data-row">
+          <div class="data-label">Nombre completo</div>
+          <div class="data-value">{{ paciente.persona.first_name }} {{ paciente.persona.last_name }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Email</div>
+          <div class="data-value">{{ paciente.persona.email|default:"--" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Tipo de documento</div>
+          <div class="data-value">{{ paciente.persona.tipoDocumento|default:"--" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Número de documento</div>
+          <div class="data-value">{{ paciente.persona.numDocumento|default:"--" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Obra Social</div>
+          <div class="data-value">{{ paciente.obraSocial|default:"No especificada" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Objetivo</div>
+          <div class="data-value">{{ paciente.objetivo|default:"--" }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de Valor Antropométrico -->
+    <div id="antropometrico-content" class="content-section" style="display: none;">
+      <div class="content-card">
+        <h4>Valores Antropométricos</h4>
+        <div class="data-row">
+          <div class="data-label">Masa Muscular</div>
+          <div class="data-value">{{ valores_antropometricos.masaMuscular|default:"No registrado" }} %</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Masa Grasa</div>
+          <div class="data-value">{{ valores_antropometricos.masaGrasa|default:"No registrado" }} %</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Circunferencia</div>
+          <div class="data-value">{{ valores_antropometricos.circunferencia|default:"No registrado" }} cm</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">IMC</div>
+          <div class="data-value">{{ valores_antropometricos.IMC|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Peso</div>
+          <div class="data-value">{{ valores_antropometricos.peso|default:"No registrado" }} kg</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Altura</div>
+          <div class="data-value">{{ valores_antropometricos.altura|default:"No registrado" }} m</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de Análisis de Lab -->
+    <div id="analisis-content" class="content-section" style="display: none;">
+      <div class="content-card">
+        <h4>Análisis de Laboratorio</h4>
+        <div class="data-row">
+          <div class="data-label">Hepatograma</div>
+          <div class="data-value">{{ analisis_lab.hepatograma|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Creatinina Sérica</div>
+          <div class="data-value">{{ analisis_lab.creatininaSerica|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Uricemia</div>
+          <div class="data-value">{{ analisis_lab.uricemia|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Colesterol Total</div>
+          <div class="data-value">{{ analisis_lab.colesterolTotal|default:"No registrado" }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de Anamnesis -->
+    <div id="anamnesis-content" class="content-section" style="display: none;">
+      <div class="content-card">
+        <h4>Anamnesis</h4>
+        <div class="data-row">
+          <div class="data-label">Hábitos</div>
+          <div class="data-value">{{ anamnesis.habitos|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Preferencias</div>
+          <div class="data-value">{{ anamnesis.preferencia|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Frecuencia de Consumo</div>
+          <div class="data-value">{{ anamnesis.frecConsumo|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Registro de Comida</div>
+          <div class="data-value">{{ anamnesis.registroComida|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Alimentación Actual</div>
+          <div class="data-value">{{ anamnesis.alimActual|default:"No registrado" }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de Historia Clínica -->
+    <div id="historia-content" class="content-section" style="display: none;">
+      <div class="content-card">
+        <h4>Historia Clínica</h4>
+        <div class="data-row">
+          <div class="data-label">Medicamentos</div>
+          <div class="data-value">{{ historia_clinica.medicamento|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Suplementos</div>
+          <div class="data-value">{{ historia_clinica.suplemento|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Alergias</div>
+          <div class="data-value">{{ historia_clinica.alergia|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Intolerancias</div>
+          <div class="data-value">{{ historia_clinica.intolerancia|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Antecedentes Familiares</div>
+          <div class="data-value">{{ historia_clinica.anteFamiliar|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Antecedentes Patológicos</div>
+          <div class="data-value">{{ historia_clinica.antePatologico|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Patología Actual</div>
+          <div class="data-value">{{ historia_clinica.patologiaActual|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Horas Actividad Física</div>
+          <div class="data-value">{{ historia_clinica.hsActiFisica|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Tipo de Actividad Física</div>
+          <div class="data-value">{{ historia_clinica.tipoActiFisica|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Actividad Laboral</div>
+          <div class="data-value">{{ historia_clinica.actiLaboral|default:"No registrado" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de pestañas de plan actual -->
+  <div id="plan-content" class="tab-content" style="display: none;">
+    <div class="clinical-tabs">
+      <div class="clinical-tab active" data-tab="progreso">
+        <i class="fas fa-chart-line clinical-tab-icon"></i> Progreso
+      </div>
+      <div class="clinical-tab" data-tab="plan-nutricional">
+        <i class="fas fa-utensils clinical-tab-icon"></i> Plan Nutricional
+      </div>
+      <div class="clinical-tab" data-tab="chat">
+        <i class="fas fa-comments clinical-tab-icon"></i> Chat
+      </div>
+      <div class="spacer"></div>
+      <div class="action-buttons">
+        {% if not paciente.planes_nutricionales.exists %}
+        <button type="button" class="btn" data-toggle="modal" data-target="#crearPlanModal{{ paciente.pk }}">
+          <i class="fa fa-plus"></i>
+        </button>
+        {% else %}
+        {% with plan=paciente.planes_nutricionales.first %}
+        <a href="{% url 'plannutricional:editar_plan_dia' plan.idPlanN %}" class="btn">
+          <i class="fa fa-edit"></i>
+        </a>
+        <form action="{% url 'plannutricional:eliminar_plan_nutricional' plan.idPlanN %}" method="post"
+          style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn" style="background: #F56565;"
+            onclick="return confirm('¿Seguro que deseas eliminar este plan nutricional?');">
+            <i class="fa fa-trash"></i>
+          </button>
+        </form>
+        {% endwith %}
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Modal para crear plan nutricional -->
+    <div class="modal fade" id="crearPlanModal{{ paciente.pk }}" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <form method="POST" action="{% url 'plannutricional:crear_plan_nutricional_modal' paciente.pk %}">
+          {% csrf_token %}
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Crear Plan Nutricional</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="fecha_inicio_{{ paciente.pk }}">Fecha Inicio</label>
+                <input type="date" class="form-control" id="fecha_inicio_{{ paciente.pk }}" name="fecha_inicio"
+                  required>
+              </div>
+              <div class="form-group">
+                <label for="duracion_dias_{{ paciente.pk }}">Duración (días)</label>
+                <input type="number" class="form-control" id="duracion_dias_{{ paciente.pk }}" name="duracion_dias"
+                  value="30" min="1" required>
+              </div>
+              <div class="form-group">
+                <label for="recomendacion_{{ paciente.pk }}">Recomendación</label>
+                <textarea class="form-control" id="recomendacion_{{ paciente.pk }}" name="recomendacion"
+                  required></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn">Guardar</button>
+              <button type="button" class="btn" style="background: #A0AEC0;" data-dismiss="modal">Cancelar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Contenido de Progreso -->
+    <div id="progreso-content" class="content-section">
+      <div class="progress-chart">
+        <canvas id="progressChart"></canvas>
+      </div>
+      <div class="content-card">
+        <h4>Evolución de Medidas</h4>
+        <div class="data-row">
+          <div class="data-label">Peso Inicial</div>
+          <div class="data-value">{{ peso_inicial|default:"--" }} kg</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Peso Actual</div>
+          <div class="data-value">{{ peso_actual|default:"--" }} kg</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Diferencia</div>
+          <div class="data-value">
+            {% if diferencia_peso is not None %}
+            {% if diferencia_peso > 0 %}
+            <span style="color: var(--accent-color);">+{{ diferencia_peso }} kg</span>
+            {% elif diferencia_peso < 0 %} <span style="color: var(--primary-color);">{{ diferencia_peso }} kg</span>
+              {% else %}
+              0 kg
+              {% endif %}
+              {% else %}
+              --
+              {% endif %}
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">% Completado</div>
+          <div class="data-value">{{ porcentaje_completado|default:"--" }}%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de Plan Nutricional (Placeholder) -->
+    <!-- Contenido de Plan Nutricional -->
+    <div id="plan-nutricional-content" class="content-section" style="display: none;">
+      <div class="content-card">
+        <h4>Plan Nutricional</h4>
+        {% if plan_data %}
+          <!-- Tabla para mostrar los días y tipos de comida -->
+          <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <!-- Encabezados de las columnas -->
+            <thead>
+              <tr>
+                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Día</th>
+                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Desayuno</th>
+                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Almuerzo</th>
+                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Merienda</th>
+                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Cena</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Iterar sobre los datos del plan -->
+              {% for dia_data in plan_data %}
+                <tr>
+                  <!-- Día -->
+                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
+                    {{ dia_data.dia_nombre }}
+                  </td>
+                  <!-- Desayuno -->
+                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
+                    {% for plato in dia_data.desayuno.platos %}
+                    {{ plato }}<br>
+                    {% endfor %}
+                    {% if dia_data.desayuno.descripcion %}
+                      <small>{{ dia_data.desayuno.descripcion }}</small>
+                    {% endif %}
+                  </td>
+                  <!-- Almuerzo -->
+                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
+                    {% for plato in dia_data.almuerzo.platos %}
+                      {{ plato }}<br>
+                    {% endfor %}
+                    {% if dia_data.almuerzo.descripcion %}
+                      <small>{{ dia_data.almuerzo.descripcion }}</small>
+                    {% endif %}
+                  </td>
+                  <!-- Merienda -->
+                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
+                    {% for plato in dia_data.merienda.platos %}
+                      {{ plato }}<br>
+                    {% endfor %}
+                    {% if dia_data.merienda.descripcion %}
+                      <small>{{ dia_data.merienda.descripcion }}</small>
+                    {% endif %}
+                  </td>
+                  <!-- Cena -->
+                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
+                    {% for plato in dia_data.cena.platos %}
+                      {{ plato }}<br>
+                    {% endfor %}
+                    {% if dia_data.cena.descripcion %}
+                      <small>{{ dia_data.cena.descripcion }}</small>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>No hay un plan nutricional activo para este paciente.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Contenido de Chat -->
+    <div id="chat-content" class="content-section" style="display: none;">
+      <div class="chat-container">
+        <div class="chat-messages">
+          <div class="message nutricionista">Hola, ¿cómo vas con el plan alimenticio?</div>
+          <div class="message paciente">Muy bien, estoy siguiendo todas las recomendaciones.</div>
+        </div>
+        <div class="chat-input">
+          <input type="text" placeholder="Escribe un mensaje...">
+          <button>Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Navegación de pestañas principales
+    const mainTabs = document.querySelectorAll('.main-tab');
+    mainTabs.forEach(tab => {
+      tab.addEventListener('click', function () {
+        mainTabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.style.display = 'none';
+          content.classList.remove('visible');
+        });
+        const tabId = this.getAttribute('data-tab');
+        const selectedContent = document.getElementById(`${tabId}-content`);
+        selectedContent.style.display = 'block';
+        setTimeout(() => selectedContent.classList.add('visible'), 10);
+        const activeSubTab = document.querySelector(`#${tabId}-content .clinical-tab`);
+        if (activeSubTab) activeSubTab.click();
+      });
+    });
+
+    // Navegación de subpestañas
+    const subTabs = document.querySelectorAll('.clinical-tab');
+    subTabs.forEach(tab => {
+      tab.addEventListener('click', function () {
+        const siblings = Array.from(this.parentElement.children);
+        siblings.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        const tabId = this.getAttribute('data-tab');
+        const parentId = this.closest('.tab-content').id.split('-')[0];
+        document.querySelectorAll(`#${parentId}-content .content-section`).forEach(content => {
+          content.style.display = 'none';
+        });
+        document.getElementById(`${tabId}-content`).style.display = 'block';
+      });
+    });
+
+    // Gráfico de progreso
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+        datasets: [{
+          label: 'Peso (kg)',
+          data: [70, 68, 67, 65],
+          borderColor: 'var(--primary-color)',
+          backgroundColor: 'rgba(72, 187, 120, 0.2)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          y: { beginAtZero: false },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

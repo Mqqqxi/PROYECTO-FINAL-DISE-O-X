@@ -1,75 +1,557 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}REGISTRARSE{% endblock %}
-{% block content %}
-<form method="post" class="register-form">
-    {% csrf_token %}
-    <div class="section-title">
-        <h2 class="text-center">REGISTRARSE</h2>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REGISTRARSE - Nutrición Vital</title>
+    <style>
+        /* 2025 Design Trends for Nutritionist Website */
+        :root {
+            --primary-color: #2ACB92; /* Vibrant eco-green */
+            --secondary-color: #24B583;
+            --accent-color: #F7F9FC; 
+            --dark-accent: #145D56;
+            --text-color: #2D3748;
+            --error-color: #FF5C5C;
+            --input-bg: rgba(255, 255, 255, 0.8);
+            --gradient-start: #2ACB92;
+            --gradient-end: #24B583;
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+            background: linear-gradient(135deg, #F7F9FC 0%, #E6F5F0 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* Glass morphism container - 2025 trend */
+        .register-container {
+            width: 500px;
+            max-width: 100%;
+            padding: 35px 40px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.06),
+                0 1px 3px rgba(0, 0, 0, 0.03),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(209, 213, 219, 0.3);
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Organic shapes background - 2025 trend */
+        .register-container::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -120px;
+            width: 250px;
+            height: 250px;
+            background-color: rgba(42, 203, 146, 0.1);
+            border-radius: 50% 60% 70% 40% / 40% 50% 60% 50%;
+            z-index: -1;
+            filter: blur(5px);
+            animation: floatBubble 15s infinite alternate ease-in-out;
+        }
+
+        .register-container::after {
+            content: "";
+            position: absolute;
+            bottom: -90px;
+            left: -70px;
+            width: 200px;
+            height: 200px;
+            background-color: rgba(20, 93, 86, 0.08);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            z-index: -1;
+            filter: blur(5px);
+            animation: floatBubble 12s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes floatBubble {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(20px, 20px) rotate(10deg); }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modern, minimalist logo-icon */
+        .logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Clean, modern heading */
+        h2 {
+            color: var(--text-color);
+            text-align: center;
+            margin: 0 0 25px;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        /* Form group with animated labels - 2025 trend */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 18px;
+            border: 1px solid rgba(209, 213, 219, 0.6);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(42, 203, 146, 0.15);
+            outline: none;
+        }
+
+        /* Floating label style */
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            position: absolute;
+            top: 50%;
+            left: 18px;
+            transform: translateY(-50%);
+            background: transparent;
+            padding: 0 5px;
+            color: #6B7280;
+            transition: all 0.25s ease;
+            pointer-events: none;
+            font-size: 15px;
+        }
+
+        .form-control:focus + label,
+        .form-control:not(:placeholder-shown) + label {
+            top: 0;
+            left: 12px;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: var(--primary-color);
+            background: var(--input-bg);
+            padding: 0 6px;
+        }
+
+        /* Special styling for select boxes */
+        select.form-control {
+            appearance: none;
+            padding-right: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+
+        /* Special styling for date inputs */
+        input[type="date"].form-control {
+            position: relative;
+            color: var(--text-color);
+        }
+
+        input[type="date"].form-control::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        input[type="date"] + label {
+            z-index: 1;
+        }
+
+        /* Neomorphic button style - refined for 2025 */
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(42, 203, 146, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(42, 203, 146, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Button ripple effect - modern touch */
+        button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%, -50%);
+            transform-origin: 50% 50%;
+        }
+
+        button:focus:not(:active)::after {
+            animation: ripple 0.8s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        /* Minimalist links with hover effects */
+        .message {
+            margin-top: 25px;
+            text-align: center;
+            line-height: 1.8;
+            font-size: 14px;
+            color: #6B7280;
+        }
+
+        .message a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-weight: 500;
+            padding: 4px 0;
+            position: relative;
+        }
+
+        .message a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .message a:hover {
+            color: var(--primary-color);
+        }
+
+        .message a:hover::after {
+            width: 100%;
+        }
+
+        /* Modern error message style */
+        .alert-danger {
+            color: #fff;
+            margin-bottom: 20px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: rgba(255, 92, 92, 0.9);
+            border-left: 4px solid #FF3B3B;
+            font-size: 14px;
+            animation: shakeError 0.6s cubic-bezier(.36,.07,.19,.97) both;
+            display: flex;
+            align-items: center;
+        }
+
+        .alert-danger::before {
+            content: "⚠️";
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        @keyframes shakeError {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Placeholder styling */
+        ::placeholder {
+            color: transparent;
+            opacity: 0;
+        }
+
+        /* Form sections */
+        .form-sections {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .form-section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Progress indicator */
+        .register-progress {
+            display: flex;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .progress-step {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #E2E8F0;
+            margin: 0 6px;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .register-container {
+                width: 90%;
+                padding: 30px 25px;
+                margin: 20px auto;
+                border-radius: 20px;
+            }
+            
+            h2 {
+                font-size: 22px;
+            }
+
+            .form-section-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            body {
+                padding: 20px 10px;
+            }
+        }
+
+        .page-title {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--dark-accent);
+            opacity: 0.8;
+        }
+
+        /* Health icons background */
+        .health-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.05;
+        }
+
+        /* Privacy note */
+        .privacy-note {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #94A3B8;
+            text-align: center;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-title">Nutrición Vital</div>
+    
+    <div class="register-container">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 12C15.5 13.933 13.933 15.5 12 15.5C10.067 15.5 8.5 13.933 8.5 12C8.5 10.067 10.067 8.5 12 8.5C13.933 8.5 15.5 10.067 15.5 12Z" stroke="#2ACB92" stroke-width="1.5"/>
+                <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" stroke="#2ACB92" stroke-width="1.5"/>
+                <path d="M13.5 6C13.5 6 13 8 12 8C11 8 10.5 6 10.5 6" stroke="#2ACB92" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M10.5 18C10.5 18 11 16 12 16C13 16 13.5 18 13.5 18" stroke="#2ACB92" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M18 13.5C18 13.5 16 13 16 12C16 11 18 10.5 18 10.5" stroke="#2ACB92" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 10.5C6 10.5 8 11 8 12C8 13 6 13.5 6 13.5" stroke="#2ACB92" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+        </div>
+        
+        <h2>Crear perfil nutricional</h2>
+        
+        <div class="register-progress">
+            <div class="progress-step active"></div>
+            <div class="progress-step"></div>
+            <div class="progress-step"></div>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if error %}
+            <div class="alert-danger">{{ error }}</div>
+            {% endif %}
+            
+            <div class="form-sections">
+                <!-- Datos personales -->
+                <div class="form-section-grid">
+                    <div class="form-group">
+                        <input type="text" name="first_name" id="first_name" class="form-control" placeholder=" " value="{{ form.first_name.value }}" required>
+                        <label for="first_name">Nombre</label>
+                        {% if form.first_name.errors %}
+                        <div class="alert-danger">{{ form.first_name.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder=" " value="{{ form.last_name.value }}" required>
+                        <label for="last_name">Apellido</label>
+                        {% if form.last_name.errors %}
+                        <div class="alert-danger">{{ form.last_name.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <select name="genero" id="genero" class="form-control" required>
+                        <option value="" disabled selected hidden></option>
+                        <option value="masculino" {% if form.genero.value and form.genero.value == "Masculino" %}selected{% endif %}>Masculino</option>
+                        <option value="femenino" {% if form.genero.value and form.genero.value == "Femenino" %}selected{% endif %}>Femenino</option>
+                        <option value="no_definido" {% if form.genero.value and form.genero.value == "No_definido" %}selected{% endif %}>No definido</option>
+                    </select>
+                    <label for="genero">Género</label>
+                    {% if form.genero.errors %}
+                    <div class="alert-danger">{{ form.genero.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <input type="date" name="fechaNacimiento" id="fechaNacimiento" class="form-control" placeholder=" " value="{{ form.fechaNacimiento.value }}" required>
+                    <label for="fechaNacimiento">Fecha de nacimiento</label>
+                    {% if form.fechaNacimiento.errors %}
+                    <div class="alert-danger">{{ form.fechaNacimiento.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Documentación -->
+                <div class="form-section-grid">
+                    <div class="form-group">
+                        <select name="tipoDocumento" id="tipoDocumento" class="form-control" required>
+                            <option value="" disabled selected hidden></option>
+                            <option value="DNI" {% if form.tipoDocumento.value and form.tipoDocumento.value == "DNI" %}selected{% endif %}>DNI</option>
+                            <option value="Pasaporte" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Pasaporte" %}selected{% endif %}>Pasaporte</option>
+                            <option value="Cédula" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Cédula" %}selected{% endif %}>Cédula</option>
+                            <option value="Licencia" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Licencia" %}selected{% endif %}>Licencia de conducir</option>
+                            <option value="Otro" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Otro" %}selected{% endif %}>Otro</option>
+                        </select>
+                        <label for="tipoDocumento">Tipo de documento</label>
+                        {% if form.tipoDocumento.errors %}
+                        <div class="alert-danger">{{ form.tipoDocumento.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="text" name="numDocumento" id="numDocumento" class="form-control" placeholder=" " value="{{ form.numDocumento.value }}" required>
+                        <label for="numDocumento">Nro. de documento</label>
+                        {% if form.numDocumento.errors %}
+                        <div class="alert-danger">{{ form.numDocumento.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Cuenta -->
+                <div class="form-group">
+                    <input type="email" name="email" id="email" class="form-control" placeholder=" " value="{{ form.email.value }}" required>
+                    <label for="email">Correo electrónico</label>
+                    {% if form.email.errors %}
+                    <div class="alert-danger">{{ form.email.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-section-grid">
+                    <div class="form-group">
+                        <input type="password" name="password1" id="password1" class="form-control" placeholder=" " required>
+                        <label for="password1">Contraseña</label>
+                        {% if form.password1.errors %}
+                        <div class="alert-danger">{{ form.password1.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" name="password2" id="password2" class="form-control" placeholder=" " required>
+                        <label for="password2">Confirmar contraseña</label>
+                        {% if form.password2.errors %}
+                        <div class="alert-danger">{{ form.password2.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit">CREAR CUENTA</button>
+            
+            <div class="privacy-note">
+                Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad. Tus datos están seguros con nosotros.
+            </div>
+            
+            <p class="message">¿Ya estás registrado? <a href="{% url 'login' %}">Inicia sesión</a></p>
+        </form>
     </div>
 
-    {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
-    {% endif %}
-
-    <!-- Campo: Nombre -->
-    <input type="text" name="first_name" placeholder="Nombre" value="{{ form.first_name.value }}" required />
-    {% if form.first_name.errors %}
-    <div class="alert alert-danger">{{ form.first_name.errors|striptags }}</div>
-    {% endif %}
-
-    <!-- Campo: Apellido -->
-    <input type="text" name="last_name" placeholder="Apellido" value="{{ form.last_name.value }}" required />
-    {% if form.last_name.errors %}
-    <div class="alert alert-danger">{{ form.last_name.errors|striptags }}</div>
-    {% endif %}
-
-    <input type="date" name="fechaNacimiento" placeholder="fechaNacimiento" value="{{ form.fechaNacimiento.value }}" required />
-    {% if form.fechaNacimiento.errors %}
-    <div class="alert alert-danger">{{ form.fechaNacimiento.errors|striptags }}</div>
-    {% endif %}
-
-
-
-
-    <!-- Campo: Tipo de Documento -->
-    <select name="tipoDocumento" style="width: 100%; padding: 10px; margin-bottom: 10px;" required>
-    <option value="DNI" {% if form.tipoDocumento.value and form.tipoDocumento.value == "DNI" %}selected{% endif %}>DNI</option>
-    <option value="Pasaporte" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Pasaporte" %}selected{% endif %}>Pasaporte</option>
-    <option value="Cédula" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Cédula" %}selected{% endif %}>Cédula</option>
-    <option value="Licencia" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Licencia" %}selected{% endif %}>Licencia de conducir</option>
-    <option value="Otro" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Otro" %}selected{% endif %}>Otro</option>
-</select>
-    {% if form.tipoDocumento.errors %}
-    <div class="alert alert-danger">{{ form.tipoDocumento.errors|striptags }}</div>
-    {% endif %}
-
-    <!-- Campo: Número de Documento -->
-    <input type="text" name="numDocumento" placeholder="Nro. de documento" value="{{ form.numDocumento.value }}"
-        required />
-    {% if form.numDocumento.errors %}
-    <div class="alert alert-danger">{{ form.numDocumento.errors|striptags }}</div>
-    {% endif %}
-
-    <!-- Campo: Email -->
-    <input type="email" name="email" placeholder="Correo electrónico" value="{{ form.email.value }}" required />
-    {% if form.email.errors %}
-    <div class="alert alert-danger">{{ form.email.errors|striptags }}</div>
-    {% endif %}
-
-    <!-- Campo: Contraseña -->
-    <input type="password" name="password1" placeholder="Contraseña" required />
-    {% if form.password1.errors %}
-    <div class="alert alert-danger">{{ form.password1.errors|striptags }}</div>
-    {% endif %}
-
-    <!-- Campo: Confirmar Contraseña -->
-    <input type="password" name="password2" placeholder="Confirmar Contraseña" required />
-    {% if form.password2.errors %}
-    <div class="alert alert-danger">{{ form.password2.errors|striptags }}</div>
-    {% endif %}
-
-    <button type="submit">REGISTRARSE</button>
-    <p class="message">¿Ya estás registrado? <a href="{% url 'login' %}">Inicia sesión</a></p>
-</form>
-{% endblock %}
+    <div class="health-icons">
+        <!-- Background decorative elements -->
+    </div>
+</body>
+</html>
