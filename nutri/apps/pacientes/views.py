@@ -277,6 +277,8 @@ def crear_datos_paciente(request, persona_id):
         'paciente': paciente,
     })
 
+from apps.planNutricional.models import PlanNutricional, PlanDelDia
+from apps.comida.models import Plato
 
 def infopaciente(request, persona_id):
     # Obtener el paciente o devolver un error 404 si no existe
@@ -317,6 +319,70 @@ def infopaciente(request, persona_id):
         if peso_inicial != peso_meta:  # Evitar división por cero
             porcentaje_completado = ((peso_inicial - peso_actual) / (peso_inicial - peso_meta)) * 100
 
+    # Preparar datos para el plan nutricional
+    plan_nutricional = paciente.planes_nutricionales.first()  # Obtener el primer plan nutricional (si existe)
+    plan_data = None
+    if plan_nutricional:
+        # Días del plan (de 1 a duracion_dias)
+        dias = list(range(1, plan_nutricional.duracion_dias + 1))
+        
+        # Mapa de días a nombres (0: Domingo, 1: Lunes, etc.)
+        dias_semana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+        
+        # Estructura para almacenar los datos del plan por día y tipo de comida
+        plan_data = []
+        for dia in dias:
+            # Obtener los planes del día para este día
+            planes_dia = PlanDelDia.objects.filter(plan_nutricional=plan_nutricional, dia=dia)
+            
+            # Mapear los platos por tipo de comida
+            desayuno = planes_dia.filter(tipo_comida="DESAYUNO").first()
+            almuerzo = planes_dia.filter(tipo_comida="ALMUERZO").first()
+            merienda = planes_dia.filter(tipo_comida="MERIENDA").first()
+            cena = planes_dia.filter(tipo_comida="CENA").first()
+            
+            # Obtener los nombres de los platos para cada tipo de comida
+            desayuno_platos = []
+            if desayuno and desayuno.platos:
+                desayuno_platos = [Plato.objects.get(idplato=plato_id).nombre for plato_id in desayuno.platos]
+            
+            almuerzo_platos = []
+            if almuerzo and almuerzo.platos:
+                almuerzo_platos = [Plato.objects.get(idplato=plato_id).nombre for plato_id in almuerzo.platos]
+            
+            merienda_platos = []
+            if merienda and merienda.platos:
+                merienda_platos = [Plato.objects.get(idplato=plato_id).nombre for plato_id in merienda.platos]
+            
+            cena_platos = []
+            if cena and cena.platos:
+                cena_platos = [Plato.objects.get(idplato=plato_id).nombre for plato_id in cena.platos]
+            
+            # Nombre del día (usamos el índice del día módulo 7 para mapear a los días de la semana)
+            dia_nombre = dias_semana[(dia - 1) % 7]
+            
+            # Agregar los datos del día a la lista
+            plan_data.append({
+                'dia': dia,
+                'dia_nombre': dia_nombre,
+                'desayuno': {
+                    'platos': desayuno_platos,
+                    'descripcion': desayuno.descripcion if desayuno else ''
+                },
+                'almuerzo': {
+                    'platos': almuerzo_platos,
+                    'descripcion': almuerzo.descripcion if almuerzo else ''
+                },
+                'merienda': {
+                    'platos': merienda_platos,
+                    'descripcion': merienda.descripcion if merienda else ''
+                },
+                'cena': {
+                    'platos': cena_platos,
+                    'descripcion': cena.descripcion if cena else ''
+                }
+            })
+
     # Contexto para el template
     contexto = {
         'paciente': paciente,
@@ -327,10 +393,11 @@ def infopaciente(request, persona_id):
         'proximo_turno': proximo_turno,
         'ultimo_turno': ultimo_turno,
         'peso_inicial': peso_inicial,
-        'peso_actual': peso_actual,  # Nuevo campo para peso actual
+        'peso_actual': peso_actual,
         'peso_meta': peso_meta,
         'diferencia_peso': diferencia_peso,
         'porcentaje_completado': porcentaje_completado,
+        'plan_data': plan_data,  # Agregar los datos del plan al contexto
     }
 
     return render(request, 'pacientes/infopaciente.html', contexto)
