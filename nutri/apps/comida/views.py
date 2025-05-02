@@ -5,15 +5,30 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ComidaForm, PlatoForm
 from .models import Comida, Plato, PlatoComida
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseRedirect
 
+
+# Función para verificar si el usuario es nutricionista
+def is_nutricionista(user):
+    return user.is_nutricionista
+
+# Función para verificar si el usuario es paciente
+def is_paciente(user):
+    return user.is_paciente
+
+
+
+# Vista para ver todas las comidas
+@login_required
+@user_passes_test(is_paciente)
 # Create your views here.
 def comida(request):
     comidas = Comida.objects.all()  # Obtén todas las comidas de la base de datos
     return render(request, 'comida/comida.html', {'comidas': comidas})
 
-
+@login_required
+@user_passes_test(is_nutricionista)
 def agregar_comida(request):
     if request.method == 'POST':
         form = ComidaForm(request.POST, request.FILES)
@@ -24,6 +39,7 @@ def agregar_comida(request):
         form = ComidaForm()
     return render(request, 'comida/agregar_comida.html', {'form': form})
 
+@user_passes_test(is_nutricionista)
 def editar_comida(request, pk):
     comida = get_object_or_404(Comida, pk=pk)  # Obtener la comida por ID
 

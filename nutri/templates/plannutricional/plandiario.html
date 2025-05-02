@@ -3,6 +3,8 @@
 {% block title %}PLAN DIARIO{% endblock %}
 {% block content %}
 
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
 <div class="container">
     <div class="section-title">
         <h2>
@@ -19,166 +21,131 @@
                 <input type="radio" name="tabset" id="tab{{ i }}" 
                     aria-controls="dia{{ i }}" 
                     {% if forloop.first %}checked{% endif %}>
-                <label for="tab{{ i }}">Dia {{ i }}</label>
+                <label for="tab{{ i }}">Día {{ i }}</label>
             {% endfor %}
         
             <div class="tab-panels">
                 {% for i in rango_dias %}
-                    <section id="dia{{ i }}" class="tab-panel">
-                        <div class="main-container">
-                            <div>
-                                <div class="button-container">
-                                    <button type="button" class="btn btn-success" onclick="agregarPlato('{{ tipo|lower }}', '{{ i }}')">Lista de platos</button>
+                <section id="dia{{ i }}" class="tab-panel">
+                    <div class="main-container">
+                        <!-- Sidebar compacta -->
+                        <div class="sidebar">
+                            <input type="text" id="searchInput" class="search-box" placeholder="Buscar alimento..." onkeyup="filterList()">
+                            <div class="food-list">
+                                <!-- Desayuno -->
+                                <div class="category" onclick="toggleCategory(this)">
+                                    <span class="toggle-arrow">▼</span>
+                                    <span>Desayuno</span>
                                 </div>
-                                <!-- Barra lateral con lista (oculta) -->
-                                <div id="listaComidas{{ i }}" class="sidebar hidden">
-                                    <input type="text" class="search-box" placeholder="Buscar alimento..." onkeyup="filterList()">
-                                    <div class="food-list">
-                                        {% for plato in platos %}
-                                        <button type="button" class="food-item" onclick="seleccionarComida('{{ plato.nombre }}', '{{ i }}')">
-                                            {{ plato.nombre }}
-                                        </button>
-                                        {% endfor %}
-                                    </div>
+                                <ul>
+                                    {% for plato in platos %}
+                                        {% if plato.tipo == "desayuno" %}
+                                            <li class="plandiario-li">
+                                                <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}', '{{ i }}', 'Desayuno')">
+                                                    {{ plato.nombre }}
+                                                </button>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                                <!-- Almuerzo -->
+                                <div class="category" onclick="toggleCategory(this)">
+                                    <span class="toggle-arrow">▼</span>
+                                    <span>Almuerzo</span>
                                 </div>
-                                <!-- Sidebar visible con categorías -->
-                                <div class="sidebar">
-                                    <input type="text" id="searchInput" class="search-box" placeholder="Buscar alimento..." onkeyup="filterList()">
-                                    <div class="food-list">
-                                        <!-- Desayuno -->
-                                        <div class="category" onclick="toggleCategory(this)">
-                                            <span class="toggle-arrow">▼</span>
-                                            <span>Desayuno</span>
-                                        </div>
-                                        <ul>
-                                            {% for plato in platos %}
-                                                {% if plato.tipo == "desayuno" %}
-                                                    <li class="plandiario-li">
-                                                        <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}', '{{ i }}', 'Desayuno')">
-                                                            {{ plato.nombre }}
-                                                        </button>
-                                                    </li>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                        <!-- Almuerzo -->
-                                        <div class="category" onclick="toggleCategory(this)">
-                                            <span class="toggle-arrow">▼</span>
-                                            <span>Almuerzo</span>
-                                        </div>
-                                        <ul>
-                                            {% for plato in platos %}
-                                                {% if plato.tipo == "almuerzo" %}
-                                                    <li class="plandiario-li">
-                                                        <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}', '{{ i }}', 'Almuerzo')">
-                                                            {{ plato.nombre }}
-                                                        </button>
-                                                    </li>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                        <!-- Merienda -->
-                                        <div class="category" onclick="toggleCategory(this)">
-                                            <span class="toggle-arrow">▼</span>
-                                            <span>Merienda</span>
-                                        </div>
-                                        <ul>
-                                            {% for plato in platos %}
-                                                {% if plato.tipo == "merienda" %}
-                                                    <li class="plandiario-li">
-                                                        <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}', '{{ i }}', 'Merienda')">
-                                                            {{ plato.nombre }}
-                                                        </button>
-                                                    </li>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                        <!-- Cena -->
-                                        <div class="category" onclick="toggleCategory(this)">
-                                            <span class="toggle-arrow">▼</span>
-                                            <span>Cena</span>
-                                        </div>
-                                        <ul>
-                                            {% for plato in platos %}
-                                                {% if plato.tipo == "cena" %}
-                                                    <li class="plandiario-li">
-                                                        <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}', '{{ i }}', 'Cena')">
-                                                            {{ plato.nombre }}
-                                                        </button>
-                                                    </li>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
+                                <ul>
+                                    {% for plato in platos %}
+                                        {% if plato.tipo == "almuerzo" %}
+                                            <li class="plandiario-li">
+                                                <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}', '{{ i }}', 'Almuerzo')">
+                                                    {{ plato.nombre }}
+                                                </button>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                                <!-- Merienda -->
+                                <div class="category" onclick="toggleCategory(this)">
+                                    <span class="toggle-arrow">▼</span>
+                                    <span>Merienda</span>
                                 </div>
+                                <ul>
+                                    {% for plato in platos %}
+                                        {% if plato.tipo == "merienda" %}
+                                            <li class="plandiario-li">
+                                                <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}', '{{ i }}', 'Merienda')">
+                                                    {{ plato.nombre }}
+                                                </button>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                                <!-- Cena -->
+                                <div class="category" onclick="toggleCategory(this)">
+                                    <span class="toggle-arrow">▼</span>
+                                    <span>Cena</span>
+                                </div>
+                                <ul>
+                                    {% for plato in platos %}
+                                        {% if plato.tipo == "cena" %}
+                                            <li class="plandiario-li">
+                                                <button type="button" class="food-item" onclick="abrirModalPlato('{{ plato.idplato }}', '{{ i }}', 'Cena')">
+                                                    {{ plato.nombre }}
+                                                </button>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
                             </div>
-                            <!-- Tabla de comidas -->
-                            <div class="table-container">
-                                <h2>Plan diario</h2>
-                                <table id="tablaComidas{{ i }}" class="bloqueado"></table>
-                                <table>
-                                    <tr>
-                                        <th>Comida</th>
-                                        <th>Platos/Comidas</th>
-                                        <th>Detalles</th>
-                                    </tr>
-                                    <tr>
-                                        <td class="meal-plan">Desayuno</td>
-                                        <td>
-                                            <button type="button" id="btnDesayuno{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Desayuno')">+</button>
-                                            <div id="platoDesayuno{{ i }}" class="selected-comida"></div>
-                                            <input type="hidden" name="plato_dia{{ i }}_desayuno" id="input_platoDesayuno{{ i }}" value="">
-                                        </td>
-                                        <td>
-                                            <div id="detallesDesayuno{{ i }}" class="detalles-comida"></div>
-                                            <textarea class="form-control" name="descripcion_dia{{ i }}_desayuno" rows="2" placeholder="Descripción para el desayuno"></textarea>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="meal-plan">Almuerzo</td>
-                                        <td>
-                                            <button type="button" id="btnAlmuerzo{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Almuerzo')">+</button>
-                                            <div id="platoAlmuerzo{{ i }}" class="selected-comida"></div>
-                                            <input type="hidden" name="plato_dia{{ i }}_almuerzo" id="input_platoAlmuerzo{{ i }}" value="">
-                                        </td>
-                                        <td>
-                                            <div id="detallesAlmuerzo{{ i }}" class="detalles-comida"></div>
-                                            <textarea class="form-control" name="descripcion_dia{{ i }}_almuerzo" rows="2" placeholder="Descripción para el almuerzo"></textarea>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="meal-plan">Merienda</td>
-                                        <td>
-                                            <button type="button" id="btnMerienda{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Merienda')">+</button>
-                                            <div id="platoMerienda{{ i }}" class="selected-comida"></div>
-                                            <input type="hidden" name="plato_dia{{ i }}_merienda" id="input_platoMerienda{{ i }}" value="">
-                                        </td>
-                                        <td>
-                                            <div id="detallesMerienda{{ i }}" class="detalles-comida"></div>
-                                            <textarea class="form-control" name="descripcion_dia{{ i }}_merienda" rows="2" placeholder="Descripción para la merienda"></textarea>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="meal-plan">Cena</td>
-                                        <td>
-                                            <button type="button" id="btnCena{{ i }}" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', 'Cena')">+</button>
-                                            <div id="platoCena{{ i }}" class="selected-comida"></div>
-                                            <input type="hidden" name="plato_dia{{ i }}_cena" id="input_platoCena{{ i }}" value="">
-                                        </td>
-                                        <td>
-                                            <div id="detallesCena{{ i }}" class="detalles-comida"></div>
-                                            <textarea class="form-control" name="descripcion_dia{{ i }}_cena" rows="2" placeholder="Descripción para la cena"></textarea>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <div class="button-group">
-                                    <button type="submit" class="btn btn-success mt-3">Guardar Plato</button>
-                                    <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-danger mt-3">Cancelar</a>
-                                </div>
-                            </div>
-                            <div class="selected-comidas" id="selectedComidas{{ i }}"></div>
                         </div>
-                    </section>
+                
+                        <!-- Tabla de comidas -->
+                        <div class="table-container">
+                            <h2>Plan diario</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>COMIDA</th>
+                                        <th>OPCIÓN 1</th>
+                                        <th>OPCIÓN 2</th>
+                                        <th>OPCIÓN 3</th>
+                                        <th>DETALLES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for tipo in comidas_lista %}
+                                        {% with tipo_lower=tipo|lower %}
+                                            <tr>
+                                                <td>{{ tipo }}</td>
+                                                <td>
+                                                    <button type="button" id="btn{{ tipo }}{{ i }}_1" class="btn btn-success btn-sm" onclick="openPlateModal('{{ i }}', '{{ tipo }}', '1')">+</button>
+                                                    <div id="plato{{ tipo }}{{ i }}_1" class="selected-comida"></div>
+                                                </td>
+                                                <td>
+                                                    <button type="button" id="btn{{ tipo }}{{ i }}_2" class="btn btn-success btn-sm hidden" onclick="openPlateModal('{{ i }}', '{{ tipo }}', '2')">+ Opción</button>
+                                                    <div id="plato{{ tipo }}{{ i }}_2" class="selected-comida"></div>
+                                                </td>
+                                                <td>
+                                                    <button type="button" id="btn{{ tipo }}{{ i }}_3" class="btn btn-success btn-sm hidden" onclick="openPlateModal('{{ i }}', '{{ tipo }}', '3')">+ Opción</button>
+                                                    <div id="plato{{ tipo }}{{ i }}_3" class="selected-comida"></div>
+                                                </td>
+                                                <td>
+                                                    <div id="detalles{{ tipo }}{{ i }}" class="detalles-comida"></div>
+                                                    <textarea class="form-control" name="descripcion_dia{{ i }}_{{ tipo_lower }}" rows="2" placeholder="Descripción para {{ tipo_lower }}"></textarea>
+                                                </td>
+                                            </tr>
+                                        {% endwith %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="button-group">
+                                <button type="submit" class="btn btn-success mt-3">Guardar Plato</button>
+                                <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-danger mt-3">Cancelar</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
                 {% endfor %}
             </div>
         </div>
@@ -209,7 +176,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalComidasPlatoLabel">Comidas del Plato</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -226,909 +193,576 @@
 </div>
 
 <style>
-
-/* Google Fonts - Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
-:root {
-    --primary-color: #31715B;
-    --secondary-color: #EFEBE0;
-    --dark-bg: #1E272E;
-    --dark-text: #D1D8E0;
-    --dark-secondary: #2F3A44;
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
-}
-
-        .section-title {
-            text-align: left;
-            padding: 40px 20px;
-            margin-bottom: 30px;
-            width: 100%;
-            background-color: var(--secondary-color);
-        }
-        .section-title h2 {
-            color: var(--primary-color);
-            font-weight: 900; /* Extra bold */
-            font-size: 72px; /* Much larger size */
-            line-height: 1;
-            text-transform: uppercase;
-            margin: 0;
-            width: 100%;
-            letter-spacing: 2px;
-        }
-        /* Separate "LISTA DE" and "PACIENTES" on two lines */
-        .section-title h2 span {
-            display: block;
-        }
-
-        section.tab-panel{
-            padding: 20px 0 20px 0;
-        }
-
-        
-        .toggle-arrow {
-            color: #31715B;
-        }
-
-        .main-container {
-            display: flex;
-            flex-direction: row;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Estilos para la barra lateral */
-        .sidebar {
-            background: #333333;
-            color: white;
-            padding: 20px;
-            width: 250px;
-            border-radius: 10px;
-            margin-right: 20px;
-            min-height: 500px;
-        }
-        
-        /* Estilo para el campo de búsqueda */
-        .search-box {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-            background-color: #f0f0f0; /* Fondo gris claro */
-            color: black; /* Texto negro */
-        }
-
-        #miTabla {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: white;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Estilos (sin cambios) */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    
+    :root {
+        --primary-color: #2A9D8F;
+        --primary-light: #4FBDAF;
+        --primary-dark: #1E7268;
+        --accent-color: #E9C46A;
+        --text-primary: #264653;
+        --text-secondary: #607B83;
+        --bg-light: #F8F9FA;
+        --bg-white: #FFFFFF;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+        --radius-sm: 6px;
+        --radius-md: 12px;
+        --radius-lg: 20px;
     }
-
-    #miTabla thead th {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 12px;
+    
+    body {
+        font-family: 'Inter', 'Poppins', sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-primary);
+        line-height: 1.6;
+    }
+    
+    .section-title {
         text-align: left;
-        font-weight: 600;
+        padding: 32px 24px;
+        margin-bottom: 24px;
+        position: relative;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(120deg, var(--primary-color), var(--primary-dark));
     }
-
-    #miTabla tbody td {
-        padding: 10px;
-        border-bottom: 1px solid var(--secondary-color);
-        transition: all 0.3s ease;
-    }
-
-    #miTabla tbody tr:hover {
-        background-color: #f5f5f5;
-    }
-
-        .btn-success {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
+    
+    .section-title h2 {
         color: white;
+        font-weight: 800;
+        font-size: 3.5rem;
+        line-height: 1.1;
+        text-transform: uppercase;
+        margin: 0;
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 2;
     }
-
-    .btn-success:hover {
-        background-color: #255747;
-        border-color: #255747;
-    }
-
-        .food-list, .food-list-modal {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        /* Ancho de la barra de scroll */
-        .food-list::-webkit-scrollbar, .food-list-modal::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        /* Fondo de la pista de scroll */
-        .food-list::-webkit-scrollbar-track, .food-list-modal::-webkit-scrollbar-track {
-            background: #555; 
-            border-radius: 10px;
-        }
-
-        /* Color y estilo de la "thumb" (la parte que se mueve) */
-        .food-list::-webkit-scrollbar-thumb, .food-list-modal::-webkit-scrollbar-thumb {
-            background: #31715B; 
-            border-radius: 10px;
-            border: 2px solid #333; /* Añade un borde para que se vea con más contraste */
-        }
-
-        /* Opcional: cuando el usuario pasa el mouse por encima */
-        .food-list::-webkit-scrollbar-thumb:hover, .food-list-modal::-webkit-scrollbar-thumb:hover {
-            background: #31715B; /* Un poco más claro u oscuro para efecto hover */
-        }
-
-        .category {
-            font-weight: bold;
-            margin: 10px 0;
-            position: relative;
-            cursor: pointer;
-        }
-        ul {
-            list-style-type: none;
-            padding-left: 20px;
-        }
-        .plandiario-li {
-            padding: 5px 0;
-            font-size: 14px;
-            border-bottom: 1px solid #555;
-        }
-        .benefit-bar {
-            width: 20px;
-            height: 100%;
-            background: linear-gradient(to bottom, #29ca8e, #333);
-            border-radius: 10px;
-            position: relative;
-        }
-        .benefit-bar::before, .benefit-bar::after {
-            content: "⬆ Benefit";
-            position: absolute;
-            left: -40px;
-            font-size: 12px;
-            color: white;
-        }
-        .benefit-bar::after {
-            content: "⬇ Harm";
-            top: calc(100% - 15px);
-        }
-
-        /* Estilos para la tabla */
-        .table-container {
-            flex: 1;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 14px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #31715B;
-            color: white;
-        }
-        .meal-plan {
-            font-weight: bold;
-        }
-
-    .tabset > input[type="radio"] {
+    
+    .section-title::after {
+        content: '';
         position: absolute;
-        left: -200vw;
+        bottom: 0;
+        right: 0;
+        width: 120px;
+        height: 120px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.15)' stroke-width='2'%3E%3Cpath d='M2.27 21.7s9.87-3.5 12.73-6.36a4.5 4.5 0 0 0 0-6.36 4.5 4.5 0 0 0-6.36 0c-2.86 2.86-6.36 12.73-6.36 12.73z'%3E%3C/path%3E%3Cpath d='M15.42 12.28 21.7 6'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        opacity: 0.8;
+        z-index: 1;
     }
-
-    .tabset .tab-panel {
-        display: none;
-    }
-
-    /* Dynamic tab selector with JS */
-    .tabset > input:checked ~ .tab-panels > .tab-panel {
-        display: none;
-    }
-
+    
     .tabset > label {
         position: relative;
-        display: inline-block;
-        padding: 10px 15px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 20px;
+        margin-right: 8px;
+        margin-bottom: 10px;
         cursor: pointer;
         font-weight: 600;
-        background: #f8f9fa;
-        border: 1px solid #ccc;
-        border-bottom: none;
-        border-radius: 5px 5px 0 0;
+        font-size: 15px;
+        color: var(--text-secondary);
+        background: var(--bg-white);
+        border: none;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        overflow: hidden;
     }
-
-    .tabset > label:hover,
+    
+    .tabset > label::before {
+        font-family: 'Material Symbols Rounded', sans-serif;
+        content: 'calendar_month';
+        margin-right: 8px;
+        font-size: 18px;
+    }
+    
     .tabset > input:checked + label {
-        background: #31715B;
+        background: var(--primary-light);
+        color: white;
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+    
+    /* Ajuste para ocultar todas las pestañas por defecto */
+    .tab-panel {
+        display: none;
+    }
+    
+    /* Mostrar solo la pestaña activa */
+    .tab-panel.active {
+        display: block;
+    }
+    
+    .tab-panels {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: 30px;
+        margin-top: 15px;
+        position: relative;
+    }
+    
+    .tab-panels::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 20px 0;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    th {
+        background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        padding: 16px;
+        border: none;
+    }
+    
+    td {
+        padding: 14px 16px;
+        border: none;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        background-color: var(--bg-white);
+        transition: background-color 0.2s;
+    }
+    
+    tr:last-child td {
+        border-bottom: none;
+    }
+    
+    tr:hover td {
+        background-color: rgba(42, 157, 143, 0.05);
+    }
+    
+    .meal-plan {
+        font-weight: 600;
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+    }
+    
+    /* .meal-plan::before {
+        font-family: 'Material Symbols Rounded', sans-serif;
+        margin-right: 8px;
+        font-size: 20px;
+    }
+    
+    td.meal-plan:nth-of-type(1)::before { content: 'breakfast_dining'; }
+    td.meal-plan:nth-of-type(2)::before { content: 'lunch_dining'; }
+    td.meal-plan:nth-of-type(3)::before { content: 'dinner_dining'; }
+    td.meal-plan:nth-of-type(4)::before { content: 'restaurant'; } */
+    
+    .sidebar {
+        background: var(--text-primary);
+        color: white;
+        padding: 20px;
+        width: 200px;
+        flex-shrink: 0;
+        border-radius: var(--radius-lg);
+        margin-right: 24px;
+        min-height: 500px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .sidebar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='2'%3E%3Cpath d='M12 2a8 8 0 0 0-8 8c0 5 8 12 8 12s8-7 8-12a8 8 0 0 0-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        opacity: 0.5;
+    }
+    
+    .search-box {
+        width: 100%;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(255,255,255,0.1);
+        outline: none;
+        font-size: 14px;
+        background-color: rgba(255,255,255,0.1);
+        color: white;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+    }
+    
+    .search-box::placeholder {
+        color: rgba(255,255,255,0.6);
+    }
+    
+    .search-box:focus {
+        background-color: rgba(255,255,255,0.15);
+        border-color: rgba(255,255,255,0.3);
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+    }
+    
+    .category {
+        font-weight: 600;
+        margin: 14px 0 10px;
+        padding: 8px 12px;
+        border-radius: var(--radius-sm);
+        background: rgba(255,255,255,0.1);
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+    
+    .toggle-arrow {
+        margin-right: 8px;
+        transition: transform 0.3s ease;
+    }
+    
+    .category.collapsed .toggle-arrow {
+        transform: rotate(-90deg);
+    }
+    
+    .food-item {
+        width: 100%;
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.8);
+        text-align: left;
+        font-size: 14px;
+        padding: 10px 12px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-bottom: 2px;
+    }
+    
+    .food-item:hover {
+        background-color: rgba(255,255,255,0.1);
+        color: white;
+        transform: translateX(3px);
+    }
+    
+    .btn {
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        padding: 10px 18px;
+        transition: all 0.3s ease;
+        border: none;
+        letter-spacing: 0.3px;
+        font-size: 14px;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .btn-success {
+        background-color: var(--primary-color);
         color: white;
     }
-
-    .tab-panels {
-        
-        padding: 10px 10px 10px 0;
-        border-radius: 0 5px 5px 5px;
-    }
-
-    .button-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px; /* Espacio entre los botones y la barra lateral */}
     
-
-    .food-item {
-    width: 100%;
-    background: none;
-    border: none;
-    color: white;
-    text-align: left;
-    font-size: 14px;
-    padding: 8px;
-    cursor: pointer;
-}
-
-.food-item:hover {
-    background-color: #31715B;
-    border-radius: 5px;
-}
-
-.food-list-modal .food-item {
-    color: #333;
-    border-bottom: 1px solid #eee;
-    padding: 10px;
-}
-
-.food-list-modal .food-item:hover {
-    background-color: #f0f0f0;
-    color: #31715B;
-}
-
-.button-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 100px;
-    justify-content: right;
-}
-
-
-.selected-comida {
-    color: black;
-    padding: 5px 10px;
-    border-radius: 5px;
-    display: block;
-    margin-left: 5px;
-}
-
-.hidden { display: none; }
-.selected-comidas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-}
-.selected-comida {
-    color: black;
-    padding: 8px 12px;
-    border-radius: 5px;
-    display: block;
-    align-items: center;
-    gap: 5px;
-}
-#tabla-oscura {
-    pointer-events: none;
-    opacity: 0.5; /* Para que se vea visualmente deshabilitada */
-}
-
-/* Añade estos estilos al final de tu sección de estilos */
-
-/* Estilos para el modal de comidas */
-.comida-item {
-    border-bottom: 1px solid #eee;
-    padding: 10px 0;
-    margin-bottom: 5px;
-}
-
-.comida-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.comida-detalles {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 5px;
-    font-size: 0.9em;
-    color: #666;
-}
-
-.comida-detalles span {
-    background-color: #f8f9fa;
-    padding: 3px 8px;
-    border-radius: 4px;
-}
-
-/* Para aumentar el tamaño del modal */
-@media (min-width: 576px) {
-    #comidaModal .modal-dialog {
-        max-width: 600px;
+    .btn-success:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
     }
-}
-
-/* Mejorar el estilo de la lista de comidas */
-#comidaLista {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.detalles-comida {
-    font-size: 12px;
-    color: #333;
-    padding: 5px;
-    max-width: 200px; /* Ajusta según necesites */
-    word-wrap: break-word;
-}
-
-/* BRAIAN */
-/* Estilos para el contenedor de la comida */
-.comida-container {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-/* Estilos para la imagen de la comida */
-.comida-imagen {
-    width: 100px;
-    height: 100px;
-    border-radius: 10px;
-    object-fit: cover;
-}
-
-/* Estilos para la información de la comida */
-.comida-info {
-    flex: 1;
-}
-
-/* Estilos para el modal */
-#modalComidasPlato .modal-content {
-    border-radius: 10px;
-}
-
-#modalComidasPlato .modal-header {
-    background-color: #31715B;
-    color: white;
-    border-radius: 10px 10px 0 0;
-}
-
-#modalComidasPlato .modal-body {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-#modalComidasPlato .list-group-item {
-    border: none;
-    border-bottom: 1px solid #eee;
-    padding: 10px;
-}
-
-#modalComidasPlato .list-group-item:hover {
-    background-color: #f8f9fa;
-}
-
-/* MODERNIZACION */
-
-/* Estilos modernos para los tabs de días */
-.tabset {
-    position: relative;
-    width: 100%;
-    margin-bottom: 30px;
-}
-
-.tabset > input[type="radio"] {
-    position: absolute;
-    left: -200vw;
-}
-
-.tabset .tab-panel {
-    display: none;
-}
-
-.tabset > label {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px 24px;
-    margin-right: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 15px;
-    color: #666;
-    background: #f8f9fa;
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.tabset > label::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: #31715B;
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-    z-index: -1;
-}
-
-.tabset > label:hover {
-    background: #ffffff;
-    color: #31715B;
-    box-shadow: 0 4px 12px rgba(49, 113, 91, 0.15);
-}
-
-.tabset > input:checked + label {
-    background: #ffffff;
-    color: #31715B;
-    box-shadow: 0 4px 15px rgba(49, 113, 91, 0.25);
-}
-
-.tabset > input:checked + label::before {
-    transform: scaleX(1);
-}
-
-.tabset > input:focus + label {
-    box-shadow: 0 0 0 2px rgba(49, 113, 91, 0.3), 0 4px 15px rgba(49, 113, 91, 0.25);
-}
-
-.tab-panels {
-    background: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    padding: 25px;
-    margin-top: 10px;
-}
-
-/* Indicador de tab activo con animación */
-.tabset > input:checked + label::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
-    height: 3px;
-    background: #31715B;
-    border-radius: 3px 3px 0 0;
-    animation: tabActive 0.3s ease forwards;
-}
-
-@keyframes tabActive {
-    from { width: 0; }
-    to { width: 60%; }
-}
-
-/* Adaptación para móviles */
-@media (max-width: 768px) {
-    .tabset {
+    
+    .btn-danger {
+        background-color: #E76F51;
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c35a41;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 13px;
+        border-radius: var(--radius-sm);
+    }
+    
+    .button-group {
         display: flex;
-        overflow-x: auto;
-        padding-bottom: 10px;
-        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+        margin-top: 30px;
+        justify-content: flex-end;
     }
     
-    .tabset > label {
-        flex: 0 0 auto;
+    /* Ajuste para mostrar múltiples platos en una celda */
+    .selected-comida {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .selected-comida button {
+        background-color: rgba(233, 196, 106, 0.2);
+        border: 1px solid var(--accent-color);
+        color: var(--text-primary);
+        padding: 8px 30px 8px 12px;
+        border-radius: var(--radius-sm);
+        display: inline-flex;
+        align-items: center;
+        margin: 4px 0;
         font-size: 14px;
-        padding: 12px 18px;
+        position: relative;
+        transition: all 0.2s ease;
     }
     
-    .tab-panels {
-        padding: 15px;
+    .selected-comida button:hover {
+        background-color: rgba(233, 196, 106, 0.3);
     }
+    
+    .remove-plato {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(231, 111, 81, 0.1);
+        color: #E76F51;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .remove-plato:hover {
+        background: rgba(231, 111, 81, 0.2);
+        transform: translateY(-50%) scale(1.1);
+    }
+    
+    .modal-content {
+        border: none;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .modal-header {
+        background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+        color: white;
+        border: none;
+        padding: 16px 24px;
+    }
+    
+    .modal-title {
+        font-weight: 600;
+        font-size: 18px;
+    }
+    
+    .modal-body {
+        padding: 24px;
+    }
+    
+    .modal-footer {
+        border-top: 1px solid rgba(0,0,0,0.05);
+        padding: 16px 24px;
+    }
+    
+    .comida-container {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px;
+        border-radius: var(--radius-md);
+        transition: all 0.2s ease;
+    }
+    
+    .comida-container:hover {
+        background-color: rgba(42, 157, 143, 0.05);
+    }
+    
+    .comida-imagen {
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius-md);
+        object-fit: cover;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .comida-info {
+        flex: 1;
+    }
+    
+    .comida-info strong {
+        color: var(--text-primary);
+        font-size: 16px;
+    }
+    
+    .comida-info small {
+        color: var(--text-secondary);
+    }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(42, 157, 143, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(42, 157, 143, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(42, 157, 143, 0); }
+    }
+    
+    .btn-success:focus {
+        animation: pulse 1.5s infinite;
+    }
+    
+    .form-control {
+        border-radius: var(--radius-md);
+        border-color: rgba(0,0,0,0.1);
+        padding: 10px 14px;
+        transition: all 0.2s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.15);
+    }
+    
+    textarea.form-control {
+        min-height: 60px;
+        resize: vertical;
+    }
+    
+    .main-container {
+        display: flex;
+        flex-direction: row;
+        background: var(--bg-white);
+        padding: 30px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+        gap: 24px;
+    }
+    
+    .nutrition-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        color: var(--text-secondary);
+        font-size: 12px;
+    }
+    
+    .nutrition-bar {
+        height: 4px;
+        width: 100%;
+        background-color: #eee;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    
+    .nutrition-fill {
+        height: 100%;
+        background: linear-gradient(to right, #4CAF50, #8BC34A);
+        border-radius: 2px;
+    }
+    
+    .category-comidas {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .category-comidas .food-item {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .category-comidas .food-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+    
+    .hidden { display: none; }
+    
+    /* ponlo después de los demás estilos de la tabla  */
+    th, td {
+        vertical-align: top;   /* contenido pegado al borde superior */
+    }
+    
+    .table-container {
+        flex-grow: 1;
+    }
+
+    .table-container table {
+    min-width: 800px;
 }
 
-/* Añadir un pequeño ícono de calendario a cada tab */
-.tabset > label::before {
-    font-family: 'Poppins', sans-serif;
-    content: '📅';
-    margin-right: 8px;
-    font-size: 16px;
-    opacity: 0.7;
+th:first-child,
+td.meal-plan {
+    width: 100px;
+    white-space: nowrap;
 }
 
-/* Efecto de transición suave entre tabs */
-.tab-panel {
-    transition: opacity 0.3s ease;
-    opacity: 0;
+/* Pantalla completa */
+.container {
+    width: 100%;
+    max-width: none;
+    padding: 0 40px;
 }
 
-.tab-panel.active {
-    opacity: 1;
+/* Elimina íconos de la columna COMIDA */
+.meal-plan::before {
+    display: none !important;
 }
 
-</style>
+/* Reduce ancho de columna COMIDA */
+th:first-child,
+td.meal-plan {
+    width: 120px;
+    white-space: nowrap;
+}
+
+/* Sidebar más angosto */
+.sidebar {
+    width: 180px;
+}
+
+/* Expande tabla al máximo espacio posible */
+.main-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.table-container {
+    flex-grow: 1;
+    width: 100%;
+}
+
+    
+    </style>
+
+
 
 <script>
-    let platoSeleccionadoId = null;
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        // (Estilos adicionales para la X de eliminar)
-        const style = document.createElement('style');
-        style.textContent = `
-            .selected-comida {
-                position: relative;
-                padding-right: 25px !important;
-                margin: 5px;
-                display: inline-block;
-            }
-            .remove-plato {
-                position: absolute;
-                right: 5px;
-                top: 50%;
-                transform: translateY(-50%);
-                cursor: pointer;
-                font-weight: bold;
-                color: red;
-            }
-        `;
-        document.head.appendChild(style);
+let platoSeleccionadoId = null;
+let opcionSeleccionada = null;
 
-        // Configurar event listeners para tabs
-        const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
-        tabInputs.forEach(input => {
-            input.addEventListener('change', function() {
-                seleccionHabilitada = false;
-                diaSeleccionado = null;
-                comidaSeleccionada = null;
-                document.querySelectorAll('.tab-panel').forEach(panel => {
-                    panel.style.display = 'none';
-                });
-                const panelId = this.getAttribute('aria-controls');
-                document.getElementById(panelId).style.display = 'block';
-            });
-        });
-        // Mostrar el primer panel inicialmente
-        if (tabInputs.length > 0) {
-            const firstPanelId = tabInputs[0].getAttribute('aria-controls');
-            document.getElementById(firstPanelId).style.display = 'block';
-        }
-    });
-    
-    let seleccionHabilitada = false;
-    let diaSeleccionado = null;
-    let comidaSeleccionada = null;
-    
-    function toggleCategory(categoryElement) {
-        const arrowElement = categoryElement.querySelector('.toggle-arrow');
-        arrowElement.innerHTML = (arrowElement.innerHTML === "▼") ? "▶" : "▼";
-        const categoryItems = categoryElement.nextElementSibling;
-        categoryItems.classList.toggle("hidden");
-    }
-    
-    function filterList() {
-        const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-        const items = document.querySelectorAll('.food-list li');
-        if (searchTerm) {
-            document.querySelectorAll('.category-items').forEach(list => {
-                list.classList.add("hidden");
-            });
-        }
-        let visibleCategories = new Set();
-        items.forEach(item => {
-            const text = item.textContent.toLowerCase();
-            if (text.includes(searchTerm)) {
-                item.style.display = "";
-                const categoryList = item.parentElement;
-                visibleCategories.add(categoryList);
-            } else {
-                item.style.display = "none";
-            }
-        });
-        visibleCategories.forEach(categoryList => {
-            categoryList.classList.remove("hidden");
-            const categoryHeader = categoryList.previousElementSibling;
-            const arrow = categoryHeader.querySelector(".toggle-arrow");
-            if (arrow) arrow.innerHTML = "▼";
-        });
-        if (!searchTerm) {
-            document.querySelectorAll('.category-items').forEach(list => {
-                list.classList.remove("hidden");
-            });
-            document.querySelectorAll('.toggle-arrow').forEach(arrow => {
-                arrow.innerHTML = "▼";
-            });
-        }
-    }
-    
-    function habilitarSeleccion(dia, comida) {
-        seleccionHabilitada = true;
-        diaSeleccionado = dia;
-        comidaSeleccionada = comida;
-        console.log(`Habilitado - Día: ${diaSeleccionado}, Comida: ${comidaSeleccionada}`);
-    }
-    
-    function seleccionarComida(nombre, dia) {
-    event.preventDefault();
-    if (seleccionHabilitada && diaSeleccionado === dia) {
-        let divId = `plato${comidaSeleccionada}${dia}`;
-        let inputName = `plato_dia${dia}_${comidaSeleccionada.toLowerCase()}`;
-        let divPlato = document.getElementById(divId);
-
-        if (divPlato) {
-            // Creamos un botón que muestra el nombre del plato seleccionado
-            let platoElement = document.createElement("button");
-            platoElement.setAttribute("type", "button");
-            platoElement.classList.add("selected-comida");
-            platoElement.innerText = nombre;
-
-            // Botón para eliminar
-            let removeBtn = document.createElement("span");
-            removeBtn.classList.add("remove-plato");
-            removeBtn.innerHTML = "×";
-            removeBtn.onclick = function (e) {
-                e.stopPropagation();
-                platoElement.remove();
-                // Eliminamos el input oculto correspondiente
-                document.querySelector(`input[name="${inputName}"][value="${platoSeleccionadoId}"]`).remove();
-            };
-            platoElement.appendChild(removeBtn);
-
-            // Insertamos el botón en el div
-            divPlato.appendChild(platoElement);
-
-            // Creamos un input oculto para el plato seleccionado
-            let inputHidden = document.createElement("input");
-            inputHidden.type = "hidden";
-            inputHidden.name = inputName;
-            inputHidden.value = platoSeleccionadoId;
-            divPlato.appendChild(inputHidden);
-
-            // Deshabilitamos la selección
-            seleccionHabilitada = false;
-            diaSeleccionado = null;
-            comidaSeleccionada = null;
-            $('#plateModal').modal('hide');
-            $('#modalComidasPlato').modal('hide');
-        }
-    }
-}
-
-    function openPlateModal(dia, comida) {
-    habilitarSeleccion(dia, comida);
-    console.log(`Abriendo modal "plateModal" para Día: ${dia}, Comida: ${comida}`);
-    $('#plateModal').modal('show');
-    
-    // Mostrar el botón "Guardar" del modal cuando se hace clic en "+"
-    const guardarModalBtn = document.getElementById('guardarModalBtn');
-    if (guardarModalBtn) {
-        guardarModalBtn.classList.remove('hidden');
-    }
-}
-    
-    function abrirModalPlato(idPlato, dia, comida) {
-        console.log(`Abriendo modalComidasPlato para plato ID: ${idPlato}, Día: ${dia}, Comida: ${comida}`);
-        document.getElementById('listaComidasPlato').innerHTML = 'Cargando...';
-        platoSeleccionadoId = idPlato;
-        if (dia && comida) {
-            habilitarSeleccion(dia, comida);
-        }
-        $('#modalComidasPlato').modal('show');
-
-        fetch(`/comida/obtener_comidas_plato/${idPlato}/`)
-            .then(response => {
-                if (!response.ok) throw new Error('Error en la solicitud');
-                return response.json();
-            })
-            .then(data => {
-                if (data.comidas && data.comidas.length > 0) {
-                    let html = '<ul class="list-group">';
-                    data.comidas.forEach(comida => {
-                        html += `
-                            <li class="list-group-item" data-id="${comida.id}">
-                                <div class="comida-container">
-                                    <img src="${comida.imagen}" alt="${comida.nombre}" class="comida-imagen">
-                                    <div class="comida-info">
-                                        <strong>${comida.nombre}</strong><br>
-                                        <small>Calorías: ${comida.calorias} kcal</small><br>
-                                    </div>
-                                </div>
-                            </li>
-                        `;
-                    });
-                    html += '</ul>';
-                    document.getElementById('listaComidasPlato').innerHTML = html;
-
-                    // Añadir evento para guardar el peso
-                    document.querySelectorAll('.guardar-peso').forEach(button => {
-                        button.addEventListener('click', function() {
-                            const id = this.getAttribute('data-id');
-                            const pesoInput = document.querySelector(`.peso-input[data-id="${id}"]`);
-                            guardarPeso(id, pesoInput.value);
-                        });
-                    });
-                } else {
-                    document.getElementById('listaComidasPlato').innerHTML = 'No hay comidas asociadas a este plato.';
-                }
-            })
-            .catch(error => {
-                console.error('Error al obtener las comidas:', error);
-                document.getElementById('listaComidasPlato').innerHTML = 'Error al cargar las comidas.';
-            });
-    }
-
-    function guardarPeso(id, nuevoPeso) {
-        fetch('/actualizar_peso_plato_comida/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify({ id: id, peso: nuevoPeso })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Peso actualizado correctamente');
-            } else {
-                alert('Error al actualizar el peso: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error al guardar el peso:', error);
-            alert('Error al guardar el peso');
-        });
-    }
-    
-    function guardarPlatoDesdeModal() {
-    if (seleccionHabilitada && diaSeleccionado && comidaSeleccionada && platoSeleccionadoId) {
-        const platoButton = document.querySelector(`button[onclick*="abrirModalPlato('${platoSeleccionadoId}'"]`);
-        const nombrePlato = platoButton ? platoButton.textContent.trim() : "Plato desconocido";
-        seleccionarComida(nombrePlato, diaSeleccionado);
-        
-        // Opcional: Ocultar el botón "Guardar" después de guardar
-        const guardarModalBtn = document.getElementById('guardarModalBtn');
-        if (guardarModalBtn) {
-            guardarModalBtn.classList.add('hidden');
-        }
-    } else {
-        console.warn("No se puede guardar el plato: faltan datos de selección");
-        alert("Por favor, selecciona un día y comida para poder guardar.");
-    }
-}
-    
-    // Si en algún momento quieres actualizar la sidebar dinámicamente:
-    function actualizarBotonesSidebar() {
-        document.querySelectorAll('.food-item').forEach(button => {
-            const idPlato = button.getAttribute('onclick').match(/'(\d+)'/)[1];
-            const dia = button.closest('.tab-panel').id.replace('dia', '');
-            const comida = button.closest('ul').previousElementSibling.querySelector('span:nth-child(2)').textContent;
-            button.setAttribute('onclick', `abrirModalPlato('${idPlato}', '${dia}', '${comida}')`);
-        });
-    }
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-    // Configurar event listeners para tabs con animación
-    const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
-    
-    tabInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            seleccionHabilitada = false;
-            diaSeleccionado = null;
-            comidaSeleccionada = null;
-            
-            // Primero, eliminamos la clase active de todos los paneles
-            document.querySelectorAll('.tab-panel').forEach(panel => {
-                panel.style.display = 'none';
-                panel.classList.remove('active');
-            });
-            
-            // Obtenemos el panel que debemos mostrar
-            const panelId = this.getAttribute('aria-controls');
-            const targetPanel = document.getElementById(panelId);
-            
-            // Configuramos el panel como visible pero con opacidad 0
-            targetPanel.style.display = 'block';
-            
-            // Forzamos un reflow para que la transición funcione
-            void targetPanel.offsetWidth;
-            
-            // Añadimos la clase active para animar la opacidad
-            targetPanel.classList.add('active');
-            
-            // Efecto de "ripple" en el tab seleccionado
-            createRippleEffect(this.nextElementSibling, event);
-        });
-    });
-    
-    // Mostrar el primer panel inicialmente con animación
-    if (tabInputs.length > 0) {
-        const firstPanelId = tabInputs[0].getAttribute('aria-controls');
-        const firstPanel = document.getElementById(firstPanelId);
-        firstPanel.style.display = 'block';
-        
-        // Pequeño retraso para que la animación se vea
-        setTimeout(() => {
-            firstPanel.classList.add('active');
-        }, 50);
-    }
-    
-    // Función para crear efecto de onda al hacer clic en un tab
-    function createRippleEffect(element, e) {
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
-        
-        // Posicionamos el elemento en función del evento de clic
-        const rect = element.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e ? e.clientX - rect.left - size / 2 : rect.width / 2;
-        const y = e ? e.clientY - rect.top - size / 2 : rect.height / 2;
-        
-        ripple.style.width = ripple.style.height = `${size}px`;
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        
-        element.appendChild(ripple);
-        
-        // Eliminamos el efecto después de la animación
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
-    }
-    
-    // Añadir estilos para el efecto ripple
-    const rippleStyle = document.createElement('style');
-    rippleStyle.textContent = `
-        .tabset > label {
-            position: relative;
-            overflow: hidden;
-        }
-        .ripple {
-            position: absolute;
-            background-color: rgba(49, 113, 91, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-effect 0.6s ease-out;
-            pointer-events: none;
-        }
-        @keyframes ripple-effect {
-            to {
-                transform: scale(2.5);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(rippleStyle);
-    
-    // El resto del código existente...
-    // (Estilos adicionales para la X de eliminar)
+document.addEventListener('DOMContentLoaded', function() {
+    // Estilos adicionales para la X de eliminar
     const style = document.createElement('style');
     style.textContent = `
         .selected-comida {
@@ -1148,166 +782,257 @@ body {
         }
     `;
     document.head.appendChild(style);
-});
 
-// El resto de las funciones existentes permanecen igual...
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Configurar event listeners para tabs con animación
+    // Configurar event listeners para tabs
     const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
-    
     tabInputs.forEach(input => {
         input.addEventListener('change', function() {
             seleccionHabilitada = false;
             diaSeleccionado = null;
             comidaSeleccionada = null;
-            
-            // Reset all tabs to default state
-            document.querySelectorAll('.tabset > label').forEach(label => {
-                label.classList.remove('active-tab');
-            });
-            
-            // Add active class to the selected tab
-            this.nextElementSibling.classList.add('active-tab');
-            
-            // Primero, eliminamos la clase active de todos los paneles
+            opcionSeleccionada = null;
             document.querySelectorAll('.tab-panel').forEach(panel => {
                 panel.style.display = 'none';
                 panel.classList.remove('active');
             });
-            
-            // Obtenemos el panel que debemos mostrar
             const panelId = this.getAttribute('aria-controls');
             const targetPanel = document.getElementById(panelId);
-            
-            // Configuramos el panel como visible pero con opacidad 0
             targetPanel.style.display = 'block';
-            
-            // Forzamos un reflow para que la transición funcione
-            void targetPanel.offsetWidth;
-            
-            // Añadimos la clase active para animar la opacidad
-            targetPanel.classList.add('active');
-            
-            // Efecto de "ripple" en el tab seleccionado
+            setTimeout(() => {
+                targetPanel.classList.add('active');
+            }, 50);
             createRippleEffect(this.nextElementSibling, event);
         });
     });
-    
-    // Mostrar el primer panel inicialmente con animación
+
+    // Mostrar el primer panel inicialmente
     if (tabInputs.length > 0) {
         const firstPanelId = tabInputs[0].getAttribute('aria-controls');
         const firstPanel = document.getElementById(firstPanelId);
         firstPanel.style.display = 'block';
-        
-        // Add active class to the first tab
-        tabInputs[0].nextElementSibling.classList.add('active-tab');
-        
-        // Pequeño retraso para que la animación se vea
         setTimeout(() => {
             firstPanel.classList.add('active');
         }, 50);
     }
-    
-    // Add indicator dot to all tab labels
-    document.querySelectorAll('.tabset > label').forEach(label => {
-        const indicator = document.createElement('span');
-        indicator.classList.add('tab-indicator');
-        label.appendChild(indicator);
-    });
-    
-    // Función para crear efecto de onda al hacer clic en un tab
-    function createRippleEffect(element, e) {
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
-        
-        // Posicionamos el elemento en función del evento de clic
-        const rect = element.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e ? e.clientX - rect.left - size / 2 : rect.width / 2;
-        const y = e ? e.clientY - rect.top - size / 2 : rect.height / 2;
-        
-        ripple.style.width = ripple.style.height = `${size}px`;
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        
-        element.appendChild(ripple);
-        
-        // Eliminamos el efecto después de la animación
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
-    }
-    
-    // Añadir estilos para el efecto ripple y tab activo
-    const additionalStyles = document.createElement('style');
-    additionalStyles.textContent = `
-        .tabset > label {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .tabset > label.active-tab {
-            transform: scale(1.05);
-            z-index: 2;
-            box-shadow: 0 4px 20px rgba(49, 113, 91, 0.3);
-        }
-        
-        .tab-indicator {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 10px;
-            height: 10px;
-            background-color: transparent;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .active-tab .tab-indicator {
-            background-color: #ff3333;
-            box-shadow: 0 0 5px #ff3333, 0 0 10px rgba(255, 51, 51, 0.5);
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7);
-            }
-            
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 5px rgba(255, 51, 51, 0);
-            }
-            
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(255, 51, 51, 0);
-            }
-        }
-        
-        .ripple {
-            position: absolute;
-            background-color: rgba(49, 113, 91, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-effect 0.6s ease-out;
-            pointer-events: none;
-        }
-        
-        @keyframes ripple-effect {
-            to {
-                transform: scale(2.5);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(additionalStyles);
-    
-    // El resto del código existente...
+
+    // Inicializar visibilidad de botones de opciones
+    updateOptionButtons();
 });
 
+let seleccionHabilitada = false;
+let diaSeleccionado = null;
+let comidaSeleccionada = null;
+
+function toggleCategory(categoryElement) {
+    const arrowElement = categoryElement.querySelector('.toggle-arrow');
+    arrowElement.innerHTML = (arrowElement.innerHTML === "▼") ? "▶" : "▼";
+    const categoryItems = categoryElement.nextElementSibling;
+    categoryItems.classList.toggle("hidden");
+}
+
+function filterList() {
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+    const items = document.querySelectorAll('.food-list li');
+    if (searchTerm) {
+        document.querySelectorAll('.category-items').forEach(list => {
+            list.classList.add("hidden");
+        });
+    }
+    let visibleCategories = new Set();
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+            item.style.display = "";
+            const categoryList = item.parentElement;
+            visibleCategories.add(categoryList);
+        } else {
+            item.style.display = "none";
+        }
+    });
+    visibleCategories.forEach(categoryList => {
+        categoryList.classList.remove("hidden");
+        const categoryHeader = categoryList.previousElementSibling;
+        const arrow = categoryHeader.querySelector(".toggle-arrow");
+        if (arrow) arrow.innerHTML = "▼";
+    });
+    if (!searchTerm) {
+        document.querySelectorAll('.category-items').forEach(list => {
+            list.classList.remove("hidden");
+        });
+        document.querySelectorAll('.toggle-arrow').forEach(arrow => {
+            arrow.innerHTML = "▼";
+        });
+    }
+}
+
+function habilitarSeleccion(dia, comida, opcion) {
+    seleccionHabilitada = true;
+    diaSeleccionado = dia;
+    comidaSeleccionada = comida;
+    opcionSeleccionada = opcion;
+    console.log(`Habilitado - Día: ${diaSeleccionado}, Comida: ${comidaSeleccionada}, Opción: ${opcionSeleccionada}`);
+}
+
+function seleccionarComida(nombre, dia, idPlato) {
+    event.preventDefault();
+    if (seleccionHabilitada && diaSeleccionado === dia) {
+        let divId = `plato${comidaSeleccionada}${dia}_${opcionSeleccionada}`;
+        let inputName = `plato${opcionSeleccionada}_dia${dia}_${comidaSeleccionada.toLowerCase()}`;
+        let divPlato = document.getElementById(divId);
+
+        if (divPlato) {
+            // Crear el botón del plato seleccionado
+            let platoElement = document.createElement("button");
+            platoElement.setAttribute("type", "button");
+            platoElement.classList.add("selected-comida");
+            platoElement.innerText = nombre;
+
+            // Botón para eliminar
+            let removeBtn = document.createElement("span");
+            removeBtn.classList.add("remove-plato");
+            removeBtn.innerHTML = "×";
+            removeBtn.onclick = function (e) {
+                e.stopPropagation();
+                removePlato(this, dia, comidaSeleccionada.toLowerCase(), opcionSeleccionada);
+            };
+            platoElement.appendChild(removeBtn);
+
+            // Insertar el botón en el div
+            divPlato.appendChild(platoElement);
+
+            // Crear un input oculto para el plato seleccionado
+            let inputHidden = document.createElement("input");
+            inputHidden.type = "hidden";
+            inputHidden.name = inputName;
+            inputHidden.value = idPlato;
+            divPlato.appendChild(inputHidden);
+
+            // Actualizar visibilidad de botones de opciones
+            updateOptionButtons();
+
+            // Deshabilitar la selección
+            seleccionHabilitada = false;
+            diaSeleccionado = null;
+            comidaSeleccionada = null;
+            opcionSeleccionada = null;
+            $('#plateModal').modal('hide');
+            $('#modalComidasPlato').modal('hide');
+        }
+    }
+}
+
+function openPlateModal(dia, comida, opcion) {
+    habilitarSeleccion(dia, comida, opcion);
+    console.log(`Abriendo modal "plateModal" para Día: ${dia}, Comida: ${comida}, Opción: ${opcion}`);
+    $('#plateModal').modal('show');
+    
+    // Mostrar el botón "Guardar" del modal
+    const guardarModalBtn = document.getElementById('guardarModalBtn');
+    if (guardarModalBtn) {
+        guardarModalBtn.classList.remove('hidden');
+    }
+}
+
+function abrirModalPlato(idPlato, dia, comida) {
+    console.log(`Abriendo modalComidasPlato para plato ID: ${idPlato}, Día: ${dia}, Comida: ${comida}`);
+    document.getElementById('listaComidasPlato').innerHTML = 'Cargando...';
+    platoSeleccionadoId = idPlato;
+    if (dia && comida) {
+        // Usar opción 1 por defecto si no se especifica
+        habilitarSeleccion(dia, comida, opcionSeleccionada || '1');
+    }
+    $('#modalComidasPlato').modal('show');
+
+    fetch(`/comida/obtener_comidas_plato/${idPlato}/`)
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la solicitud');
+            return response.json();
+        })
+        .then(data => {
+            if (data.comidas && data.comidas.length > 0) {
+                let html = '<ul class="list-group">';
+                data.comidas.forEach(comida => {
+                    html += `
+                        <li class="list-group-item" data-id="${comida.id}">
+                            <div class="comida-container">
+                                <img src="${comida.imagen}" alt="${comida.nombre}" class="comida-imagen">
+                                <div class="comida-info">
+                                    <strong>${comida.nombre}</strong><br>
+                                    <small>Calorías: ${comida.calorias} kcal</small><br>
+                                </div>
+                            </div>
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+                document.getElementById('listaComidasPlato').innerHTML = html;
+            } else {
+                document.getElementById('listaComidasPlato').innerHTML = 'No hay comidas asociadas a este plato.';
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener las comidas:', error);
+            document.getElementById('listaComidasPlato').innerHTML = 'Error al cargar las comidas.';
+        });
+}
+
+function guardarPlatoDesdeModal() {
+    if (seleccionHabilitada && diaSeleccionado && comidaSeleccionada && opcionSeleccionada && platoSeleccionadoId) {
+        const platoButton = document.querySelector(`button[onclick*="abrirModalPlato('${platoSeleccionadoId}'"]`);
+        const nombrePlato = platoButton ? platoButton.textContent.trim() : "Plato desconocido";
+        seleccionarComida(nombrePlato, diaSeleccionado, platoSeleccionadoId);
+        
+        // Ocultar el botón "Guardar" después de guardar
+        const guardarModalBtn = document.getElementById('guardarModalBtn');
+        if (guardarModalBtn) {
+            guardarModalBtn.classList.add('hidden');
+        }
+    } else {
+        console.warn("No se puede guardar el plato: faltan datos de selección");
+        alert("Por favor, selecciona un día, comida y opción para poder guardar.");
+    }
+}
+
+function removePlato(element, dia, tipo, opcion) {
+    const platoElement = element.parentElement;
+    const inputElement = platoElement.nextElementSibling;
+    if (inputElement && inputElement.tagName === 'INPUT') {
+        inputElement.remove();
+    }
+    platoElement.remove();
+    updateOptionButtons();
+}
+
+function updateOptionButtons() {
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+        const dia = panel.id.replace('dia', '');
+        ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'].forEach(tipo => {
+            const divPlato1 = document.getElementById(`plato${tipo}${dia}_1`);
+            const divPlato2 = document.getElementById(`plato${tipo}${dia}_2`);
+            const divPlato3 = document.getElementById(`plato${tipo}${dia}_3`);
+            const btnOpcion2 = document.getElementById(`btn${tipo}${dia}_2`);
+            const btnOpcion3 = document.getElementById(`btn${tipo}${dia}_3`);
+
+            // Mostrar botón de Opción 2 si hay al menos un plato en Opción 1
+            const plato1Count = divPlato1.querySelectorAll('button.selected-comida').length;
+            if (plato1Count > 0) {
+                btnOpcion2.classList.remove('hidden');
+            } else {
+                btnOpcion2.classList.add('hidden');
+                divPlato2.innerHTML = '';
+            }
+
+            // Mostrar botón de Opción 3 si hay al menos un plato en Opción 2
+            const plato2Count = divPlato2.querySelectorAll('button.selected-comida').length;
+            if (plato2Count > 0) {
+                btnOpcion3.classList.remove('hidden');
+            } else {
+                btnOpcion3.classList.add('hidden');
+                divPlato3.innerHTML = '';
+            }
+        });
+    });
+}
 </script>
 {% endblock %}
+

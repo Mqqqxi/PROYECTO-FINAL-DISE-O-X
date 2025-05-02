@@ -6,624 +6,835 @@
 {% block content %}
 <style>
   /* Estilos modernos para 2025 - Aplicación de nutricionista */
-:root {
-  /* Esquema de colores */
-  --primary-color: #4ECDC4; /* Verde/turquesa vibrante */
-  --secondary-color: #35B5AA; /* Verde/turquesa más oscuro */
-  --accent-color: #FF6B6B; /* Rojo coral para contraste */
-  --accent-secondary: #F8CB2E; /* Amarillo cálido */
-  --success-color: #7ABD7E; /* Verde éxito */
-  --warning-color: #FFD166; /* Amarillo advertencia */
-  --danger-color: #EF476F; /* Rojo peligro */
-  --background-light: #F5F7FA; /* Fondo claro */
-  --card-bg: #FFFFFF; /* Blanco para tarjetas */
-  --gray-light: #EFF1F3; /* Gris claro */
-  --gray-medium: #D8DEE3; /* Gris medio */
-  --text-primary: #212B36; /* Texto principal */
-  --text-secondary: #637381; /* Texto secundario */
-  /* Sombras */
-  --card-shadow: 0 8px 24px rgba(149, 157, 165, 0.15);
-  --hover-shadow: 0 12px 32px rgba(149, 157, 165, 0.25);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-  /* Bordes y transiciones */
-  --border-radius: 12px;
-  --border-radius-sm: 8px;
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  /* Gradientes */
-  --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-}
-
-body {
-  font-family: 'Inter', 'Montserrat', sans-serif;
-  background-color: var(--background-light);
-  color: var(--text-primary);
-  line-height: 1.7;
-  margin: 0;
-  padding: 0;
-}
-
-/* Contenedor principal */
-.container2 {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* Header del paciente */
-.patient-profile-header {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 20px;
-  background: linear-gradient(135deg, var(--card-bg), var(--gray-light));
-  border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
-  padding: 35px;
-  margin-bottom: 35px;
-  margin-top: 100px;
-  transition: var(--transition);
-}
-
-.patient-profile-header:hover {
-  box-shadow: var(--hover-shadow);
-  transform: translateY(-4px);
-}
-
-.patient-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.patient-avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 18px;
-  background: var(--gradient-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 24px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
-}
-
-.patient-details h3 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.patient-details p {
-  margin: 4px 0 0;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.patient-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.weight-info {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.weight-box {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  padding: 16px;
-  text-align: center;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-}
-
-.weight-box:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--hover-shadow);
-}
-
-.weight-box h4 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--primary-color);
-}
-
-.weight-box p {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.appointment-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.appointment-box {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  padding: 16px;
-  text-align: center;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-}
-
-.appointment-box:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--hover-shadow);
-}
-
-.appointment-box .date {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin: 0;
-}
-
-.appointment-box .time {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin: 2px 0 0;
-}
-
-.appointment-box p {
-  margin: 4px 0 0;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-/* Navegación principal */
-.main-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 30px;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: var(--card-shadow);
-  background-color: var(--card-bg);
-}
-
-.main-tab {
-  flex: 1;
-  padding: 18px 15px;
-  text-align: center;
-  font-weight: 500;
-  font-size: 15px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: var(--transition);
-  position: relative;
-}
-
-.main-tab.active {
-  color: white;
-  font-weight: 600;
-  background: var(--gradient-bg);
-}
-
-.main-tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  width: 100%;
-  background: var(--gradient-bg);
-}
-
-.main-tab:hover {
-  background: var(--secondary-color);
-  color: white;
-}
-
-.main-tab i {
-  font-size: 20px;
-}
-
-/* Sub-navegación */
-.clinical-tabs {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.clinical-tab {
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: var(--shadow-sm);
-}
-
-.clinical-tab:hover {
-  background: var(--secondary-color);
-  color: white;
-}
-
-.clinical-tab.active {
-  background: var(--primary-color);
-  color: white;
-  box-shadow: var(--card-shadow);
-}
-
-.clinical-tab-icon {
-  font-size: 16px;
-}
-
-.spacer {
-  flex-grow: 1;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.action-buttons .btn {
-  padding: 10px;
-  border-radius: var(--border-radius);
-  background: var(--primary-color);
-  color: white;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-}
-
-.action-buttons .btn:hover {
-  background: var(--accent-color);
-  transform: translateY(-2px);
-}
-
-/* Contenido */
-.tab-content {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.tab-content.visible {
-  opacity: 1;
-}
-
-.content-section {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
-  padding: 30px;
-  min-height: 300px;
-  border: 1px solid rgba(235, 238, 241, 0.8);
-  transition: var(--transition);
-  animation: fadeIn 0.4s ease-out;
-}
-
-.content-section:hover {
-  box-shadow: var(--hover-shadow);
-}
-
-.content-card h4 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 16px;
-}
-
-.data-row {
-  display: flex;
-  margin-bottom: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--gray-medium);
-  transition: var(--transition);
-}
-
-.data-row:hover {
-  background-color: var(--gray-light);
-  padding: 8px;
-  margin: -8px -8px 8px -8px;
-  border-radius: var(--border-radius-sm);
-}
-
-.data-row:last-child {
-  border-bottom: none;
-}
-
-.data-label {
-  font-size: 14px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  flex: 1;
-}
-
-.data-value {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  flex: 2;
-}
-
-/* Gráfico de progreso */
-.progress-chart {
-  height: 350px;
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  padding: 20px;
-  box-shadow: var(--card-shadow);
-  margin-bottom: 25px;
-  transition: var(--transition);
-}
-
-.progress-chart:hover {
-  box-shadow: var(--hover-shadow);
-}
-
-/* Indicadores de progreso */
-.progress-indicator {
-  display: flex;
-  justify-content: space-between;
-  margin: 30px 0;
-}
-
-.progress-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  position: relative;
-}
-
-.progress-step::after {
-  content: '';
-  position: absolute;
-  top: 25px;
-  left: 50%;
-  width: 100%;
-  height: 3px;
-  background-color: var(--gray-medium);
-  z-index: 1;
-}
-
-.progress-step:last-child::after {
-  display: none;
-}
-
-.progress-step.completed::after {
-  background-color: var(--primary-color);
-}
-
-.step-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: var(--card-bg);
-  border: 3px solid var(--gray-medium);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  position: relative;
-  z-index: 2;
-  transition: var(--transition);
-}
-
-.progress-step.completed .step-icon {
-  border-color: var(--primary-color);
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.step-label {
-  font-size: 14px;
-  color: var(--text-secondary);
-  text-align: center;
-}
-
-.progress-step.completed .step-label {
-  color: var(--primary-color);
-  font-weight: 500;
-}
-
-/* Chat */
-.chat-container {
-  height: 400px;
-  border-radius: var(--border-radius);
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--card-shadow);
-  border: 1px solid var(--gray-medium);
-  background: var(--card-bg);
-  overflow: hidden;
-}
-
-.chat-messages {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.message {
-  padding: 12px 18px;
-  border-radius: 20px;
-  max-width: 75%;
-  font-size: 14px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  line-height: 1.5;
-}
-
-.message.nutricionista {
-  background: var(--gradient-bg);
-  color: white;
-  align-self: flex-start;
-  border-bottom-left-radius: 4px;
-}
-
-.message.paciente {
-  background: var(--gray-light);
-  color: var(--text-primary);
-  align-self: flex-end;
-  border-bottom-right-radius: 4px;
-}
-
-.chat-input {
-  display: flex;
-  padding: 15px;
-  border-top: 1px solid var(--gray-medium);
-  background: var(--card-bg);
-}
-
-.chat-input input {
-  flex: 1;
-  padding: 15px;
-  border: 1px solid var(--gray-medium);
-  border-radius: 30px;
-  margin-right: 10px;
-  transition: var(--transition);
-}
-
-.chat-input input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
-}
-
-.chat-input button {
-  padding: 0 25px;
-  background: var(--gradient-bg);
-  color: white;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: var(--transition);
-  font-weight: 500;
-}
-
-.chat-input button:hover {
-  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-  transform: translateY(-2px);
-}
-
-/* Botones */
-button,
-.btn {
-  padding: 12px 24px;
-  background: var(--gradient-bg);
-  color: white;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: var(--transition);
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: var(--shadow-sm);
-}
-
-button:hover,
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, var(--danger-color), #F27999);
-}
-
-.btn-danger:hover {
-  box-shadow: 0 5px 15px rgba(239, 71, 111, 0.3);
-}
-
-.btn-success {
-  background: linear-gradient(135deg, var(--success-color), #5A9E5A);
-}
-
-.btn-success:hover {
-  box-shadow: 0 5px 15px rgba(122, 189, 126, 0.3);
-}
-
-.btn-warning {
-  background: linear-gradient(135deg, var(--warning-color), #FFBA08);
-  color: var(--text-primary);
-}
-
-.btn-warning:hover {
-  box-shadow: 0 5px 15px rgba(255, 209, 102, 0.3);
-}
-
-/* Animaciones */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+  :root {
+    --primary-color: #4ECDC4;
+    --secondary-color: #35B5AA;
+    --accent-color: #FF6B6B;
+    --accent-secondary: #F8CB2E;
+    --success-color: #7ABD7E;
+    --warning-color: #FFD166;
+    --danger-color: #EF476F;
+    --background-light: #F5F7FA;
+    --card-bg: #FFFFFF;
+    --gray-light: #EFF1F3;
+    --gray-medium: #D8DEE3;
+    --text-primary: #212B36;
+    --text-secondary: #637381;
+    --card-shadow: 0 8px 24px rgba(149, 157, 165, 0.15);
+    --hover-shadow: 0 12px 32px rgba(149, 157, 165, 0.25);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-/* Responsividad */
-@media (max-width: 1024px) {
+  body {
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-primary);
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Contenedor principal */
+  .container2 {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Header del paciente */
   .patient-profile-header {
-    grid-template-columns: 1fr;
-    gap: 25px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    background: linear-gradient(135deg, var(--card-bg), var(--gray-light));
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 35px;
+    margin-bottom: 35px;
+    transition: var(--transition);
+  }
+
+  .patient-profile-header:hover {
+    box-shadow: var(--hover-shadow);
+    transform: translateY(-4px);
+  }
+
+  .patient-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .patient-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    background: var(--gradient-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+  }
+
+  .patient-details h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .patient-details p {
+    margin: 4px 0 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+
+  .patient-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
   .weight-info {
-    grid-template-columns: 1fr 1fr;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
 
-  .content-section {
-    padding: 20px;
+  .weight-box {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
   }
-}
 
-@media (max-width: 768px) {
-  .weight-info,
+  .weight-box:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--hover-shadow);
+  }
+
+  .weight-box h4 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  .weight-box p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
   .appointment-info {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
 
+  .appointment-box {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+  }
+
+  .appointment-box:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--hover-shadow);
+  }
+
+  .appointment-box .date {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .appointment-box .time {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 2px 0 0;
+  }
+
+  .appointment-box p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* Navegación principal */
   .main-tabs {
-    flex-direction: column;
-    flex-wrap: wrap;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 30px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    background-color: var(--card-bg);
   }
 
   .main-tab {
-    flex-basis: 100%;
+    flex: 1;
+    padding: 18px 15px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
   }
 
+  .main-tab.active {
+    color: white;
+    font-weight: 600;
+    background: var(--gradient-bg);
+  }
+
+  .main-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: var(--gradient-bg);
+  }
+
+  .main-tab:hover {
+    background: var(--secondary-color);
+    color: white;
+  }
+
+  .main-tab i {
+    font-size: 20px;
+  }
+
+  /* Sub-navegación */
   .clinical-tabs {
-    flex-direction: column;
-    align-items: stretch;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
   }
 
   .clinical-tab {
-    flex-basis: 50%;
-    text-align: center;
-    justify-content: center;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .clinical-tab:hover {
+    background: var(--secondary-color);
+    color: white;
+  }
+
+  .clinical-tab.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: var(--card-shadow);
+  }
+
+  .clinical-tab-icon {
+    font-size: 16px;
+  }
+
+  .spacer {
+    flex-grow: 1;
   }
 
   .action-buttons {
-    margin-top: 15px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .action-buttons .btn {
+    padding: 10px;
+    border-radius: var(--border-radius);
+    background: var(--primary-color);
+    color: white;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .action-buttons .btn:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+  }
+
+  /* Contenido */
+  .tab-content {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .tab-content.visible {
+    opacity: 1;
+  }
+
+  .content-section {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 30px;
+    min-height: 300px;
+    border: 1px solid rgba(235, 238, 241, 0.8);
+    transition: var(--transition);
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .content-section:hover {
+    box-shadow: var(--hover-shadow);
+  }
+
+  .content-card h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 16px;
+  }
+
+  .data-row {
+    display: flex;
+    margin-bottom: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-medium);
+    transition: var(--transition);
+  }
+
+  .data-row:hover {
+    background-color: var(--gray-light);
+    padding: 8px;
+    margin: -8px -8px 8px -8px;
+    border-radius: var(--border-radius-sm);
+  }
+
+  .data-row:last-child {
+    border-bottom: none;
+  }
+
+  .data-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .data-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 2;
+  }
+
+  /* Gráfico de progreso */
+  .progress-chart {
+    height: 350px;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 25px;
+    transition: var(--transition);
+  }
+
+  .progress-chart:hover {
+    box-shadow: var(--hover-shadow);
+  }
+
+  /* Indicadores de progreso */
+  .progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0;
+  }
+
+  .progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+  }
+
+  .progress-step::after {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 50%;
     width: 100%;
+    height: 3px;
+    background-color: var(--gray-medium);
+    z-index: 1;
+  }
+
+  .progress-step:last-child::after {
+    display: none;
+  }
+
+  .progress-step.completed::after {
+    background-color: var(--primary-color);
+  }
+
+  .step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--card-bg);
+    border: 3px solid var(--gray-medium);
+    display: flex;
+    align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+    transition: var(--transition);
+  }
+
+  .progress-step.completed .step-icon {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .step-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  .progress-step.completed .step-label {
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+
+  /* Chat */
+  .chat-container {
+    height: 400px;
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--gray-medium);
+    background: var(--card-bg);
+    overflow: hidden;
+  }
+
+  .chat-messages {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .message {
+    padding: 12px 18px;
+    border-radius: 20px;
+    max-width: 75%;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    line-height: 1.5;
+  }
+
+  .message.nutricionista {
+    background: var(--gradient-bg);
+    color: white;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+
+  .message.paciente {
+    background: var(--gray-light);
+    color: var(--text-primary);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+
+  .chat-input {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid var(--gray-medium);
+    background: var(--card-bg);
+  }
+
+  .chat-input input {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid var(--gray-medium);
+    border-radius: 30px;
+    margin-right: 10px;
+    transition: var(--transition);
+  }
+
+  .chat-input input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+  }
+
+  .chat-input button {
+    padding: 0 25px;
+    background: var(--gradient-bg);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+  }
+
+  .chat-input button:hover {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    transform: translateY(-2px);
+  }
+
+  /* Botones */
+  button,
+  .btn {
+    padding: 12px 24px;
+    background: var(--gradient-bg);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  button:hover,
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+  }
+
+  .btn-danger {
+    background: linear-gradient(135deg, var(--danger-color), #F27999);
+  }
+
+  .btn-danger:hover {
+    box-shadow: 0 5px 15px rgba(239, 71, 111, 0.3);
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, var(--success-color), #5A9E5A);
+  }
+
+  .btn-success:hover {
+    box-shadow: 0 5px 15px rgba(122, 189, 126, 0.3);
+  }
+
+  .btn-warning {
+    background: linear-gradient(135deg, var(--warning-color), #FFBA08);
+    color: var(--text-primary);
+  }
+
+  .btn-warning:hover {
+    box-shadow: 0 5px 15px rgba(255, 209, 102, 0.3);
+  }
+
+  /* Animaciones */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsividad */
+  @media (max-width: 1024px) {
+    .patient-profile-header {
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+
+    .weight-info {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .content-section {
+      padding: 20px;
+    }
+  }
+
+  @media (max-width: 768px) {
+
+    .weight-info,
+    .appointment-info {
+      grid-template-columns: 1fr;
+    }
+
+    .main-tabs {
+      flex-direction: column;
+      flex-wrap: wrap;
+    }
+
+    .main-tab {
+      flex-basis: 100%;
+    }
+
+    .clinical-tabs {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .clinical-tab {
+      flex-basis: 50%;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .action-buttons {
+      margin-top: 15px;
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+
+  /* Estilos para las opciones dentro de cada comida */
+  .meal-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .meal-option {
+    background: var(--gray-light);
+    padding: 8px 12px;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+  }
+
+  .meal-option:hover {
+    background: rgba(78, 205, 196, 0.1);
+  }
+
+  .meal-option strong {
+    color: var(--primary-color);
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .meal-option ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc;
+  }
+
+  .meal-option li {
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+
+  .meal-option p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+
+
+
+
+
+  /* Estilos para la tabla del plan nutricional */
+  .nutrition-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+
+  .nutrition-table th,
+  .nutrition-table td {
+    padding: 12px 16px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--gray-medium);
+  }
+
+  .nutrition-table th {
+    background-color: var(--gray-light);
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+
+  .nutrition-table td {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+  }
+
+  .nutrition-day {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .nutrition-meal ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc;
+  }
+
+  .nutrition-meal li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .nutrition-meal small {
+    display: block;
+    margin-top: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .nutrition-table tr:hover {
+    background-color: var(--gray-light);
+  }
+
+  /* Estilos para las opciones dentro de cada comida */
+.meal-options {
+  display: flex;
+  flex-direction: row; /* Options are displayed side by side */
+  gap: 10px;
+  width: 100%;
+  flex-wrap: nowrap; /* Prevent wrapping to ensure all options stay in one row */
+  justify-content: space-between;
+}
+
+.meal-option {
+  background: var(--gray-light);
+  padding: 8px 12px;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition);
+  flex: 1; /* Make each option take equal space */
+  min-width: 100px; /* Reduced min-width to fit better in the cell */
+  max-width: 150px; /* Added max-width to prevent overly wide options */
+  box-sizing: border-box;
+}
+
+.meal-option:hover {
+  background: rgba(78, 205, 196, 0.1);
+}
+
+.meal-option strong {
+  color: var(--primary-color);
+  font-size: 13px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.meal-option ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.meal-option li {
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.meal-option p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Ensure the table cell is wide enough */
+.nutrition-meal {
+  vertical-align: top;
+  padding: 10px;
+  min-width: 350px; /* Increased to ensure all options fit in one row */
+}
+
+/* Adjust table styling for better fit */
+.nutrition-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Add horizontal scrolling to the table container */
+.nutrition-table-container {
+  overflow-x: auto; /* Enable horizontal scrolling if the table is too wide */
+  margin-bottom: 20px;
+}
+
+.nutrition-table th,
+.nutrition-table td {
+  border: 1px solid var(--gray-light);
+  padding: 8px;
+  text-align: left;
+}
+
+.nutrition-day {
+  font-weight: bold;
+  text-align: center;
+  min-width: 100px; /* Ensure the day column has enough space */
+}
+
+.evolucion-action-buttons {
+  margin-left: auto;
+  display: none;
+  gap: 8px;
+}
+
+.clinical-tabs {
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 768px) {
+  .evolucion-action-buttons {
+    margin-top: 10px;
+    justify-content: center;
+    width: 100%;
   }
 }
+
+
+
+
+
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -631,12 +842,39 @@ button:hover,
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="container2">
+    
   <!-- Header del paciente -->
+
+  {% if not paciente.planes_nutricionales.exists %}
+  <div style="
+    margin-top: 100px;
+    background-color: #EF476F;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  ">
+    <i class="fas fa-exclamation-triangle"></i>
+    Este paciente no tiene un plan nutricional creado. Por favor, crea uno para comenzar.
+  </div>
+  {% else %}
+  <div style="margin-top: 100px;"></div>
+  {% endif %}
+
   <div class="patient-profile-header">
+
     <div class="patient-info">
+
       <div class="patient-avatar">
         <i class="fas fa-user"></i>
       </div>
+      
       <div class="patient-details">
         <h3>{{ paciente.persona.first_name }} {{ paciente.persona.last_name }}</h3>
         <p>Edad: {{ paciente.historia_clinica.edad|default:"--" }} | Género: {{ paciente.persona.genero|default:"--" }}
@@ -674,6 +912,8 @@ button:hover,
     </div>
   </div>
 
+  
+
   <!-- Navegación principal -->
   <div class="main-tabs">
     <div class="main-tab active" data-tab="info">
@@ -685,6 +925,8 @@ button:hover,
       <span>Plan Actual</span>
     </div>
   </div>
+
+  
 
   <!-- Contenedor de pestañas de información -->
   <div id="info-content" class="tab-content visible">
@@ -885,7 +1127,12 @@ button:hover,
         </div>
       </div>
     </div>
+
+
+
   </div>
+
+
 
   <!-- Contenedor de pestañas de plan actual -->
   <div id="plan-content" class="tab-content" style="display: none;">
@@ -896,11 +1143,11 @@ button:hover,
       <div class="clinical-tab" data-tab="plan-nutricional">
         <i class="fas fa-utensils clinical-tab-icon"></i> Plan Nutricional
       </div>
-      <div class="clinical-tab" data-tab="chat">
-        <i class="fas fa-comments clinical-tab-icon"></i> Chat
+      <div class="clinical-tab" data-tab="evolucion">
+        <i class="fas fa-file-medical clinical-tab-icon"></i> Evolución
       </div>
       <div class="spacer"></div>
-      <div class="action-buttons">
+      <div class="plan-action-buttons action-buttons" style="display: none;">
         {% if not paciente.planes_nutricionales.exists %}
         <button type="button" class="btn" data-toggle="modal" data-target="#crearPlanModal{{ paciente.pk }}">
           <i class="fa fa-plus"></i>
@@ -910,16 +1157,22 @@ button:hover,
         <a href="{% url 'plannutricional:editar_plan_dia' plan.idPlanN %}" class="btn">
           <i class="fa fa-edit"></i>
         </a>
-        <form action="{% url 'plannutricional:eliminar_plan_nutricional' plan.idPlanN %}" method="post"
-          style="display:inline;">
+        <form action="{% url 'plannutricional:eliminar_plan_nutricional' plan.idPlanN %}" method="post" style="display:inline;">
           {% csrf_token %}
-          <button type="submit" class="btn" style="background: #F56565;"
-            onclick="return confirm('¿Seguro que deseas eliminar este plan nutricional?');">
+          <button type="submit" class="btn" style="background: #F56565;" onclick="return confirm('¿Seguro que deseas eliminar este plan nutricional?');">
             <i class="fa fa-trash"></i>
           </button>
         </form>
         {% endwith %}
         {% endif %}
+      </div>
+      <div class="evolucion-action-buttons action-buttons" style="display: none;">
+        <button type="button" class="btn edit-progress-btn" data-toggle="modal" data-target="#editarProgresoModal{{ paciente.pk }}">
+          <i class="fa fa-edit"></i> Editar
+        </button>
+        <button type="button" class="btn btn-danger delete-progress-btn">
+          <i class="fa fa-trash"></i> Eliminar
+        </button>
       </div>
     </div>
 
@@ -998,88 +1251,409 @@ button:hover,
       </div>
     </div>
 
-    <!-- Contenido de Plan Nutricional (Placeholder) -->
     <!-- Contenido de Plan Nutricional -->
     <div id="plan-nutricional-content" class="content-section" style="display: none;">
       <div class="content-card">
         <h4>Plan Nutricional</h4>
         {% if plan_data %}
-          <!-- Tabla para mostrar los días y tipos de comida -->
-          <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <!-- Tabla para mostrar los días y tipos de comida con opciones -->
+        <div style="overflow-x: auto;">
+          <table class="nutrition-table">
             <!-- Encabezados de las columnas -->
             <thead>
               <tr>
-                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Día</th>
-                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Desayuno</th>
-                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Almuerzo</th>
-                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Merienda</th>
-                <th style="padding: 10px; background-color: var(--gray-light); border-bottom: 1px solid var(--gray-medium); text-align: left;">Cena</th>
+                <th>DÍA</th>
+                <th>DESAYUNO</th>
+                <th>ALMUERZO</th>
+                <th>MERIENDA</th>
+                <th>CENA</th>
               </tr>
             </thead>
             <tbody>
               <!-- Iterar sobre los datos del plan -->
               {% for dia_data in plan_data %}
-                <tr>
-                  <!-- Día -->
-                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
-                    {{ dia_data.dia_nombre }}
-                  </td>
-                  <!-- Desayuno -->
-                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
-                    {% for plato in dia_data.desayuno.platos %}
-                    {{ plato }}<br>
-                    {% endfor %}
-                    {% if dia_data.desayuno.descripcion %}
-                      <small>{{ dia_data.desayuno.descripcion }}</small>
-                    {% endif %}
-                  </td>
-                  <!-- Almuerzo -->
-                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
-                    {% for plato in dia_data.almuerzo.platos %}
-                      {{ plato }}<br>
-                    {% endfor %}
-                    {% if dia_data.almuerzo.descripcion %}
-                      <small>{{ dia_data.almuerzo.descripcion }}</small>
-                    {% endif %}
-                  </td>
-                  <!-- Merienda -->
-                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
-                    {% for plato in dia_data.merienda.platos %}
-                      {{ plato }}<br>
-                    {% endfor %}
-                    {% if dia_data.merienda.descripcion %}
-                      <small>{{ dia_data.merienda.descripcion }}</small>
-                    {% endif %}
-                  </td>
-                  <!-- Cena -->
-                  <td style="padding: 10px; border-bottom: 1px solid var(--gray-light);">
-                    {% for plato in dia_data.cena.platos %}
-                      {{ plato }}<br>
-                    {% endfor %}
-                    {% if dia_data.cena.descripcion %}
-                      <small>{{ dia_data.cena.descripcion }}</small>
-                    {% endif %}
-                  </td>
-                </tr>
+              <tr>
+                <!-- Día -->
+                <td class="nutrition-day">{{ dia_data.dia_nombre }}</td>
+                <!-- Desayuno -->
+                <td class="nutrition-meal">
+                  <div class="meal-options">
+                    <div class="meal-option">
+                      <strong>OP1:</strong>
+                      {% if dia_data.desayuno.op1 %}
+                      <ul>
+                        {% for plato in dia_data.desayuno.op1 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                    <div class="meal-option">
+                      <strong>OP2:</strong>
+                      {% if dia_data.desayuno.op2 %}
+                      <ul>
+                        {% for plato in dia_data.desayuno.op2 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                    <div class="meal-option">
+                      <strong>OP3:</strong>
+                      {% if dia_data.desayuno.op3 %}
+                      <ul>
+                        {% for plato in dia_data.desayuno.op3 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if dia_data.desayuno.descripcion %}
+                  <small>{{ dia_data.desayuno.descripcion }}</small>
+                  {% endif %}
+                </td>
+                <!-- Almuerzo -->
+                <td class="nutrition-meal">
+                  <div class="meal-options">
+                    <div class="meal-option">
+                      <strong>OP1:</strong>
+                      {% if dia_data.almuerzo.op1 %}
+                      <ul>
+                        {% for plato in dia_data.almuerzo.op1 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                    <div class="meal-option">
+                      <strong>OP2:</strong>
+                      {% if dia_data.almuerzo.op2 %}
+                      <ul>
+                        {% for plato in dia_data.almuerzo.op2 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                    <div class="meal-option">
+                      <strong>OP3:</strong>
+                      {% if dia_data.almuerzo.op3 %}
+                      <ul>
+                        {% for plato in dia_data.almuerzo.op3 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if dia_data.almuerzo.descripcion %}
+                  <small>{{ dia_data.almuerzo.descripcion }}</small>
+                  {% endif %}
+                </td>
+                <!-- Merienda -->
+                <td class="nutrition-meal">
+                  <div class="meal-options">
+                    <div class="meal-option">
+                      <strong>OP1:</strong>
+                      {% if dia_data.merienda.op1 %}
+                      <ul>
+                        {% for plato in dia_data.merienda.op1 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                    <div class="meal-option">
+                      <strong>OP2:</strong>
+                      {% if dia_data.merienda.op2 %}
+                      <ul>
+                        {% for plato in dia_data.merienda.op2 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                    <div class="meal-option">
+                      <strong>OP3:</strong>
+                      {% if dia_data.merienda.op3 %}
+                      <ul>
+                        {% for plato in dia_data.merienda.op3 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if dia_data.merienda.descripcion %}
+                  <small>{{ dia_data.merienda.descripcion }}</small>
+                  {% endif %}
+                </td>
+                <!-- Cena -->
+                <td class="nutrition-meal">
+                  <div class="meal-options">
+                    <div class="meal-option">
+                      <strong>OP1:</strong>
+                      {% if dia_data.cena.op1 %}
+                      <ul>
+                        {% for plato in dia_data.cena.op1 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                    <div class="meal-option">
+                      <strong>OP2:</strong>
+                      {% if dia_data.cena.op2 %}
+                      <ul>
+                        {% for plato in dia_data.cena.op2 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                    <div class="meal-option">
+                      <strong>OP3:</strong>
+                      {% if dia_data.cena.op3 %}
+                      <ul>
+                        {% for plato in dia_data.cena.op3 %}
+                        <li>{{ plato }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p>-</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if dia_data.cena.descripcion %}
+                  <small>{{ dia_data.cena.descripcion }}</small>
+                  {% endif %}
+                </td>
+              </tr>
               {% endfor %}
             </tbody>
           </table>
+        </div>
         {% else %}
-          <p>No hay un plan nutricional activo para este paciente.</p>
+        <p>No hay un plan nutricional activo para este paciente.</p>
         {% endif %}
       </div>
     </div>
 
-    <!-- Contenido de Chat -->
-    <div id="chat-content" class="content-section" style="display: none;">
-      <div class="chat-container">
-        <div class="chat-messages">
-          <div class="message nutricionista">Hola, ¿cómo vas con el plan alimenticio?</div>
-          <div class="message paciente">Muy bien, estoy siguiendo todas las recomendaciones.</div>
+   
+    <div id="evolucion-content" class="content-section" style="display: none;">
+      <div class="content-card">
+        <h4>Evolución</h4>
+    
+        <!-- Selector de fechas para ver datos históricos -->
+        <div class="form-group">
+          <label for="fechaSelectEvolucion">Seleccionar Fecha</label>
+          <select class="form-control selectpicker" id="fechaSelectEvolucion" onchange="cargarDatosEvolucion()">
+            <option value="">Selecciona una fecha</option>
+            {% for progreso in progresos %}
+            <option value="{{ progreso.fecha|date:'Y-m-d' }}">{{ progreso.fecha|date:'d/m/Y' }}</option>
+            {% endfor %}
+          </select>
         </div>
-        <div class="chat-input">
-          <input type="text" placeholder="Escribe un mensaje...">
-          <button>Enviar</button>
+    
+        <!-- Contenedor para mostrar datos de evolución -->
+        <div id="datosEvolucionContainer">
+          <p>Selecciona una fecha para ver los datos.</p>
+        </div>
+    
+        <!-- Formulario para actualizar datos -->
+        <div class="card form-section mt-4">
+          <h5><i class="fa fa-heartbeat" aria-hidden="true"></i> Actualizar Evolución</h5>
+          <button class="btn-toggle" type="button" data-toggle="collapse" data-target="#formEvolucion" aria-expanded="false"
+            aria-controls="formEvolucion">
+            <i class="fa fa-chevron-down" aria-hidden="true"></i> Ingresar Nuevos Datos
+          </button>
+          <div id="formEvolucion" class="collapse collapse-section">
+            <form method="POST" enctype="multipart/form-data" action="{% url 'progreso:crear_progreso' paciente.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="form_type" value="evolucion">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label for="peso" class="form-label">Peso (kg):</label>
+                  <input type="text" class="form-control" id="peso" name="peso" placeholder="Peso" required>
+                </div>
+                <div class="col-md-4">
+                  <label for="perimetro_pecho" class="form-label">Perímetro pecho (cm):</label>
+                  <input type="text" class="form-control" id="perimetro_pecho" name="perimetro_pecho"
+                    placeholder="Perímetro pecho">
+                </div>
+                <div class="col-md-4">
+                  <label for="indice_grasa_corporal" class="form-label">Índice de grasa corporal (%):</label>
+                  <input type="text" class="form-control" id="indice_grasa_corporal" name="indice_grasa_corporal"
+                    placeholder="Índice de grasa">
+                </div>
+                <div class="col-md-4">
+                  <label for="masa_muscular" class="form-label">Masa muscular (kg):</label>
+                  <input type="text" class="form-control" id="masa_muscular" name="masa_muscular"
+                    placeholder="Masa muscular">
+                </div>
+                <div class="col-md-4">
+                  <label for="agua_corporal" class="form-label">Agua corporal (%):</label>
+                  <input type="text" class="form-control" id="agua_corporal" name="agua_corporal"
+                    placeholder="Agua corporal">
+                </div>
+                <div class="col-md-4">
+                  <label for="perimetro_cintura" class="form-label">Perímetro cintura (cm):</label>
+                  <input type="text" class="form-control" id="perimetro_cintura" name="perimetro_cintura"
+                    placeholder="Perímetro cintura">
+                </div>
+                <div class="col-md-4">
+                  <label for="perimetro_cadera" class="form-label">Perímetro cadera (cm):</label>
+                  <input type="text" class="form-control" id="perimetro_cadera" name="perimetro_cadera"
+                    placeholder="Perímetro cadera">
+                </div>
+                <div class="col-md-4">
+                  <label for="perimetro_muslo" class="form-label">Perímetro muslo (cm):</label>
+                  <input type="text" class="form-control" id="perimetro_muslo" name="perimetro_muslo"
+                    placeholder="Perímetro muslo">
+                </div>
+                <div class="col-md-4">
+                  <label for="perimetro_brazo" class="form-label">Perímetro brazo (cm):</label>
+                  <input type="text" class="form-control" id="perimetro_brazo" name="perimetro_brazo"
+                    placeholder="Perímetro brazo">
+                </div>
+                <div class="col-md-4">
+                  <label for="tension_arterial_maxima" class="form-label">Tensión arterial máxima (mmHg):</label>
+                  <input type="text" class="form-control" id="tension_arterial_maxima" name="tension_arterial_maxima"
+                    placeholder="Tensión arterial máxima">
+                </div>
+                <div class="col-md-4">
+                  <label for="tension_arterial_minima" class="form-label">Tensión arterial mínima (mmHg):</label>
+                  <input type="text" class="form-control" id="tension_arterial_minima" name="tension_arterial_minima"
+                    placeholder="Tensión arterial mínima">
+                </div>
+                <div class="col-md-6">
+                  <label for="comentario" class="form-label">Comentario:</label>
+                  <textarea class="form-control" id="comentario" name="comentario" rows="3"
+                    placeholder="Comentario opcional"></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label for="fecha" class="form-label">Fecha:</label>
+                  <input type="date" class="form-control" id="fecha" name="fecha" value="{{ today|date:'Y-m-d' }}"
+                    required>
+                </div>
+              </div>
+              <div class="row g-3 mt-3">
+                <div class="col-md-12 text-center">
+                  <button type="submit" class="btn btn-save">
+                    <i class="fa fa-save" aria-hidden="true"></i> Guardar
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+    
+        <!-- Modal para editar datos de evolución -->
+        <div class="modal fade" id="editarProgresoModal{{ paciente.pk }}" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <form method="POST" enctype="multipart/form-data" action="{% url 'progreso:editar_progreso' paciente.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="fecha" id="edit_fecha">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Editar Datos de Evolución</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="edit_peso" class="form-label">Peso (kg):</label>
+                      <input type="text" class="form-control" id="edit_peso" name="peso" placeholder="Peso" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_perimetro_pecho" class="form-label">Perímetro pecho (cm):</label>
+                      <input type="text" class="form-control" id="edit_perimetro_pecho" name="perimetro_pecho"
+                        placeholder="Perímetro pecho">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_indice_grasa_corporal" class="form-label">Índice de grasa corporal (%):</label>
+                      <input type="text" class="form-control" id="edit_indice_grasa_corporal" name="indice_grasa_corporal"
+                        placeholder="Índice de grasa">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_masa_muscular" class="form-label">Masa muscular (kg):</label>
+                      <input type="text" class="form-control" id="edit_masa_muscular" name="masa_muscular"
+                        placeholder="Masa muscular">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_agua_corporal" class="form-label">Agua corporal (%):</label>
+                      <input type="text" class="form-control" id="edit_agua_corporal" name="agua_corporal"
+                        placeholder="Agua corporal">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_perimetro_cintura" class="form-label">Perímetro cintura (cm):</label>
+                      <input type="text" class="form-control" id="edit_perimetro_cintura" name="perimetro_cintura"
+                        placeholder="Perímetro cintura">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_perimetro_cadera" class="form-label">Perímetro cadera (cm):</label>
+                      <input type="text" class="form-control" id="edit_perimetro_cadera" name="perimetro_cadera"
+                        placeholder="Perímetro cadera">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_perimetro_muslo" class="form-label">Perímetro muslo (cm):</label>
+                      <input type="text" class="form-control" id="edit_perimetro_muslo" name="perimetro_muslo"
+                        placeholder="Perímetro muslo">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_perimetro_brazo" class="form-label">Perímetro brazo (cm):</label>
+                      <input type="text" class="form-control" id="edit_perimetro_brazo" name="perimetro_brazo"
+                        placeholder="Perímetro brazo">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_tension_arterial_maxima" class="form-label">Tensión arterial máxima (mmHg):</label>
+                      <input type="text" class="form-control" id="edit_tension_arterial_maxima" name="tension_arterial_maxima"
+                        placeholder="Tensión arterial máxima">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="edit_tension_arterial_minima" class="form-label">Tensión arterial mínima (mmHg):</label>
+                      <input type="text" class="form-control" id="edit_tension_arterial_minima" name="tension_arterial_minima"
+                        placeholder="Tensión arterial mínima">
+                    </div>
+                    <div class="col-md-12">
+                      <label for="edit_comentario" class="form-label">Comentario:</label>
+                      <textarea class="form-control" id="edit_comentario" name="comentario" rows="3"
+                        placeholder="Comentario opcional"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn">Guardar</button>
+                  <button type="button" class="btn" style="background: #A0AEC0;" data-dismiss="modal">Cancelar</button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -1102,7 +1676,7 @@ button:hover,
         const selectedContent = document.getElementById(`${tabId}-content`);
         selectedContent.style.display = 'block';
         setTimeout(() => selectedContent.classList.add('visible'), 10);
-        const activeSubTab = document.querySelector(`#${tabId}-content .clinical-tab`);
+        const activeSubTab = document.querySelector(`#${tabId}-content .clinical-tab.active`);
         if (activeSubTab) activeSubTab.click();
       });
     });
@@ -1120,6 +1694,14 @@ button:hover,
           content.style.display = 'none';
         });
         document.getElementById(`${tabId}-content`).style.display = 'block';
+
+        // Mostrar u ocultar botones de acción en plan-content
+        if (parentId === 'plan') {
+          const actionButtons = document.querySelector('#plan-content .plan-action-buttons');
+          if (actionButtons) {
+            actionButtons.style.display = tabId === 'plan-nutricional' ? 'flex' : 'none';
+          }
+        }
       });
     });
 
@@ -1150,6 +1732,146 @@ button:hover,
         }
       }
     });
+
+    // Activar pestaña Evolución si se indica en la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('tab') === 'evolucion') {
+      const planTab = document.querySelector('.main-tab[data-tab="plan"]');
+      const evolucionSubTab = document.querySelector('.clinical-tab[data-tab="evolucion"]');
+      if (planTab && evolucionSubTab) {
+        planTab.click();
+        evolucionSubTab.click();
+      }
+    } else if (urlParams.get('tab') === 'plan-nutricional') {
+      const planTab = document.querySelector('.main-tab[data-tab="plan"]');
+      const planNutricionalSubTab = document.querySelector('.clinical-tab[data-tab="plan-nutricional"]');
+      if (planTab && planNutricionalSubTab) {
+        planTab.click();
+        planNutricionalSubTab.click();
+      }
+    }
+  });
+
+  function cargarDatosEvolucion() {
+  const fecha = $('#fechaSelectEvolucion').val();
+  const datosContainer = $('#datosEvolucionContainer');
+
+  if (fecha) {
+    console.log(`Cargando datos para fecha: ${fecha}`);
+    $.ajax({
+      url: `/progreso/obtener_datos_progreso/{{ paciente.pk }}/${fecha}/`,
+      method: 'GET',
+      success: function (data) {
+        console.log('Datos recibidos:', data);
+        if (data.error) {
+          datosContainer.html('<p>' + data.error + '</p>');
+          return;
+        }
+        let html = `
+          <div class="data-row">
+            <div class="data-label">Peso</div>
+            <div class="data-value">${data.peso || '-'} kg</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Índice de grasa corporal</div>
+            <div class="data-value">${data.indice_grasa_corporal || '-'} %</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Perímetro cintura</div>
+            <div class="data-value">${data.perimetro_cintura || '-'} cm</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Perímetro cadera</div>
+            <div class="data-value">${data.perimetro_cadera || '-'} cm</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Perímetro muslo</div>
+            <div class="data-value">${data.perimetro_muslo || '-'} cm</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Perímetro brazo</div>
+            <div class="data-value">${data.perimetro_brazo || '-'} cm</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Perímetro pecho</div>
+            <div class="data-value">${data.perimetro_pecho || '-'} cm</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Masa muscular</div>
+            <div class="data-value">${data.masa_muscular || '-'} kg</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Agua corporal</div>
+            <div class="data-value">${data.agua_corporal || '-'} %</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Tensión arterial</div>
+            <div class="data-value">${data.tension_arterial_maxima || '-'} / ${data.tension_arterial_minima || '-'} mmHg</div>
+          </div>
+          <div class="data-row">
+            <div class="data-label">Comentario</div>
+            <div class="data-value">${data.comentario || '-'}</div>
+          </div>
+          <div class="action-buttons" style="margin-top: 20px;">
+            <button type="button" class="btn edit-progress-btn" data-toggle="modal" data-target="#editarProgresoModal{{ paciente.pk }}" data-fecha="${fecha}" data-progreso='${JSON.stringify(data)}'>
+              <i class="fa fa-edit"></i> Editar
+            </button>
+          </div>
+        `;
+        if (data.fotos && data.fotos.length > 0) {
+          html += '<h5>Fotos:</h5><div class="photo-upload">';
+          data.fotos.forEach(foto => {
+            html += `
+              <div>
+                <label>${foto.descripcion}</label>
+                <div class="image-preview">
+                  <img src="${foto.url}" alt="${foto.descripcion}">
+                </div>
+              </div>
+            `;
+          });
+          html += '</div>';
+        }
+        datosContainer.html(html);
+
+        // Asignar evento de clic a los botones de edición
+        $('.edit-progress-btn').on('click', function () {
+          const fecha = $(this).data('fecha');
+          const progresoData = $(this).data('progreso');
+          prellenarFormularioEdicion(fecha, progresoData);
+        });
+      },
+      error: function (xhr, status, error) {
+        console.error('Error AJAX:', xhr.status, error, xhr.responseText);
+        datosContainer.html(`<p>Error al cargar los datos: ${xhr.status} - ${xhr.responseText || error}</p>`);
+      }
+    });
+  } else {
+    datosContainer.html('<p>Selecciona una fecha para ver los datos.</p>');
+  }
+}
+
+  function prellenarFormularioEdicion(fecha, data) {
+    // Establecer la fecha en el campo oculto
+    $('#edit_fecha').val(fecha);
+
+    // Prellenar los campos del formulario
+    $('#edit_peso').val(data.peso || '');
+    $('#edit_perimetro_pecho').val(data.perimetro_pecho || '');
+    $('#edit_indice_grasa_corporal').val(data.indice_grasa_corporal || '');
+    $('#edit_masa_muscular').val(data.masa_muscular || '');
+    $('#edit_agua_corporal').val(data.agua_corporal || '');
+    $('#edit_perimetro_cintura').val(data.perimetro_cintura || '');
+    $('#edit_perimetro_cadera').val(data.perimetro_cadera || '');
+    $('#edit_perimetro_muslo').val(data.perimetro_muslo || '');
+    $('#edit_perimetro_brazo').val(data.perimetro_brazo || '');
+    $('#edit_tension_arterial_maxima').val(data.tension_arterial_maxima || '');
+    $('#edit_tension_arterial_minima').val(data.tension_arterial_minima || '');
+    $('#edit_comentario').val(data.comentario || '');
+  }
+
+  $(document).ready(function () {
+    $('.selectpicker').selectpicker();
   });
 </script>
 {% endblock %}

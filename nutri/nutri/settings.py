@@ -51,10 +51,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.comida',
     'apps.pacientes',
-    'apps.persona',
     'apps.planNutricional',
     'apps.progreso',
     'apps.turno',
+    'apps.persona.apps.PersonaConfig',  # Usa la configuración personalizada
 ]
 
 
@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'nutri.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bdnueva',
+        'NAME': 'bdnuevax5',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': '127.0.0.1',  # O el host correspondiente

@@ -1,14 +1,10 @@
 from django import forms
 from .models import PlanDelDia, PlanNutricional
 
-from django import forms
-from .models import PlanDelDia
-
 class PlanDelDiaForm(forms.ModelForm):
     class Meta:
         model = PlanDelDia
-        fields = ["dia", "tipo_comida", "platos", "descripcion"]
-
+        fields = ["dia", "tipo_comida", "plato1", "plato2", "plato3", "descripcion"]
 
 class PlanNutricionalForm(forms.ModelForm):
     class Meta:

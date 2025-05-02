@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -20,7 +21,7 @@ def CrearProgreso(request, paciente_pk):
                 progreso = Progreso(
                     paciente=paciente,
                     fecha=request.POST.get('fecha'),
-                    peso=float(request.POST.get('peso')) if request.POST.get('peso') else 0.0,  # Peso obligatorio
+                    peso=float(request.POST.get('peso')) if request.POST.get('peso') else 0.0,
                     comentario=request.POST.get('comentario', ''),
                     indice_grasa_corporal=float(request.POST.get('indice_grasa_corporal')) if request.POST.get('indice_grasa_corporal') else None,
                     perimetro_cintura=float(request.POST.get('perimetro_cintura')) if request.POST.get('perimetro_cintura') else None,
@@ -35,7 +36,7 @@ def CrearProgreso(request, paciente_pk):
                 )
                 progreso.save()
                 messages.success(request, 'Datos de evolución guardados exitosamente')
-                return redirect('progreso:crear_progreso', paciente_pk=paciente.pk)
+                return redirect('pacientes:infopaciente', persona_id=paciente.persona_id)
             except ValueError as e:
                 messages.error(request, f'Error en los datos numéricos: {str(e)}')
             except Exception as e:
@@ -47,7 +48,7 @@ def CrearProgreso(request, paciente_pk):
                 progreso, created = Progreso.objects.get_or_create(
                     paciente=paciente,
                     fecha=request.POST.get('fecha', timezone.now().date()),
-                    defaults={'peso': 0.0}  # Peso obligatorio por el modelo
+                    defaults={'peso': 0.0}
                 )
                 fotos = [
                     ('foto_espalda', 'Espalda'),
@@ -64,7 +65,7 @@ def CrearProgreso(request, paciente_pk):
                         )
                         foto.save()
                 messages.success(request, 'Fotos guardadas exitosamente')
-                return redirect('progreso:crear_progreso', paciente_pk=paciente.pk)
+                return redirect('pacientes:infopaciente', persona_id=paciente.persona_id)
             except Exception as e:
                 messages.error(request, f'Error al guardar fotos: {str(e)}')
 
@@ -77,25 +78,68 @@ def CrearProgreso(request, paciente_pk):
     }
     return render(request, 'progreso/progreso.html', context)
 
-# Vista AJAX para obtener datos y fotos de una fecha específica
+# Configurar un logger
+logger = logging.getLogger(__name__)
+
 def obtener_datos_progreso(request, paciente_pk, fecha):
     paciente = get_object_or_404(Paciente, pk=paciente_pk)
-    progreso = get_object_or_404(Progreso, paciente=paciente, fecha=fecha)
-    fotos = progreso.fotos.all()  # Obtener las fotos asociadas
+    try:
+        progreso = Progreso.objects.get(paciente=paciente, fecha=fecha)
+        fotos = FotoProgreso.objects.filter(progreso=progreso)
+        data = {
+            'peso': progreso.peso,
+            'indice_grasa_corporal': progreso.indice_grasa_corporal,
+            'perimetro_cintura': progreso.perimetro_cintura,
+            'perimetro_cadera': progreso.perimetro_cadera,
+            'perimetro_muslo': progreso.perimetro_muslo,
+            'perimetro_brazo': progreso.perimetro_brazo,
+            'perimetro_pecho': progreso.perimetro_pecho,
+            'masa_muscular': progreso.masa_muscular,
+            'agua_corporal': progreso.agua_corporal,
+            'tension_arterial_maxima': progreso.tension_arterial_maxima,
+            'tension_arterial_minima': progreso.tension_arterial_minima,
+            'comentario': progreso.comentario,
+            'fotos': [{'url': foto.foto.url, 'descripcion': foto.descripcion} for foto in fotos]
+        }
+        return JsonResponse(data)
+    except Progreso.DoesNotExist:
+        logger.error(f"No se encontró Progreso para paciente {paciente_pk} en fecha {fecha}")
+        return JsonResponse({'error': 'No se encontraron datos para la fecha seleccionada'}, status=404)
+    except Exception as e:
+        logger.error(f"Error en obtener_datos_progreso: {str(e)}", exc_info=True)
+        return JsonResponse({'error': f'Error interno del servidor: {str(e)}'}, status=500)
 
-    data = {
-        'peso': progreso.peso,
-        'indice_grasa_corporal': progreso.indice_grasa_corporal,
-        'perimetro_cintura': progreso.perimetro_cintura,
-        'perimetro_cadera': progreso.perimetro_cadera,
-        'perimetro_muslo': progreso.perimetro_muslo,
-        'perimetro_brazo': progreso.perimetro_brazo,
-        'perimetro_pecho': progreso.perimetro_pecho,
-        'masa_muscular': progreso.masa_muscular,
-        'agua_corporal': progreso.agua_corporal,
-        'tension_arterial_maxima': progreso.tension_arterial_maxima,
-        'tension_arterial_minima': progreso.tension_arterial_minima,
-        'comentario': progreso.comentario,
-        'fotos': [{'url': foto.foto.url, 'descripcion': foto.descripcion} for foto in fotos]
-    }
-    return JsonResponse(data)
+def editar_progreso(request, paciente_pk):
+    paciente = get_object_or_404(Paciente, pk=paciente_pk)
+    
+    if request.method == 'POST':
+        fecha = request.POST.get('fecha')
+        if not fecha:
+            messages.error(request, 'La fecha no fue proporcionada.')
+            return redirect('pacientes:infopaciente', persona_id=paciente.persona_id)
+        
+        try:
+            progreso = Progreso.objects.get(paciente=paciente, fecha=fecha)
+            progreso.peso = float(request.POST.get('peso')) if request.POST.get('peso') else 0.0
+            progreso.indice_grasa_corporal = float(request.POST.get('indice_grasa_corporal')) if request.POST.get('indice_grasa_corporal') else None
+            progreso.perimetro_cintura = float(request.POST.get('perimetro_cintura')) if request.POST.get('perimetro_cintura') else None
+            progreso.perimetro_cadera = float(request.POST.get('perimetro_cadera')) if request.POST.get('perimetro_cadera') else None
+            progreso.perimetro_muslo = float(request.POST.get('perimetro_muslo')) if request.POST.get('perimetro_muslo') else None
+            progreso.perimetro_brazo = float(request.POST.get('perimetro_brazo')) if request.POST.get('perimetro_brazo') else None
+            progreso.perimetro_pecho = float(request.POST.get('perimetro_pecho')) if request.POST.get('perimetro_pecho') else None
+            progreso.masa_muscular = float(request.POST.get('masa_muscular')) if request.POST.get('masa_muscular') else None
+            progreso.agua_corporal = float(request.POST.get('agua_corporal')) if request.POST.get('agua_corporal') else None
+            progreso.tension_arterial_maxima = float(request.POST.get('tension_arterial_maxima')) if request.POST.get('tension_arterial_maxima') else None
+            progreso.tension_arterial_minima = float(request.POST.get('tension_arterial_minima')) if request.POST.get('tension_arterial_minima') else None
+            progreso.comentario = request.POST.get('comentario', '')
+            progreso.save()
+            messages.success(request, 'Datos de evolución actualizados exitosamente')
+            return redirect('pacientes:infopaciente', persona_id=paciente.persona_id)
+        except Progreso.DoesNotExist:
+            messages.error(request, 'No se encontraron datos para la fecha seleccionada')
+        except ValueError as e:
+            messages.error(request, f'Error en los datos numéricos: {str(e)}')
+        except Exception as e:
+            messages.error(request, f'Error al actualizar evolución: {str(e)}')
+    
+    return redirect('pacientes:infopaciente')

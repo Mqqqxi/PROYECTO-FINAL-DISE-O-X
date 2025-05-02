@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser
 from apps.persona.models import Persona
 
 
+
+
 from django.db import models
 
 class Paciente(models.Model):

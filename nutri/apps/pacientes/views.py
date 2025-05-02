@@ -10,17 +10,32 @@ from .forms import PacienteForm, ValorAntropometricoForm, AnalisisLabForm, Anamn
 from apps.progreso.models import Progreso  # Ajusta según la ubicación real
 from apps.persona.models import Persona
 from apps.pacientes.models import Paciente
-
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import RegistroPacienteForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
 from django.contrib import messages
 
+
+# Función para verificar si el usuario es nutricionista
+def is_nutricionista(user):
+    return user.is_nutricionista
+
+# Función para verificar si el usuario es paciente
+def is_paciente(user):
+    return user.is_paciente
+
+
+
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+@login_required
+@user_passes_test(is_nutricionista)
 def listapacientenuevo(request):
     pacientes = Paciente.objects.all()
     contexto = {
-        'pacientes': pacientes  # Envolver el QuerySet en un diccionario
+        'pacientes': pacientes
     }
     return render(request, 'pacientes/listapacientenuevo.html', contexto)
 
@@ -43,11 +58,11 @@ def login_paciente(request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            if user.is_paciente:  # Verificar que sea un paciente
+            if user.is_paciente or user.is_nutricionista:  # Verificar que sea un paciente o nutricionista
                 login(request, user)
                 return redirect('inicio')  # Redirige a la página principal o donde prefieras
             else:
-                form.add_error(None, 'Solo los pacientes pueden iniciar sesión.')
+                form.add_error(None, 'Acceso denegado. No eres un paciente.')
     else:
         form = AuthenticationForm()
     return render(request, 'pacientes/login.html', {'form': form})
@@ -57,7 +72,7 @@ class PerfilPacienteForm(forms.ModelForm):
     # Campos del perfil
     class Meta:
         model = Persona
-        fields = ['first_name', 'last_name', 'email', 'telefono', 'direccion', 'tipoDocumento', 'numDocumento']
+        fields = ['first_name', 'last_name','genero', 'email', 'telefono', 'direccion', 'tipoDocumento', 'numDocumento']
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -66,6 +81,14 @@ class PerfilPacienteForm(forms.ModelForm):
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
             'tipoDocumento': forms.TextInput(attrs={'class': 'form-control'}),
             'numDocumento': forms.TextInput(attrs={'class': 'form-control'}),
+            'genero': forms.Select(
+                attrs={'class': 'form-control selectpicker'},
+                choices=[
+                    ('M', 'Masculino'),
+                    ('F', 'Femenino'),
+                    ('ND', 'No Definido'),
+                ]
+            ),
         }
 
 class PacienteForm(forms.ModelForm):
@@ -113,8 +136,10 @@ def editar_perfil_paciente(request):
     return render(request, 'pacientes/perfil.html', contexto)
 
 
-def seguimiento_paciente(request):
-    return render(request, 'pacientes/seguimiento.html')
+def mi_seguimiento(request, persona_id):
+    # Obtener el paciente
+    paciente = get_object_or_404(Paciente, persona_id=persona_id)
+    return render(request, 'pacientes/infopaciente.html')
 
 
 def lista_pacientes(request):
@@ -277,119 +302,108 @@ def crear_datos_paciente(request, persona_id):
         'paciente': paciente,
     })
 
+from django.db import transaction
+from django.urls import reverse
+from django.utils import timezone
 from apps.planNutricional.models import PlanNutricional, PlanDelDia
-from apps.comida.models import Plato
+from apps.comida.models import Plato, Comida
 
-def infopaciente(request, persona_id):
-    # Obtener el paciente o devolver un error 404 si no existe
-    paciente = get_object_or_404(Paciente, persona_id=persona_id)
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from apps.planNutricional.models import PlanNutricional, PlanDelDia
 
-    # Obtener los datos relacionados con el paciente
+
+
+def infopaciente(request):
+    try:
+        paciente = Paciente.objects.get(persona=request.user)
+    except Paciente.DoesNotExist:
+        return redirect('inicio')  # o mostrar error
+    
     valores_antropometricos = getattr(paciente, 'valores_antropometricos', None)
     analisis_lab = getattr(paciente, 'analisis_lab', None)
     anamnesis = getattr(paciente, 'anamnesis', None)
     historia_clinica = getattr(paciente, 'historia_clinica', None)
 
-    # Obtener el peso más reciente de la tabla Progreso
-    progreso_reciente = Progreso.objects.filter(paciente=paciente).order_by('-fecha').first()
+    # Obtener datos de progreso
+    progresos = Progreso.objects.filter(paciente=paciente).order_by('-fecha')
+    progreso_reciente = progresos.first()
     peso_actual = progreso_reciente.peso if progreso_reciente else None
 
-    # Obtener la fecha actual en formato string
+    # Obtener turnos
     fecha_actual = timezone.now().strftime('%Y-%m-%d')
-    
-    # Obtener todos los turnos del paciente
     turnos = Turno.objects.filter(paciente=paciente)
-    
-    # Filtrar próximos turnos
     proximos_turnos = turnos.filter(dia__gte=fecha_actual).order_by('dia', 'hora')
     proximo_turno = proximos_turnos.first() if proximos_turnos.exists() else None
-    
-    # Filtrar turnos pasados
     turnos_pasados = turnos.filter(dia__lt=fecha_actual).order_by('-dia', '-hora')
     ultimo_turno = turnos_pasados.first() if turnos_pasados.exists() else None
 
-    # Calcular peso inicial, meta y diferencia
+    # Calcular peso inicial y diferencias
     peso_inicial = valores_antropometricos.peso if valores_antropometricos else None
-    peso_meta = None  # Define esta lógica según tu modelo o requisitos
+    peso_meta = None  # Ajusta según el modelo si tienes un campo para peso meta
     diferencia_peso = None
     porcentaje_completado = None
-    
     if peso_inicial and peso_actual and peso_meta:
         diferencia_peso = peso_actual - peso_inicial
-        if peso_inicial != peso_meta:  # Evitar división por cero
+        if peso_inicial != peso_meta:
             porcentaje_completado = ((peso_inicial - peso_actual) / (peso_inicial - peso_meta)) * 100
 
-    # Preparar datos para el plan nutricional
-    plan_nutricional = paciente.planes_nutricionales.first()  # Obtener el primer plan nutricional (si existe)
+    # Obtener plan nutricional
+    plan_nutricional = paciente.planes_nutricionales.first()
     plan_data = None
     if plan_nutricional:
-        # Días del plan (de 1 a duracion_dias)
         dias = list(range(1, plan_nutricional.duracion_dias + 1))
-        
-        # Mapa de días a nombres (0: Domingo, 1: Lunes, etc.)
         dias_semana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
-        
-        # Estructura para almacenar los datos del plan por día y tipo de comida
         plan_data = []
         for dia in dias:
-            # Obtener los planes del día para este día
             planes_dia = PlanDelDia.objects.filter(plan_nutricional=plan_nutricional, dia=dia)
-            
-            # Mapear los platos por tipo de comida
             desayuno = planes_dia.filter(tipo_comida="DESAYUNO").first()
             almuerzo = planes_dia.filter(tipo_comida="ALMUERZO").first()
             merienda = planes_dia.filter(tipo_comida="MERIENDA").first()
             cena = planes_dia.filter(tipo_comida="CENA").first()
-            
-            # Obtener los nombres de los platos para cada tipo de comida
-            desayuno_platos = []
-            if desayuno and desayuno.platos:
-                desayuno_platos = [Plato.objects.get(idplato=plato_id).nombre for plato_id in desayuno.platos]
-            
-            almuerzo_platos = []
-            if almuerzo and almuerzo.platos:
-                almuerzo_platos = [Plato.objects.get(idplato=plato_id).nombre for plato_id in almuerzo.platos]
-            
-            merienda_platos = []
-            if merienda and merienda.platos:
-                merienda_platos = [Plato.objects.get(idplato=plato_id).nombre for plato_id in merienda.platos]
-            
-            cena_platos = []
-            if cena and cena.platos:
-                cena_platos = [Plato.objects.get(idplato=plato_id).nombre for plato_id in cena.platos]
-            
-            # Nombre del día (usamos el índice del día módulo 7 para mapear a los días de la semana)
+
+            def obtener_nombres(opciones):
+                if not opciones:
+                    return []
+                return [item.get("nombre", "") for item in opciones]
+
             dia_nombre = dias_semana[(dia - 1) % 7]
-            
-            # Agregar los datos del día a la lista
             plan_data.append({
                 'dia': dia,
                 'dia_nombre': dia_nombre,
                 'desayuno': {
-                    'platos': desayuno_platos,
-                    'descripcion': desayuno.descripcion if desayuno else ''
+                    'op1': obtener_nombres(desayuno.plato1) if desayuno else [],
+                    'op2': obtener_nombres(desayuno.plato2) if desayuno else [],
+                    'op3': obtener_nombres(desayuno.plato3) if desayuno else [],
+                    'descripcion': desayuno.descripcion if desayuno and desayuno.descripcion else ''
                 },
                 'almuerzo': {
-                    'platos': almuerzo_platos,
-                    'descripcion': almuerzo.descripcion if almuerzo else ''
+                    'op1': obtener_nombres(almuerzo.plato1) if almuerzo else [],
+                    'op2': obtener_nombres(almuerzo.plato2) if almuerzo else [],
+                    'op3': obtener_nombres(almuerzo.plato3) if almuerzo else [],
+                    'descripcion': almuerzo.descripcion if almuerzo and almuerzo.descripcion else ''
                 },
                 'merienda': {
-                    'platos': merienda_platos,
-                    'descripcion': merienda.descripcion if merienda else ''
+                    'op1': obtener_nombres(merienda.plato1) if merienda else [],
+                    'op2': obtener_nombres(merienda.plato2) if merienda else [],
+                    'op3': obtener_nombres(merienda.plato3) if merienda else [],
+                    'descripcion': merienda.descripcion if merienda and merienda.descripcion else ''
                 },
                 'cena': {
-                    'platos': cena_platos,
-                    'descripcion': cena.descripcion if cena else ''
+                    'op1': obtener_nombres(cena.plato1) if cena else [],
+                    'op2': obtener_nombres(cena.plato2) if cena else [],
+                    'op3': obtener_nombres(cena.plato3) if cena else [],
+                    'descripcion': cena.descripcion if cena and cena.descripcion else ''
                 }
             })
 
-    # Contexto para el template
     contexto = {
         'paciente': paciente,
         'valores_antropometricos': valores_antropometricos,
         'analisis_lab': analisis_lab,
         'anamnesis': anamnesis,
         'historia_clinica': historia_clinica,
+        'progresos': progresos,  # Para el selector de fechas en Evolución
         'proximo_turno': proximo_turno,
         'ultimo_turno': ultimo_turno,
         'peso_inicial': peso_inicial,
@@ -397,7 +411,8 @@ def infopaciente(request, persona_id):
         'peso_meta': peso_meta,
         'diferencia_peso': diferencia_peso,
         'porcentaje_completado': porcentaje_completado,
-        'plan_data': plan_data,  # Agregar los datos del plan al contexto
+        'plan_data': plan_data,
+        'comidas_loop': ['desayuno', 'almuerzo', 'merienda', 'cena'],
+        'today': timezone.now(),  # Para la fecha por defecto en el formulario
     }
-
     return render(request, 'pacientes/infopaciente.html', contexto)

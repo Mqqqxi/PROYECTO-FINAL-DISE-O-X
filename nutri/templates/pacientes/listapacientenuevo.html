@@ -272,7 +272,7 @@
     
     <div class="patient-grid" id="patientGrid">
         {% for paciente in pacientes %}
-            <a href="{% url 'pacientes:infopaciente' paciente.persona.id %}" class="patient-link">
+            <a href="{% url 'pacientes:infopaciente' %}" class="patient-link">
                 <div class="patient-card">
                     {% if paciente.persona.genero == 'masculino' %}
                         <img src="{% static 'images/masculino.jpg' %}" alt="masculino" class="patient-image">
