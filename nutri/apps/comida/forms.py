@@ -28,6 +28,19 @@ class ComidaForm(forms.ModelForm):
             'categoria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Categoría'}),
         }
 
+    def clean_nombre(self):
+            nombre = self.cleaned_data.get('nombre')
+            if any(char.isdigit() for char in nombre):
+                raise forms.ValidationError("El nombre no debe contener números.")
+            return nombre
+
+    def clean_imagen(self):
+        imagen = self.cleaned_data.get('imagen')
+        if not imagen:
+            raise forms.ValidationError("Este campo es obligatorio.")
+        return imagen
+
+
 class PlatoForm(forms.ModelForm):
     class Meta:
         model = Plato
@@ -37,3 +50,9 @@ class PlatoForm(forms.ModelForm):
             'tipo': forms.Select(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripción del plato', 'rows': 3}),
         }
+
+    def clean_nombre(self):
+            nombre = self.cleaned_data.get('nombre')
+            if any(char.isdigit() for char in nombre):
+                raise forms.ValidationError("El nombre no debe contener números.")
+            return nombre

@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -30,12 +31,34 @@ def reservar_turnos(request):
     
     if request.method == 'POST':
         data = json.loads(request.body)
-        dia = data.get('dia')  # Fecha seleccionada
-        hora = data.get('hora')  # Hora seleccionada
+        dia = data.get('dia')  # Fecha seleccionada (YYYY-MM-DD)
+        hora = data.get('hora')  # Hora seleccionada (HH:MM)
         motivo = data.get('motivo')  # Motivo seleccionado
 
         if not dia or not hora or not motivo:
             return JsonResponse({'success': False, 'error': 'Faltan datos para la reserva.'}, status=400)
+
+        # Validar fecha
+        try:
+            parsed_date = datetime.strptime(dia, '%Y-%m-%d').date()
+            day_of_week = parsed_date.weekday()  # 0 = Lunes, 6 = Domingo
+        except ValueError:
+            return JsonResponse({'success': False, 'error': 'Formato de fecha inválido.'}, status=400)
+
+        # Validar que no sea domingo
+        if day_of_week == 6:  # Domingo
+            return JsonResponse({'success': False, 'error': 'No se pueden reservar turnos los domingos.'}, status=400)
+
+        # Validar horarios en sábados
+        if day_of_week == 5:  # Sábado
+            try:
+                parsed_time = datetime.strptime(hora, '%H:%M').time()
+                hour, minute = parsed_time.hour, parsed_time.minute
+                time_in_minutes = hour * 60 + minute
+                if 16 * 60 <= time_in_minutes <= 19 * 60 + 30:  # 16:00 a 19:30
+                    return JsonResponse({'success': False, 'error': 'No se pueden reservar turnos los sábados entre las 16:00 y las 19:30.'}, status=400)
+            except ValueError:
+                return JsonResponse({'success': False, 'error': 'Formato de hora inválido.'}, status=400)
 
         # Verifica si el paciente ya tiene un turno reservado
         turno_existente = Turno.objects.filter(paciente=paciente).first()
@@ -133,6 +156,7 @@ def obtener_turnos_dia(request):
         turnos = Turno.objects.filter(dia=dia).select_related('paciente__persona')
         turnos_data = [
             {
+                'id_turno': turno.idTurno,  # Añadido para identificar el turno
                 'paciente_nombre': turno.paciente.persona.first_name + ' ' + turno.paciente.persona.last_name,
                 'paciente_telefono': turno.paciente.persona.telefono or '',
                 'hora': turno.hora.strftime('%H:%M'),
@@ -143,3 +167,23 @@ def obtener_turnos_dia(request):
         return JsonResponse({'success': True, 'turnos': turnos_data})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@login_required
+def eliminar_turno(request):
+    if not request.user.is_nutricionista:
+        return JsonResponse({'success': False, 'error': 'No tienes permisos para eliminar turnos.'}, status=403)
+
+    if request.method == 'DELETE':
+        id_turno = request.GET.get('id_turno')
+        if not id_turno:
+            return JsonResponse({'success': False, 'error': 'ID del turno no proporcionado.'}, status=400)
+
+        try:
+            turno = Turno.objects.get(idTurno=id_turno)
+            turno.delete()
+            return JsonResponse({'success': True, 'message': 'Turno eliminado exitosamente.'})
+        except Turno.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'El turno no existe.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    return JsonResponse({'success': False, 'error': 'Método no permitido.'}, status=405)

@@ -18,7 +18,6 @@
         </a>
 
         <table id="miTabla" class="table display">
-
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -36,24 +35,31 @@
             </thead>
             <tbody>
                 {% for comida in comidas %}
-                <td>{{ comida.nombre }}</td>
-                <td>{{ comida.calorias }}</td>
-                <td>{{ comida.proteina }}</td>
-                <td>{{ comida.carbohidratos }}</td>
-                <td>{{ comida.grasaTotales }}</td>
-                <td>{{ comida.fibraAlimentaria }}</td>
-                <td>{{ comida.sodio }}</td>
-                <td>{{ comida.reqEnergetico }}</td>
-                <td>{{ comida.categoria }}</td>
-                <td><img src="{{ comida.imagen.url }}" alt="{{ comida.nombre }}" width="50"></td>
-                <td>
-                    <a href="{% url 'comida:editar_comida' comida.pk %}" class="btn btn-warning btn-sm">
-                        <i class="fa fa-pencil"></i>
-                    </a>
-                    <a href="#" class="btn btn-danger btn-sm btn-eliminar" data-plato-id="{{ plato.pk }}" data-comida-id="{{ comida.pk }}">
-                        <i class="fa fa-ban"></i>
-                    </a>
-                </td>
+                <tr>
+                    <td data-label="Nombre">{{ comida.nombre }}</td>
+                    <td data-label="Calorías">{{ comida.calorias }}</td>
+                    <td data-label="Proteínas">{{ comida.proteina }}</td>
+                    <td data-label="Carbohidratos">{{ comida.carbohidratos }}</td>
+                    <td data-label="Grasas Totales">{{ comida.grasaTotales }}</td>
+                    <td data-label="Fibra Alimentaria">{{ comida.fibraAlimentaria }}</td>
+                    <td data-label="Sodio">{{ comida.sodio }}</td>
+                    <td data-label="Req Energético">{{ comida.reqEnergetico }}</td>
+                    <td data-label="Categoría">{{ comida.categoria }}</td>
+                    <td data-label="Imagen">
+                        {% if comida.imagen %}
+                            <img src="{{ comida.imagen.url }}" alt="{{ comida.nombre }}" width="50">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.png' %}" alt="Sin imagen" width="50">
+                        {% endif %}
+                    </td>
+                    <td data-label="Acciones">
+                        <a href="{% url 'comida:editar_comida' comida.pk %}" class="btn btn-warning btn-sm">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                        <a href="#" class="btn btn-danger btn-sm btn-eliminar" data-comida-id="{{ comida.pk }}">
+                          <i class="fa fa-ban"></i>
+                      </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -117,389 +123,616 @@
         }
     }
 
-
-
     $(document).ready(function () {
-        $('#miTabla').DataTable({
-            paging: true,
-            ordering: true,
-            searching: true,
-            pageLength: 10,
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-            },
-            dom: 'Bfrtip',
-            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-        });
-
-        // Mostrar detalles al hacer clic en una fila de la tabla
-        $("#miTabla tbody").on("click", "tr", function () {
-            // Obtener los datos de la fila
-            let nombre = $(this).data("nombre");
-            let calorias = $(this).data("calorias");
-            let proteina = $(this).data("proteina");
-            let colesterol = $(this).data("colesterol");
-            let carbohidratos = $(this).data("carbohidratos");
-            let grasaTotales = $(this).data("grasatotales");
-            let sodio = $(this).data("sodio");
-            let categoria = $(this).data("categoria");
-
-            // Actualizar los detalles en el panel
-            $("#detalle-nombre").text(nombre);
-            $("#detalle-calorias").text(calorias);
-            $("#detalle-proteina").text(proteina);
-            $("#detalle-colesterol").text(colesterol);
-            $("#detalle-carbohidratos").text(carbohidratos);
-            $("#detalle-grasaTotales").text(grasaTotales);
-            $("#detalle-sodio").text(sodio);
-            $("#detalle-categoria").text(categoria);
-        });
-
-        // Model de Exito/Error y Confirmación
-
-        let comidaIdAEliminar = null; // Variable global para guardar el ID de la comida
-
-        $(document).ready(function () {
-            // Evento para abrir el modal de confirmación cuando se quiere eliminar una comida
-            $(".btn-eliminar").click(function (event) {
-                event.preventDefault(); // Evita la recarga de la página
-                const platoId = $(this).data("plato-id");
-                const comidaId = $(this).data("comida-id");
-                $("#modalConfirmacion").modal("show"); // Muestra el modal de confirmación
-
-                // Evento para confirmar la eliminación
-                $("#btnConfirmarEliminar").click(function () {
-                    fetch(`/comida/eliminar_comida_plato/${platoId}/${comidaId}/`, {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": "{{ csrf_token }}", // Si usas Django
-                            "Content-Type": "application/json"
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        $("#modalConfirmacion").modal("hide"); // Cierra el modal de confirmación
-                        if (data.success) {
-                            mostrarModal("Éxito", "La comida ha sido eliminada del plato con éxito.");
-                            setTimeout(() => location.reload(), 2000); // Recarga la página después de 2 segundos
-                        } else {
-                            mostrarModal("Error", "Hubo un error al eliminar la comida del plato.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        mostrarModal("Error", "Ocurrió un error inesperado.");
-                    });
-                });
-            });
-
-            // Función para mostrar el modal de éxito o error
-            function mostrarModal(titulo, mensaje) {
-                $("#modalMensajeLabel").text(titulo); // Cambia el título del modal
-                $("#modalMensajeBody").text(mensaje); // Cambia el cuerpo del mensaje
-                $("#modalMensaje").modal("show"); // Muestra el modal
-            }
-        });
-
-
+    $('#miTabla').DataTable({
+        paging: true,
+        ordering: true,
+        searching: true,
+        pageLength: 10,
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        },
+        dom: 'Bfrtip',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
     });
 
+    // Evento para abrir el modal de confirmación cuando se quiere eliminar una comida
+    $(".btn-eliminar").click(function (event) {
+        event.preventDefault(); // Evita la recarga de la página
+        const comidaId = $(this).data("comida-id");
+        $("#modalConfirmacion").modal("show"); // Muestra el modal de confirmación
 
+        // Evento para confirmar la eliminación
+        $("#btnConfirmarEliminar").off('click').on('click', function () {
+            fetch(`/comida/eliminar/${comidaId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                $("#modalConfirmacion").modal("hide"); // Cierra el modal de confirmación
+                if (data.success) {
+                    mostrarModal("Éxito", "La comida ha sido eliminada con éxito.");
+                    setTimeout(() => location.reload(), 2000); // Recarga la página después de 2 segundos
+                } else {
+                    mostrarModal("Error", "Hubo un error al eliminar la comida.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                mostrarModal("Error", "Ocurrió un error inesperado.");
+            });
+        });
+    });
 
-
-
-
+    // Función para mostrar el modal de éxito o error
+    function mostrarModal(titulo, mensaje) {
+        $("#modalMensajeLabel").text(titulo); // Cambia el título del modal
+        $("#modalMensajeBody").text(mensaje); // Cambia el cuerpo del mensaje
+        $("#modalMensaje").modal("show"); // Muestra el modal
+    }
+});
 </script>
 
 <style>
-    /* Google Fonts - Poppins */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+ /* Base de Diseño Nutricionista 2025 */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap');
 
-    :root {
-        --primary-color: #31715B;
-        --secondary-color: #EFEBE0;
-        --dark-bg: #1E272E;
-        --dark-text: #D1D8E0;
-        --dark-secondary: #2F3A44;
-    }
+:root {
+  /* Paleta de colores moderna y saludable */
+  --primary: #13846B;
+  --primary-light: #1AAB89;
+  --primary-dark: #0E6351;
+  --secondary: #F8F5F0;
+  --accent: #FF7E54;
+  --text: #1A2238;
+  --text-light: #5A6478;
+  --success: #64D2A3;
+  --warning: #FFB661;
+  --danger: #FF6B6B;
+  --light: #FFFFFF;
+  --dark: #0B1023;
+  
+  /* Variables para espaciado y tamaños */
+  --border-radius-sm: 8px;
+  --border-radius-md: 16px;
+  --border-radius-lg: 24px;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2.5rem;
+  --spacing-xl: 4rem;
+  
+  /* Sombras modernos con efecto de profundidad */
+  --shadow-sm: 0 2px 10px rgba(10, 16, 35, 0.06);
+  --shadow-md: 0 4px 20px rgba(10, 16, 35, 0.08);
+  --shadow-lg: 0 10px 40px rgba(10, 16, 35, 0.1);
+  
+  /* Transiciones suaves */
+  --transition-fast: 0.2s ease;
+  --transition: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Tamaños de fuente ajustados */
+  --font-size-base: 16px;      /* Reducido para la tabla */
+  --font-size-sm: 14px;        /* Reducido para botones y celdas */
+  --font-size-md: 16px;        /* Reducido para encabezados */
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-xxl: 28px;
+  --font-size-hero: 56px;
+}
 
-    body {
-        font-family: 'Poppins', sans-serif;
-        background-color: var(--secondary-color);
-        color: var(--primary-color);
-        transition: all 0.3s ease;
-    }
+/* Reset y estilos base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--secondary);
+  color: var(--text);
+  line-height: 1.6;
+  font-size: var(--font-size-base);
+  overflow-x: hidden;
+}
 
-    .section-title {
-        text-align: left;
-        padding: 40px 20px;
-        margin-bottom: 30px;
-        width: 100%;
-        background-color: var(--secondary-color);
-    }
-    .section-title h2 {
-        color: var(--primary-color);
-        font-weight: 900;
-        font-size: 72px;
-        line-height: 1;
-        text-transform: uppercase;
-        margin: 0;
-        width: 100%;
-        letter-spacing: 2px;
-    }
-    .section-title h2 span {
-        display: block;
-    }
+/* Container con márgenes ajustados */
+.container {
+  width: 100%;
+  max-width: 1600px; /* Aumentado para dar más espacio a la tabla */
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm); /* Reducido el padding */
+}
 
-    section.container {
-        padding-top: 10px;
-        padding-bottom: 25px;
-    }
+section.container {
+  padding-top: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+}
 
+/* Estilos de encabezado con diseño 2025 */
+.section-title {
+  text-align: left;
+  padding: var(--spacing-lg) var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+}
 
-    .heading {
-        font-family: "Montserrat", Arial, sans-serif;
-        font-size: 4rem;
-        font-weight: 500;
-        line-height: 1.5;
-        text-align: center;
-        padding: 3.5rem 0;
-        color: #1a1a1a;
-    }
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: var(--spacing-sm);
+  bottom: var(--spacing-lg);
+  width: 80px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 3px;
+}
 
-    .heading span {
-        display: block;
-    }
+.section-title h2 {
+  color: var(--primary);
+  font-weight: 900;
+  font-size: clamp(3.5rem, 5vw, 5rem);
+  line-height: 1;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: -1px;
+}
 
+.section-title h2 span {
+  display: block;
+}
 
-    .details {
-        flex: 1;
-        /* Ocupa 1/3 del espacio */
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 2rem;
-        background-color: #fff;
-        box-shadow: 0.3rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1);
-        min-width: 30rem;
-        /* Asegura un ancho mínimo para los detalles */
-        max-height: 60rem;
-        /* Altura máxima alineada con la galería */
-        margin-left: 3rem;
-        /* Agrega margen para mover a la derecha */
-    }
+.section-title h2 span:last-child {
+  color: var(--accent);
+}
 
+/* Tabla con diseño moderno y minimalista */
+.table-container {
+  width: 100%;
+  border: none;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-sm); /* Reducido el padding */
+  background-color: var(--light);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--spacing-xl);
+}
 
+#miTabla {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: var(--spacing-sm);
+  background-color: var(--light);
+  border-radius: var(--border-radius-md);
+  table-layout: auto; /* Permite que las columnas se ajusten al contenido */
+}
 
-    .details h2 {
-        margin-top: 0;
-        font-size: 2rem;
-        color: #333;
-    }
+#miTabla thead th {
+  background-color: var(--primary);
+  color: var(--light);
+  padding: var(--spacing-sm); /* Reducido el padding */
+  font-weight: 600;
+  font-size: var(--font-size-sm); /* Reducido el tamaño de fuente */
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  position: relative;
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+}
 
-    .details p {
-        margin: 0.5rem 0;
-        font-size: 1.6rem;
-        line-height: 1.5;
-    }
+#miTabla thead th:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0.3);
+  transform-origin: left;
+  transition: transform var(--transition);
+}
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+#miTabla thead th:hover:after {
+  transform: scaleX(0.6);
+}
 
-    .table-container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        border: 2px solid #ddd;
-        /* Borde del cuadrado */
-        border-radius: 8px;
-        /* Bordes redondeados opcionales */
-        padding: 1rem;
-        background-color: #fff;
-        box-shadow: 0.3rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        /* Evita que los bordes se vean interrumpidos por contenido flotante */
-    }
+#miTabla tbody td {
+  padding: var(--spacing-sm); /* Reducido el padding */
+  border-bottom: 1px solid rgba(10, 16, 35, 0.05);
+  font-size: var(--font-size-sm); /* Reducido el tamaño de fuente */
+  transition: all var(--transition);
+  white-space: nowrap; /* Evita que el texto se divida */
+}
 
-    .table {
-        width: 100%;
-        margin: 0;
-        border-collapse: collapse;
-        /* Asegura que las celdas no añadan espacios que interrumpan el borde */
-    }
+#miTabla tbody tr {
+  transition: all var(--transition);
+}
 
-    .btn-secondary {
-        background-color: #b0b0b0 !important;
-        /* Gris claro */
-        color: white !important;
-        transition: background-color 0.3s ease-in-out;
-    }
+#miTabla tbody tr:last-child td {
+  border-bottom: none;
+}
 
-    .btn-secondary:hover {
-        background-color: #8c8c8c !important;
-        /* Gris más intenso */
-    }
+#miTabla tbody tr:hover {
+  background-color: rgba(19, 132, 107, 0.05);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
 
-    #miTabla {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: white;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+/* Botones modernos con efectos de hover */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.2rem;
+  font-weight: 500;
+  border-radius: var(--border-radius-sm);
+  border: none;
+  transition: all var(--transition);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  gap: 0.5rem;
+  letter-spacing: 0.3px;
+}
 
-    #miTabla thead th {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 6px;
-        text-align: left;
-        font-weight: 600;
-    }
+.btn-sm {
+  padding: 0.4rem 0.8rem; /* Reducido para botones pequeños */
+  font-size: var(--font-size-sm);
+}
 
-    #miTabla tbody td {
-        padding: 10px;
-        border-bottom: 1px solid var(--secondary-color);
-        transition: all 0.3s ease;
-    }
+.btn-success {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(19, 132, 107, 0.2);
+}
 
-    #miTabla tbody tr:hover {
-        background-color: #f5f5f5;
-    }
+.btn-success:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(19, 132, 107, 0.3);
+}
 
-    /* Solo para las celdas que contienen botones */
-    #miTabla tbody td a {
-        display: inline-block;
-        margin-right: 4px;
-    }
+.btn-success:active {
+  transform: translateY(0);
+}
 
-    /* o mejor aún si querés que TODOS los botones se alineen bien */
-    #miTabla tbody td:has(a) {
-        display: flex;
-        align-items: center;
-        gap: 4px; /* espaciado entre los botones */
-    }
-    
-    .btn {
-        padding: 5px 10px;
-        font-size: 14px;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-        margin-right: 5px;
-    }
+.btn-warning {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(19, 132, 107, 0.2);
+}
 
-    .btn-xs {
-        padding: 4px 7px;
-        font-size: 13px;
-        line-height: 1.5;
-    }
+.btn-warning:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(19, 132, 107, 0.3);
+}
 
-    .btn-warning {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
-        color: white;
-    }
+.btn-danger {
+  background-color: white;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
 
-    .btn-warning:hover {
-        background-color: #255747;
-        border-color: #255747;
-    }
+.btn-danger:hover {
+  background-color: var(--danger);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+}
 
-    .btn-danger {
-        background-color: var(--secondary-color);
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-    }
+.btn-primary {
+  background-color: var(--primary-dark);
+  color: white;
+  box-shadow: 0 4px 12px rgba(10, 16, 35, 0.15);
+}
 
-    .btn-danger:hover {
-        background-color: #d9d5cb;
-        border-color: var(--primary-color);
-    }
+.btn-primary:hover {
+  background-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(10, 16, 35, 0.2);
+}
 
-    .btn-success {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
-        color: white;
-    }
+.btn-secondary {
+  background-color: var(--secondary);
+  color: var(--text);
+  border: 1px solid rgba(10, 16, 35, 0.1);
+}
 
-    .btn-success:hover {
-        background-color: #255747;
-        border-color: #255747;
-    }
+.btn-secondary:hover {
+  background-color: var(--light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
 
-    .btn-info {
-        background-color: var(--secondary-color);
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-    }
+.btn-agregar-comida {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
 
-    .btn-info:hover {
-        background-color: #d9d5cb;
-        border-color: var(--primary-color);
-    }
+/* Modales con diseño moderno */
+.modal-content {
+  border: none;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
 
-    .btn-primary {
-        background-color: #255747;
-        border-color: #255747;
-        color: white;
-    }
+.modal-header {
+  background-color: var(--primary);
+  color: white;
+  border-bottom: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+}
 
-    .btn-primary:hover {
-        background-color: #1e4a3a;
-        border-color: #1e4a3a;
-    }
+.modal-title {
+  font-weight: 600;
+  font-size: var(--font-size-xl);
+}
 
-    .modal-content {
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+.modal-body {
+  background-color: var(--light);
+  color: var(--text);
+  padding: var(--spacing-lg);
+  font-size: var(--font-size-base);
+}
 
-    .modal-header {
-        background-color: var(--primary-color);
-        color: white;
-        border-radius: 10px 10px 0 0;
-    }
+.modal-footer {
+  border-top: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--light);
+}
 
-    .modal-body {
-        background-color: var(--secondary-color);
-        color: var(--primary-color);
-    }
+/* Formularios modernos */
+.form-control, .form-select {
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(10, 16, 35, 0.1);
+  background-color: var(--light);
+  transition: all var(--transition);
+  font-size: var(--font-size-base);
+  box-shadow: inset 0 2px 4px rgba(10, 16, 35, 0.03);
+}
 
-    .modal-footer .btn-secondary {
-        background-color: var(--secondary-color);
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-    }
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(19, 132, 107, 0.15);
+  outline: none;
+}
 
-    .modal-footer .btn-secondary:hover {
-        background-color: #d9d5cb;
-        border-color: var(--primary-color);
-    }
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  font-size: var(--font-size-md);
+}
 
-    #miTabla td:nth-child(8),
-    #miTabla td:nth-child(9) {
-        min-width: 130px;
-    }
+.mb-3 {
+  margin-bottom: var(--spacing-md);
+}
 
-    /* Responsividad: apila la galería y los detalles en pantallas pequeñas */
-    @media (max-width: 768px) {
-        .containerComida {
-            flex-direction: column;
-            /* Cambia a columna en pantallas pequeñas */
-        }
+/* Listas dentro de la tabla */
+#miTabla ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
 
-        .details {
-            max-height: auto;
-            /* Ajusta la altura */
-        }
-    }
+#miTabla li {
+  padding: 0.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-size-base);
+}
+
+#miTabla li:before {
+  content: "•";
+  color: var(--accent);
+  font-weight: bold;
+  margin-right: 0.35rem;
+  font-size: var(--font-size-lg);
+}
+
+/* Botón de cerrar del modal */
+.btn-close {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  opacity: 0.8;
+  transition: all var(--transition);
+}
+
+.btn-close:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: rotate(90deg);
+}
+
+/* DataTables personalizado */
+.dataTables_wrapper .dataTables_filter input {
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(10, 16, 35, 0.1);
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+  font-size: var(--font-size-base);
+}
+
+.dataTables_wrapper .dataTables_filter label {
+  font-size: var(--font-size-base);
+}
+
+.dataTables_wrapper .dataTables_length select {
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(10, 16, 35, 0.1);
+  padding: 0.4rem 0.75rem;
+  font-size: var(--font-size-base);
+}
+
+.dataTables_wrapper .dataTables_length label {
+  font-size: var(--font-size-base);
+}
+
+.dataTables_wrapper .dataTables_info {
+  font-size: var(--font-size-base);
+  padding-top: var(--spacing-sm);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(10, 16, 35, 0.1) !important;
+  background: var(--light) !important;
+  color: var(--text) !important;
+  padding: 0.4rem 0.8rem !important;
+  margin: 0 0.2rem;
+  font-size: var(--font-size-base);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: var(--primary) !important;
+  color: var(--light) !important;
+  border: 1px solid var(--primary) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: var(--secondary) !important;
+  color: var(--primary) !important;
+}
+
+/* Efectos de glassmorfismo - tendencia 2025 */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Animaciones de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table-container {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsividad mejorada */
+@media (max-width: 992px) {
+  .section-title h2 {
+    font-size: clamp(3rem, 8vw, 4rem);
+  }
+  
+  #miTabla thead {
+    display: none;
+  }
+  
+  #miTabla, 
+  #miTabla tbody, 
+  #miTabla tr, 
+  #miTabla td {
+    display: block;
+    width: 100%;
+  }
+  
+  #miTabla tr {
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(10, 16, 35, 0.05);
+  }
+  
+  #miTabla td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+    border-bottom: 1px solid rgba(10, 16, 35, 0.05);
+    font-size: var(--font-size-sm);
+  }
+  
+  #miTabla td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: var(--spacing-sm);
+    width: 45%;
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: var(--font-size-sm);
+  }
+  
+  .btn {
+    padding: 0.6rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  :root {
+    --font-size-base: 14px; /* Más pequeño en móviles */
+  }
+  
+  .section-title {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+  
+  .section-title h2 {
+    font-size: clamp(2.5rem, 10vw, 3rem);
+  }
+  
+  .btn {
+    font-size: var(--font-size-sm);
+  }
+  
+  .modal-body, .modal-footer {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Decoración sutil - formas orgánicas modernas */
+.table-container:before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background-color: rgba(255, 126, 84, 0.1);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.table-container {
+  position: relative;
+}
+
+/* Mejora de legibilidad */
+p, li, td, th, input, select, textarea, button, label {
+  letter-spacing: 0.3px;
+}
+
+/* Asegurar que las imágenes en la tabla no rompan el diseño */
+#miTabla tbody td img {
+  max-width: 40px; /* Reducido para ahorrar espacio */
+  height: auto;
+  border-radius: var(--border-radius-sm);
+}
 </style>
 {% endblock %}

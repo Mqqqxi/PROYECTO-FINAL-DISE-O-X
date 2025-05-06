@@ -76,7 +76,7 @@ def CrearProgreso(request, paciente_pk):
         'fechas': fechas,
         'progresos': progresos,
     }
-    return render(request, 'progreso/progreso.html', context)
+    return render(request, 'pacientes/infopaciente.html', context)
 
 # Configurar un logger
 logger = logging.getLogger(__name__)

@@ -78,21 +78,36 @@
     </div>
 </div>
 
+<!-- Modal para Confirmaciones y Notificaciones -->
+<div class="modal" id="message-modal" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('message-modal')">×</button>
+        <h3 id="message-modal-title"></h3>
+        <p id="message-modal-text"></p>
+        <div class="modal-actions" id="message-modal-actions">
+            <!-- Los botones se generarán dinámicamente -->
+        </div>
+    </div>
+</div>
+
+
+
 <!-- Overlay del Modal -->
 <div class="modal-overlay" id="modal-overlay" style="display: none;"></div>
 
 <style>
-/* Los estilos se mantienen idénticos a los proporcionados */
+/* Estilos existentes */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --primary-color: #2A9D8F; /* Teal for health and trust */
-    --secondary-color: #F4F1DE; /* Soft cream background */
-    --accent-color: #E9C46A; /* Warm yellow for highlights */
-    --text-color: #264653; /* Deep blue-gray for text */
-    --card-bg: rgba(255, 255, 255, 0.9); /* Glassmorphism effect */
+    --primary-color: #2A9D8F;
+    --secondary-color: #F4F1DE;
+    --accent-color: #E9C46A;
+    --text-color: #264653;
+    --card-bg: rgba(255, 255, 255, 0.9);
     --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     --backdrop: blur(12px);
+    --danger-color: #e63946; /* Color rojo para el botón de eliminar */
 }
 
 body {
@@ -108,7 +123,6 @@ body {
     padding: 40px 20px;
 }
 
-/* Section Title */
 .section-title {
     text-align: center;
     margin-bottom: 40px;
@@ -131,7 +145,6 @@ body {
     opacity: 0.8;
 }
 
-/* Calendar */
 .calendar-wrapper {
     background: var(--card-bg);
     padding: 20px;
@@ -174,7 +187,6 @@ body {
     background: rgba(233, 196, 106, 0.2);
 }
 
-/* Modal */
 .modal {
     position: fixed;
     top: 0;
@@ -283,10 +295,9 @@ body {
     color: var(--text-color);
 }
 
-/* Form Control */
 .form-control {
     width: 100%;
-    padding: 12px;
+    padding: 4px;
     border: 1px solid rgba(42, 157, 143, 0.2);
     border-radius: 8px;
     font-size: 1rem;
@@ -301,7 +312,6 @@ body {
     box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
 }
 
-/* Buttons */
 .btn {
     padding: 12px 24px;
     border-radius: 50px;
@@ -331,14 +341,12 @@ body {
     background: #d4a548;
 }
 
-/* Modal Actions */
 .modal-actions {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
 }
 
-/* Modal Overlay */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -350,7 +358,6 @@ body {
     z-index: 999;
 }
 
-/* Nutricionista Notice */
 .nutricionista-notice {
     margin-top: 20px;
     padding: 16px;
@@ -365,7 +372,6 @@ body {
     font-weight: 500;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -383,7 +389,6 @@ body {
     background: #21867a;
 }
 
-/* Tabla de Turnos */
 .appointments-table-wrapper {
     max-height: 400px;
     overflow-y: auto;
@@ -434,7 +439,25 @@ body {
     background: #20b356;
 }
 
-/* Ajustes Responsivos */
+.appointments-table .delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--danger-color);
+    border-radius: 50%;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.3s ease;
+}
+
+.appointments-table .delete-btn:hover {
+    background: #d00000;
+}
+
 @media (max-width: 768px) {
     .container2 {
         padding: 20px;
@@ -458,310 +481,390 @@ body {
         font-size: 0.9rem;
     }
 
-    .appointments-table .whatsapp-icon {
+    .appointments-table .whatsapp-icon,
+    .appointments-table .delete-btn {
         width: 28px;
         height: 28px;
     }
 }
 </style>
 
-<script>
-// Control de Modales
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    const modalOverlay = document.getElementById('modal-overlay');
-    modal.classList.remove('active');
-    setTimeout(() => {
-        modal.style.display = 'none';
-        modalOverlay.style.display = 'none';
-    }, 300);
-}
 
-function openModal(modalId, dateStr) {
-    const modal = document.getElementById(modalId);
-    const modalOverlay = document.getElementById('modal-overlay');
-    modal.style.display = 'flex';
-    modalOverlay.style.display = 'block';
-    setTimeout(() => {
-        modal.classList.add('active');
-    }, 10);
-    if (dateStr) {
-        const date = new Date(dateStr);
-        const dateDisplay = date.toLocaleDateString('es-ES', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-        if (modalId === 'time-modal') {
-            document.getElementById('modal-date').textContent = dateDisplay;
-        } else if (modalId === 'appointments-modal') {
-            document.getElementById('appointments-modal-date').textContent = dateDisplay;
+<script>
+    // Control de Modales
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        const modalOverlay = document.getElementById('modal-overlay');
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        }, 600);
+    }
+    
+    function openModal(modalId, dateStr) {
+        const modal = document.getElementById(modalId);
+        const modalOverlay = document.getElementById('modal-overlay');
+        modal.style.display = 'flex';
+        modalOverlay.style.display = 'block';
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+        if (dateStr && (modalId === 'time-modal' || modalId === 'appointments-modal')) {
+            const [year, month, day] = dateStr.split('-');
+            const date = new Date(year, month - 1, day);
+            const dateDisplay = date.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            if (modalId === 'time-modal') {
+                document.getElementById('modal-date').textContent = dateDisplay;
+            } else if (modalId === 'appointments-modal') {
+                document.getElementById('appointments-modal-date').textContent = dateDisplay;
+            }
         }
     }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const calendarEl = document.getElementById('calendar');
-    const modalOverlay = document.getElementById('modal-overlay');
-    const availableTimes = document.getElementById('available-times');
-    const reasonSelect = document.getElementById('reason-select');
-    const reserveBtn = document.getElementById('reserve-btn');
-    const cancelTurnBtn = document.getElementById('cancel-turn-btn');
-    const reservedTurnDiv = document.getElementById('reserved-turn');
-    const reservedDetails = document.getElementById('reserved-details');
-    const closeReasonModalBtn = document.getElementById('close-reason-modal-btn');
-    const appointmentsTableBody = document.getElementById('appointments-table-body');
     
-    // Verificar si el usuario es nutricionista usando la variable pasada desde la vista
-    const isNutricionista = `{% if is_nutricionista %}true{% else %}false{% endif %}`;
-
-    let selectedDate = null;
-    let selectedTime = null;
-
-    // Cerrar modal de motivo al hacer clic en cancelar
-    closeReasonModalBtn.addEventListener('click', function() {
-        closeModal('reason-modal');
-    });
-
-    // Generar horarios
-    function generarHorarios(rangos) {
-        const horarios = [];
-        rangos.forEach(rango => {
-            let horaActual = new Date(`1970-01-01T${rango.inicio}:00`);
-            const horaFin = new Date(`1970-01-01T${rango.fin}:00`);
-            while (horaActual < horaFin) {
-                const horaString = horaActual.toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                });
-                horarios.push(horaString);
-                horaActual.setMinutes(horaActual.getMinutes() + 30);
-            }
-        });
-        return horarios;
-    }
-
-    // Cargar turno reservado
-    function cargarTurnoReservado() {
-        fetch('{% url "turnos:obtener_turno" %}')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.turno) {
-                    reservedTurnDiv.style.display = 'block';
-                    reservedDetails.innerHTML = `
-                        Día: ${data.turno.dia}<br>
-                        Hora: ${data.turno.hora}<br>
-                        Motivo: ${data.turno.motivo}
-                    `;
-                } else {
-                    reservedTurnDiv.style.display = 'none';
-                }
-            })
-            .catch(error => console.error('Error al cargar turno reservado:', error));
-    }
-
-    // Cargar horarios disponibles
-    function cargarHorarios(rangos, horariosOcupados) {
-        const horarios = generarHorarios(rangos);
-        availableTimes.innerHTML = horarios
-            .map(horario => {
-                const disabled = horariosOcupados.includes(horario) || reservedTurnDiv.style.display === 'block';
-                return `<button class="time-btn" ${disabled ? 'disabled' : ''} data-horario="${horario}" aria-label="Seleccionar horario ${horario}">${horario}</button>`;
-            })
-            .join('');
-
-        document.querySelectorAll('.time-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                selectedTime = this.getAttribute('data-horario');
-                closeModal('time-modal');
-                openModal('reason-modal');
+    // Función para mostrar el modal de mensaje/confirmación
+    function showMessageModal(title, message, isConfirmation = false, onConfirm = null) {
+        const modal = document.getElementById('message-modal');
+        const modalTitle = document.getElementById('message-modal-title');
+        const modalText = document.getElementById('message-modal-text');
+        const modalActions = document.getElementById('message-modal-actions');
+    
+        modalTitle.textContent = title;
+        modalText.textContent = message;
+        modalActions.innerHTML = '';
+    
+        if (isConfirmation) {
+            modalActions.innerHTML = `
+                <button class="btn btn-primary" id="message-modal-confirm">Aceptar</button>
+                <button class="btn btn-secondary" id="message-modal-cancel">Cancelar</button>
+            `;
+            const confirmBtn = document.getElementById('message-modal-confirm');
+            const cancelBtn = document.getElementById('message-modal-cancel');
+    
+            confirmBtn.addEventListener('click', () => {
+                if (onConfirm) onConfirm();
+                closeModal('message-modal');
             });
-        });
+            cancelBtn.addEventListener('click', () => closeModal('message-modal'));
+        } else {
+            modalActions.innerHTML = `
+                <button class="btn btn-primary" id="message-modal-close">Cerrar</button>
+            `;
+            document.getElementById('message-modal-close').addEventListener('click', () => closeModal('message-modal'));
+        }
+    
+        openModal('message-modal');
     }
-
-    // Cargar turnos para nutricionista
-    function cargarTurnosNutricionista(dia) {
-        fetch(`{% url "turnos:obtener_turnos_dia" %}?dia=${dia}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    appointmentsTableBody.innerHTML = '';
-                    if (data.turnos.length === 0) {
-                        appointmentsTableBody.innerHTML = `
-                            <tr>
-                                <td colspan="4" style="text-align: center;">No hay turnos reservados para este día.</td>
-                            </tr>
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const availableTimes = document.getElementById('available-times');
+        const reasonSelect = document.getElementById('reason-select');
+        const reserveBtn = document.getElementById('reserve-btn');
+        const cancelTurnBtn = document.getElementById('cancel-turn-btn');
+        const reservedTurnDiv = document.getElementById('reserved-turn');
+        const reservedDetails = document.getElementById('reserved-details');
+        const closeReasonModalBtn = document.getElementById('close-reason-modal-btn');
+        const appointmentsTableBody = document.getElementById('appointments-table-body');
+        
+        const isNutricionista = `{% if is_nutricionista %}true{% else %}false{% endif %}`;
+    
+        let selectedDate = null;
+        let selectedTime = null;
+    
+        closeReasonModalBtn.addEventListener('click', function() {
+            closeModal('reason-modal');
+        });
+    
+        function generarHorarios(rangos) {
+            const horarios = [];
+            rangos.forEach(rango => {
+                let horaActual = new Date(`1970-01-01T${rango.inicio}:00`);
+                const horaFin = new Date(`1970-01-01T${rango.fin}:00`);
+                while (horaActual < horaFin) {
+                    const horaString = horaActual.toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    });
+                    horarios.push(horaString);
+                    horaActual.setMinutes(horaActual.getMinutes() + 30);
+                }
+            });
+            return horarios;
+        }
+    
+        function cargarTurnoReservado() {
+            fetch('{% url "turnos:obtener_turno" %}')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.turno) {
+                        reservedTurnDiv.style.display = 'block';
+                        reservedDetails.innerHTML = `
+                            Día: ${data.turno.dia}<br>
+                            Hora: ${data.turno.hora}<br>
+                            Motivo: ${data.turno.motivo}
                         `;
                     } else {
-                        data.turnos.forEach(turno => {
-                            const telefono = turno.paciente_telefono ? `+54${turno.paciente_telefono.replace(/[^0-9]/g, '')}` : '';
-                            const whatsappLink = telefono
-                                ? `https://wa.me/${telefono}?text=Hola%20${encodeURIComponent(turno.paciente_nombre)},%20te%20recordamos%20tu%20consulta%20con%20la%20nutricionista%20el%20${encodeURIComponent(dia)}%20a%20las%20${encodeURIComponent(turno.hora)}.%20Motivo:%20${encodeURIComponent(turno.motivo)}.%20¡Te%20esperamos!`
-                                : '#';
-                            const row = `
+                        reservedTurnDiv.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error al cargar turno reservado:', error));
+        }
+    
+        function cargarHorarios(rangos, horariosOcupados) {
+            const horarios = generarHorarios(rangos);
+            availableTimes.innerHTML = horarios
+                .map(horario => {
+                    const disabled = horariosOcupados.includes(horario) || reservedTurnDiv.style.display === 'block';
+                    return `<button class="time-btn" ${disabled ? 'disabled' : ''} data-horario="${horario}" aria-label="Seleccionar horario ${horario}">${horario}</button>`;
+                })
+                .join('');
+    
+            document.querySelectorAll('.time-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    selectedTime = this.getAttribute('data-horario');
+                    closeModal('time-modal');
+                    openModal('reason-modal');
+                });
+            });
+        }
+    
+        function cargarTurnosNutricionista(dia) {
+            fetch(`{% url "turnos:obtener_turnos_dia" %}?dia=${dia}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        appointmentsTableBody.innerHTML = '';
+                        if (data.turnos.length === 0) {
+                            appointmentsTableBody.innerHTML = `
                                 <tr>
-                                    <td>${turno.paciente_nombre}</td>
-                                    <td>${turno.hora}</td>
-                                    <td>${turno.motivo}</td>
-                                    <td>
-                                        <a href="${whatsappLink}" class="whatsapp-icon" target="_blank" ${!telefono ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.76.45 3.43 1.24 4.88L2 22l5.29-1.36c1.42.79 3.03 1.2 4.75 1.2 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm-.04 3.55c.55 0 1.09.07 1.62.2.53.13 1.03.33 1.49.59.46.26.86.58 1.19.96.33.38.59.82.77 1.29.18.47.27.97.27 1.49 0 3.31-2.69 6-6 6-.55 0-1.09-.07-1.62-.2-.53-.13-1.03-.33-1.49-.59-.46-.26-.86-.58-1.19-.96-.33-.38-.59-.82-.77-1.29-.18-.47-.27-.97-.27-1.49 0-3.31 2.69-6 6-6zm3.83 7.67c-.05-.09-.14-.15-.25-.18-.09-.03-.19-.03-.3 0-.11.03-.22.09-.32.18-.1.09-.19.21-.27.33-.08.12-.15.26-.2.41-.05.15-.09.31-.12.48-.03.17-.05.34-.05.51 0 .18.02.36.05.54.03.18.08.36.14.54.06.18.14.35.23.52.09.17.2.33.33.47.13.14.28.27.45.38.17.11.36.2.57.27.21.07.44.11.68.11.24 0 .49-.04.73-.12.24-.08.47-.21.68-.38.21-.17.39-.39.54-.65.15-.26.27-.56.36-.9.09-.34.14-.71.14-1.1 0-.39-.05-.77-.15-1.14-.1-.37-.25-.72-.45-1.04-.2-.32-.46-.61-.76-.85-.3-.24-.65-.42-1.02-.54-.37-.12-.77-.17-1.17-.14z"/>
-                                            </svg>
-                                        </a>
-                                    </td>
+                                    <td colspan="4" style="text-align: center;">No hay turnos reservados para este día.</td>
                                 </tr>
                             `;
-                            appointmentsTableBody.innerHTML += row;
-                        });
+                        } else {
+                            data.turnos.forEach(turno => {
+                                const telefono = turno.paciente_telefono ? `+54${turno.paciente_telefono.replace(/[^0-9]/g, '')}` : '';
+                                const whatsappLink = telefono ? `https://wa.me/${telefono}` : '#';
+                                const row = `
+                                    <tr>
+                                        <td>${turno.paciente_nombre}</td>
+                                        <td>${turno.hora}</td>
+                                        <td>${turno.motivo}</td>
+                                        <td>
+                                            <a href="${whatsappLink}" class="whatsapp-icon" target="_blank" ${!telefono ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.76.45 3.43 1.24 4.88L2 22l5.29-1.36c1.42.79 3.03 1.2 4.75 1.2 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm-.04 3.55c.55 0 1.09.07 1.62.2.53.13 1.03.33 1.49.59.46.26.86.58 1.19.96.33.38.59.82.77 1.29.18.47.27.97.27 1.49 0 3.31-2.69 6-6 6-.55 0-1.09-.07-1.62-.2-.53-.13-1.03-.33-1.49-.59-.46-.26-.86-.58-1.19-.96-.33-.38-.59-.82-.77-1.29-.18-.47-.27-.97-.27-1.49 0-3.31 2.69-6 6-6zm3.83 7.67c-.05-.09-.14-.15-.25-.18-.09-.03-.19-.03-.3 0-.11.03-.22.09-.32.18-.1.09-.19.21-.27.33-.08.12-.15.26-.2.41-.05.15-.09.31-.12.48-.03.17-.05.34-.05.51 0 .18.02.36.05.54.03.18.08.36.14.54.06.18.14.35.23.52.09.17.2.33.33.47.13.14.28.27.45.38.17.11.36.2.57.27.21.07.44.11.68.11.24 0 .49-.04.73-.12.24-.08.47-.21.68-.38.21-.17.39-.39.54-.65.15-.26.27-.56.36-.9.09-.34.14-.71.14-1.1 0-.39-.05-.77-.15-1.14-.1-.37-.25-.72-.45-1.04-.2-.32-.46-.61-.76-.85-.3-.24-.65-.42-1.02-.54-.37-.12-.77-.17-1.17-.14z"/>
+                                                </svg>
+                                            </a>
+                                            <button class="delete-btn" data-turno-id="${turno.id_turno}" aria-label="Eliminar turno">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+                                appointmentsTableBody.innerHTML += row;
+                            });
+    
+                            document.querySelectorAll('.delete-btn').forEach(button => {
+                                button.addEventListener('click', function () {
+                                    const turnoId = this.getAttribute('data-turno-id');
+                                    const pacienteNombre = this.closest('tr').querySelector('td').textContent;
+                                    showMessageModal(
+                                        'Confirmar Eliminación',
+                                        `¿Estás seguro de que deseas eliminar el turno de ${pacienteNombre}?`,
+                                        true,
+                                        () => {
+                                            fetch(`{% url "turnos:eliminar_turno" %}?id_turno=${turnoId}`, {
+                                                method: 'DELETE',
+                                                headers: {
+                                                    'X-CSRFToken': '{{ csrf_token }}',
+                                                    'Content-Type': 'application/json'
+                                                }
+                                            })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        showMessageModal('Éxito', data.message);
+                                                        cargarTurnosNutricionista(dia);
+                                                    } else {
+                                                        showMessageModal('Error', data.error || 'No se pudo eliminar el turno.');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error al eliminar turno:', error);
+                                                    showMessageModal('Error', 'Ocurrió un error al intentar eliminar el turno.');
+                                                });
+                                        }
+                                    );
+                                });
+                            });
+                        }
+                    } else {
+                        showMessageModal('Error', data.error || 'Error al obtener los turnos.');
                     }
-                } else {
-                    alert('Error al obtener los turnos: ' + (data.error || 'Error desconocido.'));
-                }
-            })
-            .catch(error => console.error('Error al cargar turnos:', error));
-    }
-
-    // Cancelar turno
-    if (cancelTurnBtn) {
-        cancelTurnBtn.addEventListener('click', function () {
-            if (confirm('¿Estás seguro de que deseas cancelar este turno?')) {
-                fetch('{% url "turnos:cancelar_turno" %}', {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            reservedTurnDiv.style.display = 'none';
-                            cargarHorarios(
-                                [
-                                    { inicio: '08:00', fin: '12:00' },
-                                    { inicio: '16:00', fin: '20:00' }
-                                ],
-                                []
-                            );
-                        } else {
-                            alert(data.error || 'No se pudo cancelar el turno.');
-                        }
-                    })
-                    .catch(error => console.error('Error al cancelar turno:', error));
-            }
-        });
-    }
-
-    // Reservar turno
-    if (reserveBtn) {
-        reserveBtn.addEventListener('click', function () {
-            const motivo = reasonSelect.value;
-            if (!motivo) {
-                alert('Por favor, seleccione un motivo de la consulta.');
-                return;
-            }
-
-            if (confirm(`¿Confirmar reserva para el ${selectedDate} a las ${selectedTime} con el motivo: "${motivo}"?`)) {
-                fetch('{% url "turnos:reservar_turno" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({
-                        dia: selectedDate,
-                        hora: selectedTime,
-                        motivo: motivo
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) throw response.json();
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            const [year, month, day] = selectedDate.split('-');
-                            alert(`Turno guardado exitosamente para el día ${day}-${month}-${year} a las ${selectedTime}.`);
-                            closeModal('reason-modal');
-                            cargarTurnoReservado();
-                        } else {
-                            alert(data.error || 'No se pudo guardar el turno.');
-                        }
-                    })
-                    .catch(async error => {
-                        const errorData = await error;
-                        alert('Error al reservar el turno: ' + (errorData.error || 'Error desconocido.'));
-                    });
-            }
-        });
-    }
-
-    // Inicializar FullCalendar
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        validRange: { start: new Date().toISOString().split('T')[0] },
-        dateClick: function (info) {
-            selectedDate = info.dateStr;
-            if (isNutricionista === 'true') {
-                // Abrir modal de turnos para nutricionistas
-                openModal('appointments-modal', info.dateStr);
-                cargarTurnosNutricionista(info.dateStr);
-            } else {
-                // Lógica para pacientes
-                const selected = new Date(info.dateStr);
-                const today = new Date();
-                if (selected < today.setHours(0, 0, 0, 0)) {
-                    alert('No se puede reservar para fechas pasadas o el día de hoy.');
+                .catch(error => {
+                    console.error('Error al cargar turnos:', error);
+                    showMessageModal('Error', 'Ocurrió un error al cargar los turnos.');
+                });
+        }
+    
+        if (cancelTurnBtn) {
+            cancelTurnBtn.addEventListener('click', function () {
+                showMessageModal(
+                    'Confirmar Cancelación',
+                    '¿Estás seguro de que deseas cancelar este turno?',
+                    true,
+                    () => {
+                        fetch('{% url "turnos:cancelar_turno" %}', {
+                            method: 'POST',
+                            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    showMessageModal('Éxito', data.message);
+                                    reservedTurnDiv.style.display = 'none';
+                                    cargarHorarios(
+                                        [
+                                            { inicio: '08:00', fin: '12:00' },
+                                            { inicio: '16:00', fin: '20:00' }
+                                        ],
+                                        []
+                                    );
+                                } else {
+                                    showMessageModal('Error', data.error || 'No se pudo cancelar el turno.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error al cancelar turno:', error);
+                                showMessageModal('Error', 'Ocurrió un error al intentar cancelar el turno.');
+                            });
+                    }
+                );
+            });
+        }
+    
+        if (reserveBtn) {
+            reserveBtn.addEventListener('click', function () {
+                const motivo = reasonSelect.value;
+                if (!motivo) {
+                    showMessageModal('Advertencia', 'Por favor, seleccione un motivo de la consulta.');
                     return;
                 }
-                openModal('time-modal', info.dateStr);
-
-                // Obtener horarios ocupados
-                fetch(`{% url "turnos:obtener_horarios_ocupados" %}?dia=${info.dateStr}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const horariosOcupados = data.horarios_ocupados.map(hora =>
-                                new Date(`1970-01-01T${hora}`).toLocaleTimeString('es-ES', {
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })
-                            );
-                            cargarHorarios(
-                                [
-                                    { inicio: '08:00', fin: '12:00' },
-                                    { inicio: '16:00', fin: '20:00' }
-                                ],
-                                horariosOcupados
-                            );
-                        } else {
-                            alert('Error al obtener horarios ocupados.');
-                        }
-                    })
-                    .catch(error => console.error('Error al cargar horarios ocupados:', error));
-
-                cargarTurnoReservado();
-            }
-        },
-        eventDidMount: function(info) {
-            if (isNutricionista === 'true') {
-                info.el.style.cursor = 'pointer';
-            }
+    
+                showMessageModal(
+                    'Confirmar Reserva',
+                    `¿Confirmar reserva para el ${selectedDate} a las ${selectedTime} con el motivo: "${motivo}"?`,
+                    true,
+                    () => {
+                        fetch('{% url "turnos:reservar_turno" %}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                dia: selectedDate,
+                                hora: selectedTime,
+                                motivo: motivo
+                            })
+                        })
+                            .then(response => {
+                                if (!response.ok) throw response.json();
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    const [year, month, day] = selectedDate.split('-');
+                                    showMessageModal('Éxito', `Turno guardado exitosamente para el día ${day}-${month}-${year} a las ${selectedTime}.`);
+                                    closeModal('reason-modal');
+                                    cargarTurnoReservado();
+                                } else {
+                                    showMessageModal('Error', data.error || 'No se pudo guardar el turno.');
+                                }
+                            })
+                            .catch(async error => {
+                                const errorData = await error;
+                                showMessageModal('Error', errorData.error || 'Error al reservar el turno.');
+                            });
+                    }
+                );
+            });
         }
+    
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            validRange: { start: new Date().toISOString().split('T')[0] },
+            dateClick: function (info) {
+                selectedDate = info.dateStr;
+                if (isNutricionista === 'true') {
+                    openModal('appointments-modal', info.dateStr);
+                    cargarTurnosNutricionista(info.dateStr);
+                } else {
+                    const selected = new Date(info.dateStr);
+                    const today = new Date();
+                    if (selected < today.setHours(0, 0, 0, 0)) {
+                        showMessageModal('Advertencia', 'No se puede reservar para fechas pasadas o el día de hoy.');
+                        return;
+                    }
+                    openModal('time-modal', info.dateStr);
+    
+                    fetch(`{% url "turnos:obtener_horarios_ocupados" %}?dia=${info.dateStr}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                const horariosOcupados = data.horarios_ocupados.map(hora =>
+                                    new Date(`1970-01-01T${hora}`).toLocaleTimeString('es-ES', {
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })
+                                );
+                                cargarHorarios(
+                                    [
+                                        { inicio: '08:00', fin: '12:00' },
+                                        { inicio: '16:00', fin: '20:00' }
+                                    ],
+                                    horariosOcupados
+                                );
+                            } else {
+                                showMessageModal('Error', 'Error al obtener horarios ocupados.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar horarios ocupados:', error);
+                            showMessageModal('Error', 'Ocurrió un error al cargar los horarios ocupados.');
+                        });
+    
+                    cargarTurnoReservado();
+                }
+            },
+            eventDidMount: function(info) {
+                if (isNutricionista === 'true') {
+                    info.el.style.cursor = 'pointer';
+                }
+            }
+        });
+        calendar.render();
+    
+        if (isNutricionista !== 'true') {
+            cargarTurnoReservado();
+        }
+    
+        modalOverlay.addEventListener('click', () => {
+            closeModal('time-modal');
+            closeModal('reason-modal');
+            closeModal('appointments-modal');
+            closeModal('message-modal');
+        });
     });
-    calendar.render();
-
-    // Si no es nutricionista, cargar el turno reservado al inicio
-    if (isNutricionista !== 'true') {
-        cargarTurnoReservado();
-    }
-
-    // Cerrar modales al hacer clic en el overlay
-    modalOverlay.addEventListener('click', () => {
-        closeModal('time-modal');
-        closeModal('reason-modal');
-        closeModal('appointments-modal');
-    });
-});
 </script>
 {% endblock %}

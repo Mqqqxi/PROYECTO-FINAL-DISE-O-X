@@ -14,6 +14,10 @@ urlpatterns = [
     path('habilitar/<int:pk>/', habilitar_paciente, name='habilitar_paciente'),
     path('crear-datos/<int:persona_id>/', crear_datos_paciente, name='crear_datos_paciente'),  # Nueva URL
     path('listapacientenuevo/',listapacientenuevo, name='listapacientenuevo'),
-    # path('infopaciente/<int:persona_id>/', infopaciente, name='infopaciente'),  # Nueva ruta
-    path('infopaciente/', infopaciente, name='infopaciente')
+    # el propio paciente ve su seguimiento sin pasar ID
+    path("mi‑seguimiento/", infopaciente, name="infopaciente"),
+
+    # el/la nutricionista abre la ficha de cualquier paciente
+    path("paciente/<int:paciente_id>/", infopaciente, name="infopaciente_detalle"),
+    
 ]

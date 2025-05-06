@@ -5,83 +5,126 @@
 
 {% block content %}
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
     * {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         margin: 0;
         padding: 0;
         box-sizing: border-box;
     }
 
     body {
-        background-color: #f5f5f5;
-        background-image: linear-gradient(120deg, #f5f5f5 0%, #ffffff 100%);
+        background-color: #f8f9fa;
+        background-image: linear-gradient(135deg, #f8f9fa 0%, #e9f5f2 100%);
         min-height: 100vh;
     }
 
     .container3 {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        max-width: 1280px;
+        margin: 30px auto;
+        padding: 30px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
         position: relative;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
     header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #EFEBE0;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        margin-bottom: 25px;
+        background-color: #ffffff;
+        padding: 20px 25px;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(49, 113, 91, 0.06);
+        margin-bottom: 30px;
+        border: 1px solid rgba(49, 113, 91, 0.08);
+    }
+
+    .section-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
 
     .section-left span {
         font-size: 16px;
-        margin-right: 10px;
-        color: #31715B;
+        color: #1e3a31;
         font-weight: 500;
+        padding: 8px 16px;
+        background-color: #f1f8f6;
+        border-radius: 12px;
+        border: 1px solid rgba(49, 113, 91, 0.1);
     }
 
     .section-left button {
         background-color: #31715B;
         color: white;
         border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
+        padding: 10px 16px;
+        border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s ease;
-        margin-left: 10px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .section-left button:before {
+        content: '';
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    #exportCsvButton:before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3Cpolyline points='7 10 12 15 17 10'/%3E%3Cline x1='12' y1='15' x2='12' y2='3'/%3E%3C/svg%3E");
+    }
+
+    #exportPdfButton:before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cpolyline points='10 9 9 9 8 9'/%3E%3C/svg%3E");
     }
 
     .section-left button:hover {
-        background-color: #275a47;
+        background-color: #265a48;
         transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(49, 113, 91, 0.2);
     }
 
     .section-right input {
-        padding: 10px 15px;
-        border: 1px solid #31715B;
-        border-radius: 8px;
-        width: 220px;
-        background-color: #EFEBE0;
+        padding: 14px 20px;
+        border: 1px solid rgba(49, 113, 91, 0.15);
+        border-radius: 12px;
+        width: 250px;
+        background-color: #f9fafb;
         transition: all 0.3s ease;
+        font-size: 15px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2331715B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: 12px center;
+        background-size: 18px;
+        padding-left: 40px;
     }
 
     .section-right input:focus {
         outline: none;
-        box-shadow: 0 0 0 2px rgba(49, 113, 91, 0.3);
-        width: 240px;
+        box-shadow: 0 0 0 3px rgba(49, 113, 91, 0.15);
+        width: 280px;
+        border-color: #31715B;
     }
 
     h2 {
-        color: #31715B;
+        color: #1e3a31;
         margin: 20px 0 10px;
+        font-weight: 700;
     }
 
     h3 {
@@ -91,7 +134,7 @@
 
     .patient-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 25px;
         padding: 15px 5px;
     }
@@ -103,89 +146,118 @@
     }
     
     .patient-card {
-        background-color: #EFEBE0;
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        background-color: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
         text-align: center;
-        padding: 15px;
+        padding: 25px 15px;
         transition: all 0.3s ease;
-        color: #31715B;
-        border: 1px solid rgba(49, 113, 91, 0.1);
-        height: 300px;
+        color: #1e3a31;
+        border: 1px solid rgba(49, 113, 91, 0.06);
+        height: 320px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .patient-card:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #31715B, #4a9a7e);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
     }
 
     .patient-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(49, 113, 91, 0.1);
         cursor: pointer;
-        background-color: #f7f4ec;
+        background-color: #fbfdfb;
+    }
+
+    .patient-card:hover:after {
+        transform: scaleX(1);
     }
 
     .patient-image {
-        width: 90px;
-        height: 90px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
-        margin-bottom: 12px;
-        transition: transform 0.3s ease, border 0.3s ease;
-        border: 2px solid #31715B;
+        margin-bottom: 20px;
+        transition: all 0.4s ease;
+        border: 4px solid #f1f8f6;
         object-fit: cover;
         background-color: white;
+        box-shadow: 0 8px 20px rgba(49, 113, 91, 0.1);
     }
 
     .patient-card:hover .patient-image {
-        transform: scale(1.1);
-        border: 3px solid #31715B;
+        transform: scale(1.12);
+        border: 4px solid #31715B;
     }
 
     .patient-info {
         height: auto;
-        min-height: 50px;
+        min-height: 60px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         width: 100%;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
 
     .patient-card p {
         margin: 5px 0;
-        font-size: 14px;
-        font-weight: 500;
-        line-height: 1.2;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.4;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
+    .patient-card p:last-child {
+        font-size: 14px;
+        font-weight: 500;
+        color: #667085;
+    }
+
     .status {
         display: inline-block;
-        padding: 5px 12px;
-        border-radius: 20px;
+        padding: 8px 18px;
+        border-radius: 30px;
         color: white;
-        font-size: 12px;
+        font-size: 13px;
         margin-top: 10px;
-        transition: transform 0.3s ease;
-        font-weight: 500;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     }
 
     .patient-card:hover .status {
-        transform: scale(1.1);
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     }
 
     .status.green {
-        background-color: #31715B;
+        background: linear-gradient(90deg, #31715B, #4a9a7e);
     }
 
     .status.red {
-        background-color: #dc3545;
+        background: linear-gradient(90deg, #dc3545, #e35d6a);
     }
 
     .status.blue {
-        background-color: #31715B;
+        background: linear-gradient(90deg, #31715B, #4a9a7e);
     }
     
     .patient-link.hidden {
@@ -195,12 +267,13 @@
     .no-results {
         grid-column: 1 / -1;
         text-align: center;
-        padding: 30px;
+        padding: 40px;
         font-size: 16px;
         color: #31715B;
-        background-color: #EFEBE0;
-        border-radius: 8px;
-        margin-top: 20px;
+        background-color: #f1f8f6;
+        border-radius: 16px;
+        margin-top: 30px;
+        border: 1px dashed rgba(49, 113, 91, 0.2);
     }
 
     .container3::before {
@@ -210,10 +283,27 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2331715b' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
-        opacity: 0.5;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2331715b' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.7;
         z-index: -1;
         pointer-events: none;
+        border-radius: 20px;
+    }
+
+    /* Nutrición - elementos temáticos */
+    .nutrition-accent {
+        position: absolute;
+        z-index: -1;
+    }
+
+    .leaf-accent {
+        top: -10px;
+        right: -10px;
+        width: 70px;
+        height: 70px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2331715B' stroke-width='1' stroke-linecap='round' stroke-linejoin='round' opacity='0.15'%3E%3Cpath d='M2 12C2 6.5 6.5 2 12 2c5.5 0 10 4.5 10 10s-4.5 10-10 10C6.5 22 2 17.5 2 12z'/%3E%3Cpath d='M12 7c-1.75 0-3.5.5-5 1.5 1.5 1 3.25 1.5 5 1.5s3.5-.5 5-1.5c-1.5-1-3.25-1.5-5-1.5z'/%3E%3Cpath d='M12 7v10'/%3E%3Cpath d='M7 14c.97 1.37 3 2 5 2s4.03-.63 5-2'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        opacity: 0.15;
     }
 
     @media print {
@@ -259,6 +349,8 @@
 </style>
 
 <div class="container3">
+    <div class="nutrition-accent leaf-accent"></div>
+    
     <header>
         <div class="section-left">
             <span>Pacientes activos: <strong>{{ pacientes.count }}</strong></span>
@@ -272,12 +364,12 @@
     
     <div class="patient-grid" id="patientGrid">
         {% for paciente in pacientes %}
-            <a href="{% url 'pacientes:infopaciente' %}" class="patient-link">
+        <a href="{% url 'pacientes:infopaciente_detalle' paciente.pk %}" class="patient-link">
                 <div class="patient-card">
-                    {% if paciente.persona.genero == 'masculino' %}
+                    {% if paciente.persona.genero == 'M' or paciente.persona.genero == 'masculino' %}
                         <img src="{% static 'images/masculino.jpg' %}" alt="masculino" class="patient-image">
-                    {% elif paciente.persona.genero == 'femenino' %}
-                        <img src="{% static 'images/femenino.jpg' %}" alt="femenino" class="patient-image">
+                        {% elif paciente.persona.genero == 'F' or paciente.persona.genero == 'femenino' %}
+                        <img src="{% static 'images/femenino.PNG' %}" alt="femenino" class="patient-image">
                     {% else %}
                         <img src="{% static 'images/no_definido.PNG' %}" alt="No definido" class="patient-image">
                     {% endif %}

@@ -1,88 +1,130 @@
 {% extends 'base.html' %}
 {% block title %}Crear Datos del Paciente{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2 class="text-center">Añadir Datos del Paciente</h2>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <form method="post" action="{% url 'pacientes:crear_datos_paciente' paciente.persona_id %}" id="pacienteForm">
-        {% csrf_token %}
-        <div class="tabset">
-            <input type="radio" name="tabset" id="tab1" aria-controls="paciente" checked>
-            <label for="tab1">Datos del Paciente</label>
-            <input type="radio" name="tabset" id="tab2" aria-controls="antropometria">
-            <label for="tab2">Valores Antropométricos</label>
-            <input type="radio" name="tabset" id="tab3" aria-controls="laboratorio">
-            <label for="tab3">Análisis de Laboratorio</label>
-            <input type="radio" name="tabset" id="tab4" aria-controls="anamnesis">
-            <label for="tab4">Anamnesis</label>
-            <input type="radio" name="tabset" id="tab5" aria-controls="historia">
-            <label for="tab5">Historia Clínica</label>
-            <div class="tab-panels">
-                <section id="paciente" class="tab-panel">
-                    <h3>Datos del Paciente</h3>
-                    {{ paciente_form.as_p }}
-                </section>
-                <section id="antropometria" class="tab-panel">
-                    <h3>Valores Antropométricos</h3>
-                    {{ valor_antropometrico_form.as_p }}
-                </section>
-                <section id="laboratorio" class="tab-panel">
-                    <h3>Análisis de Laboratorio</h3>
-                    {{ analisis_lab_form.as_p }}
-                </section>
-                <section id="anamnesis" class="tab-panel">
-                    <h3>Anamnesis</h3>
-                    {{ anamnesis_form.as_p }}
-                </section>
-                <section id="historia" class="tab-panel">
-                    <h3>Historia Clínica</h3>
-                    {{ historia_clinica_form.as_p }}
-                </section>
-            </div>
-        </div>
-        <button type="button" id="submitBtn" class="btn btn-primary mt-3">Guardar</button>
-        <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-secondary mt-3">Cancelar</a>
-    </form>
-
-    <!-- Success Modal (Bootstrap 3.3.6) -->
-    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title" id="successModalLabel">Éxito</h4>
-                </div>
-                <div class="modal-body">
-                    ¡Se ha guardado exitosamente!
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="successModalRedirect">Aceptar</button>
-                </div>
-            </div>
-        </div>
+<div class="nutri-page">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
     </div>
 
-    <!-- Error Modal (Bootstrap 3.3.6) -->
-    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="errorModalLabel">Error</h4>
+    <div class="content-wrapper">
+        <div class="form-container">
+            <div class="form-header">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                 </div>
-                <div class="modal-body">
-                    Por favor, completa todos los campos en todas las secciones.
+                <h2>Añadir Datos del Paciente</h2>
+            </div>
+
+            {% if messages %}
+            <ul class="messages" aria-live="polite">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            <form method="post" action="{% url 'pacientes:crear_datos_paciente' paciente.persona_id %}" id="pacienteForm" aria-label="Formulario de creación de datos del paciente" class="smart-form">
+                {% csrf_token %}
+                <div class="tabset">
+                    <input type="radio" name="tabset" id="tab1" aria-controls="paciente" checked>
+                    <label for="tab1">Datos del Paciente</label>
+                    <input type="radio" name="tabset" id="tab2" aria-controls="antropometria">
+                    <label for="tab2">Valores Antropométricos</label>
+                    <input type="radio" name="tabset" id="tab3" aria-controls="laboratorio">
+                    <label for="tab3">Análisis de Laboratorio</label>
+                    <input type="radio" name="tabset" id="tab4" aria-controls="anamnesis">
+                    <label for="tab4">Anamnesis</label>
+                    <input type="radio" name="tabset" id="tab5" aria-controls="historia">
+                    <label for="tab5">Historia Clínica</label>
+
+                    <div class="tab-panels">
+                        <section id="paciente" class="tab-panel" role="tabpanel">
+                            <h3>Datos del Paciente</h3>
+                            <div class="form-fields">
+                                {{ paciente_form.as_p }}
+                            </div>
+                        </section>
+                        <section id="antropometria" class="tab-panel" role="tabpanel">
+                            <h3>Valores Antropométricos</h3>
+                            <div class="form-fields">
+                                {{ valor_antropometrico_form.as_p }}
+                            </div>
+                        </section>
+                        <section id="laboratorio" class="tab-panel" role="tabpanel">
+                            <h3>Análisis de Laboratorio</h3>
+                            <div class="form-fields">
+                                {{ analisis_lab_form.as_p }}
+                            </div>
+                        </section>
+                        <section id="anamnesis" class="tab-panel" role="tabpanel">
+                            <h3>Anamnesis</h3>
+                            <div class="form-fields">
+                                {{ anamnesis_form.as_p }}
+                            </div>
+                        </section>
+                        <section id="historia" class="tab-panel" role="tabpanel">
+                            <h3>Historia Clínica</h3>
+                            <div class="form-fields">
+                                {{ historia_clinica_form.as_p }}
+                            </div>
+                        </section>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+
+                <div class="form-action">
+                    <a href="{% url 'pacientes:listapacientenuevo' %}" class="btn-cancel">
+                        <span>Cancelar</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <button type="button" id="submitBtn" class="btn-submit">
+                        <span>Guardar</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Success Modal -->
+            <div class="modal" id="successModal" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" aria-label="Cerrar">×</button>
+                        <h4 class="modal-title" id="successModalLabel">¡Éxito!</h4>
+                    </div>
+                    <div class="modal-body">
+                        Los datos del paciente se han guardado exitosamente.
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{% url 'pacientes:listapacientenuevo' %}" class="btn btn-submit">Aceptar</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Modal -->
+            <div class="modal" id="errorModal" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" aria-label="Cerrar">×</button>
+                        <h4 class="modal-title" id="errorModalLabel">Error</h4>
+                    </div>
+                    <div class="modal-body">
+                        Por favor, completa todos los campos requeridos en todas las secciones.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-cancel" onclick="closeModal('errorModal')">Cerrar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,155 +132,845 @@
 </div>
 
 <style>
-/* Copia aquí el mismo CSS que usas en editar_perfil_paciente.html para mantener consistencia */
-.tabset > input[type="radio"] {
-    position: absolute;
-    left: -200vw;
+:root {
+    /* Color palette */
+    --primary: #2A9D8F; /* Teal green for health and vitality */
+    --primary-light: #48C9B0; /* Lighter teal for hover states */
+    --secondary: #F4A261; /* Warm peach for warmth */
+    --secondary-light: #F7B267; /* Lighter peach */
+    --surface: #FFFFFF; /* Clean white */
+    --background: #F6FAF6; /* Soft green-gray for calm background */
+    --text: #1A3C34; /* Dark teal for readability */
+    --text-light: #5E7C76; /* Muted teal for secondary text */
+    --accent: #E76F51; /* Coral for pops of energy */
+    
+    /* Typography */
+    --font-family: 'Manrope', 'Inter', system-ui, sans-serif;
+    
+    /* Shadows and effects */
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.12);
+    --glow: 0 0 30px rgba(42, 157, 143, 0.25);
+    
+    /* Border radius */
+    --radius-sm: 16px;
+    --radius-md: 28px;
+    --radius-lg: 36px;
+    --radius-full: 9999px;
 }
 
-.tabset .tab-panel {
+/* Base y reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+}
+
+/* Contenedor principal con fondo dinámico */
+.nutri-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #e9f7ef, #f6faf6);
+    padding: 2.5rem;
+    overflow: hidden;
+}
+
+/* Formas flotantes de fondo (organic shapes) */
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    filter: blur(50px);
+    opacity: 0.4;
+}
+
+.shape-1 {
+    width: 1420px;
+    height: 1420px;
+    background: var(--primary-light);
+    top: -120px;
+    right: -80px;
+    animation: float-slow 14s infinite alternate;
+}
+
+.shape-2 {
+    width: 820px;
+    height: 820px;
+    background: var(--secondary-light);
+    bottom: -60px;
+    left: -90px;
+    animation: float-slow 17s infinite alternate-reverse;
+}
+
+.shape-3 {
+    width: 220px;
+    height: 220px;
+    background: var(--accent);
+    top: 25%;
+    right: 15%;
+    opacity: 0.35;
+    animation: float-slow 11s infinite alternate;
+}
+
+.shape-4 {
+    width: 280px;
+    height: 280px;
+    background: var(--primary);
+    bottom: 15%;
+    left: 20%;
+    opacity: 0.25;
+    animation: float-slow 19s infinite alternate-reverse;
+}
+
+@keyframes float-slow {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(50px, 50px) scale(1.15);
+    }
+}
+
+/* Contenedor del contenido */
+.content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Contenedor del formulario */
+.form-container {
+    background: var(--surface);
+    padding: 3.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    transition: all 0.4s ease;
+}
+
+.form-container:hover {
+    box-shadow: var(--shadow-lg), var(--glow);
+    transform: translateY(-4px);
+}
+
+/* Estilo del encabezado */
+.form-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.icon-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.8rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-badge svg {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    z-index: 1;
+}
+
+.icon-badge::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    opacity: 0.35;
+    filter: blur(10px);
+    z-index: 0;
+}
+
+.form-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    letter-spacing: -0.5px;
+    line-height: 1.4;
+}
+
+/* Messages */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.messages li {
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    background: rgba(246, 250, 246, 0.9);
+    color: var(--text);
+    border-left: 3px solid var(--primary);
+    animation: bounceIn 0.5s ease;
+    line-height: 1.5;
+}
+
+.messages .error {
+    background: rgba(244, 67, 54, 0.08);
+    border-left-color: #F44336;
+    color: #F44336;
+}
+
+/* Tabset */
+.tabset {
+    background: transparent;
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    position: relative;
+}
+
+.tabset input[type="radio"] {
     display: none;
 }
 
-.tabset > input:first-child:checked ~ .tab-panels > .tab-panel:first-child,
-.tabset > input:nth-child(3):checked ~ .tab-panels > .tab-panel:nth-child(2),
-.tabset > input:nth-child(5):checked ~ .tab-panels > .tab-panel:nth-child(3),
-.tabset > input:nth-child(7):checked ~ .tab-panels > .tab-panel:nth-child(4),
-.tabset > input:nth-child(9):checked ~ .tab-panels > .tab-panel:nth-child(5) {
-    display: block;
-}
-
-.tabset > label {
-    position: relative;
+.tabset label {
     display: inline-block;
-    padding: 10px 15px;
-    cursor: pointer;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.5rem;
     font-weight: 600;
-    background: #f8f9fa;
-    border: 1px solid #ccc;
-    border-bottom: none;
-    border-radius: 5px 5px 0 0;
+    color: var(--text-light);
+    background: rgba(246, 250, 246, 0.9);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.2px;
+    line-height: 1.5;
 }
 
-.tabset > label:hover,
-.tabset > input:checked + label {
-    background: #06c;
+.tabset label:hover {
+    background: var(--primary-light);
     color: white;
+    transform: translateY(-2px);
+}
+
+.tabset input:checked + label {
+    background: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+    transform: scale(1.05);
 }
 
 .tab-panels {
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 0 5px 5px 5px;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
 }
 
-input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: all 0.3s ease-in-out;
+.tab-panel {
+    display: none;
+    animation: slideIn 0.5s ease;
 }
 
-input:focus, textarea:focus {
-    border-color: #06c;
-    box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
-    outline: none;
+.tab-panel h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    position: relative;
+    letter-spacing: -0.2px;
+    line-height: 1.4;
 }
 
-input[type="date"], input[type="time"] {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border: 1px solid #ccc;
-    cursor: pointer;
+.tab-panel h3::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--primary);
+    border-radius: 2px;
 }
 
-input[type="number"] {
-    background-color: #f9f9f9;
-}
-
-textarea {
-    min-height: 120px;
-    resize: vertical;
-}
-
-::placeholder {
-    color: #888;
-    font-style: italic;
-}
-
-/* Estilo para campos requeridos */
-.required-field {
-    border-color: #dc3545;
-}
-
-/* Asegurarse de que los modales se muestren correctamente */
-.modal {
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal.show {
+.tabset input:nth-child(1):checked ~ .tab-panels .tab-panel:nth-child(1),
+.tabset input:nth-child(3):checked ~ .tab-panels .tab-panel:nth-child(2),
+.tabset input:nth-child(5):checked ~ .tab-panels .tab-panel:nth-child(3),
+.tabset input:nth-child(7):checked ~ .tab-panels .tab-panel:nth-child(4),
+.tabset input:nth-child(9):checked ~ .tab-panels .tab-panel:nth-child(5) {
     display: block;
+}
+
+/* Formulario inteligente */
+.smart-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.form-fields {
+    display: grid;
+    gap: 2rem;
+}
+
+.form-fields p {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.form-fields label {
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin-bottom: 0.85rem;
+    color: var(--text);
+    transition: all 0.3s ease;
+    letter-spacing: 0.2px;
+    line-height: 1.5;
+}
+
+.form-fields input:not([type="file"]),
+.form-fields select,
+.form-fields textarea {
+    width: 100%;
+    padding: 1.3rem 1.6rem;
+    background: rgba(200, 200, 200, 0.2); /* Gris más oscuro con ligera transparencia */
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.3s ease;
+    line-height: 1.5;
+    box-sizing: border-box;
+}
+
+.form-fields input:not([type="file"]):focus,
+.form-fields select:focus,
+.form-fields textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 5px rgba(42, 157, 143, 0.2);
+}
+
+/* Specific styling for textarea to match input/select height */
+.form-fields textarea {
+    height: 56px;
+    resize: none;
+    line-height: 1.5;
+    vertical-align: middle;
+}
+
+/* Estilo personalizado para select */
+.form-fields select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231A3C34' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.25rem center;
+    background-size: 1.5rem;
+    padding-right: 3rem;
+}
+
+/* Estilo para input type file */
+.form-fields input[type="file"] {
+    padding: 0.1rem;
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.form-fields input[type="file"]::file-selector-button {
+    padding: 0.9rem 1.4rem;
+    margin-right: 1.2rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.2px;
+}
+
+.form-fields input[type="file"]::file-selector-button:hover {
+    background: var(--primary-light);
+}
+
+/* Botones */
+.form-action {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-submit,
+.btn-cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 1.3rem 2.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+    letter-spacing: 0.2px;
+    line-height: 1.5;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-submit span,
+.btn-cancel span {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.btn-submit svg,
+.btn-cancel svg {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.btn-submit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.btn-submit:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.btn-submit:hover::before {
+    opacity: 1;
+}
+
+.btn-submit:hover svg {
+    transform: translateX(5px);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-cancel {
+    background: rgba(246, 250, 246, 0.9);
+    color: var(--text);
+    border: 2px solid var(--text-light);
+}
+
+.btn-cancel:hover {
+    background: var(--surface);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-cancel:hover svg {
+    transform: translateX(5px);
+}
+
+/* Modals */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    max-width: 500px;
+    width: 90%;
+    animation: bounceIn 0.5s ease;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    position: relative;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.2px;
+    line-height: 1.5;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    border-top: 1px solid rgba(246, 250, 246, 0.9);
+}
+
+.modal .btn-submit,
+.modal .btn-cancel {
+    padding: 0.8rem 1.5rem;
+    letter-spacing: 0.2px;
+}
+
+.close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes bounceOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    60% {
+        opacity: 0.7;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+/* Responsividad */
+@media (min-width: 768px) {
+    .form-action {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+    
+    .btn-submit,
+    .btn-cancel {
+        flex: 1;
+    }
+    
+    .tabset label {
+        display: inline-block;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        padding: 2.5rem;
+    }
+    
+    .icon-badge {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .icon-badge svg {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .form-header h2 {
+        font-size: 2.2rem;
+    }
+    
+    .form-fields label {
+        font-size: 1.4rem;
+    }
+    
+    .form-fields input:not([type="file"]),
+    .form-fields select,
+    .form-fields textarea {
+        font-size: 1.3rem;
+        padding: 1.2rem 1.4rem;
+        height: 52px;
+    }
+    
+    .btn-submit,
+    .btn-cancel {
+        font-size: 1.15rem;
+        padding: 1.2rem 2rem;
+    }
+    
+    .tabset label {
+        display: block;
+        margin-right: 0;
+        margin-bottom: 0.75rem;
+        font-size: 1.15rem;
+    }
+    
+    .tab-panel h3 {
+        font-size: 1.6rem;
+    }
+    
+    .modal-title {
+        font-size: 1.4rem;
+    }
+    
+    .modal-body {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nutri-page {
+        padding: 1.5rem;
+    }
+    
+    .form-container {
+        padding: 2rem;
+        border-radius: var(--radius-sm);
+    }
+    
+    .icon-badge {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.2rem;
+    }
+    
+    .icon-badge svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .form-header h2 {
+        font-size: 1.8rem;
+    }
+    
+    .form-fields label {
+        font-size: 1.2rem;
+    }
+    
+    .form-fields input:not([type="file"]),
+    .form-fields select,
+    .form-fields textarea {
+        font-size: 1.2rem;
+        padding: 1.1rem 1.3rem;
+        height: 48px;
+    }
+    
+    .btn-submit,
+    .btn-cancel {
+        font-size: 1.1rem;
+        padding: 1.1rem 1.8rem;
+    }
+    
+    .tabset label {
+        font-size: 1.1rem;
+    }
+    
+    .tab-panel h3 {
+        font-size: 1.4rem;
+    }
+    
+    .modal-title {
+        font-size: 1.3rem;
+    }
+    
+    .modal-body {
+        font-size: 0.9rem;
+    }
+    
+    .messages li {
+        font-size: 0.95rem;
+    }
 }
 </style>
 
 <script>
-
-// Define la URL en una variable para evitar problemas de sintaxis
-const redirectUrl = "{% url 'pacientes:listapaciente' %}";
-
-// Agrega el evento de redireccionamiento al botón del modal
-document.getElementById('successModalRedirect').addEventListener('click', function() {
-    window.location.href = redirectUrl;
-});
-
-// Ensure jQuery is loaded (required for Bootstrap 3.3.6 modals and AJAX)
-document.getElementById('submitBtn').addEventListener('click', function() {
-    // Get the form
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('pacienteForm');
-    const formData = new FormData(form);
+    const submitButton = document.getElementById('submitBtn');
 
-    // Client-side validation: Check if all fields are filled
-    let allFieldsFilled = true;
-    const inputs = form.querySelectorAll('input, textarea, select');
-    inputs.forEach(input => {
-        if (!input.value.trim() && input.hasAttribute('required')) {
-            allFieldsFilled = false;
-            input.classList.add('required-field');
-        } else {
-            input.classList.remove('required-field');
+    // Form submission with client-side validation
+    submitButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+
+        // Client-side validation: Check if all required fields are filled
+        let allFieldsFilled = true;
+        const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                allFieldsFilled = false;
+                input.classList.add('validation-error');
+            } else {
+                input.classList.remove('validation-error');
+            }
+        });
+
+        // If validation fails, show error modal
+        if (!allFieldsFilled) {
+            document.getElementById('errorModal').style.display = 'flex';
+            return;
         }
+
+        // Proceed with AJAX submission
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('successModal').style.display = 'flex';
+            } else {
+                document.getElementById('errorModal').style.display = 'flex';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('errorModal').style.display = 'flex';
+        });
     });
 
-    // If client-side validation fails, show error modal immediately
-    if (!allFieldsFilled) {
-        $('#errorModal').modal('show');
-        return;
-    }
+    // Close modals
+    document.querySelectorAll('.close').forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.closest('.modal').style.display = 'none';
+        });
+    });
 
-    // If all fields are filled, proceed with AJAX submission
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest' // Indicate AJAX request
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Show success modal
-            $('#successModal').modal('show');
-        } else {
-            // Show error modal
-            $('#errorModal').modal('show');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        $('#errorModal').modal('show');
+    // Tab switch animation
+    document.querySelectorAll('.tabset input').forEach(input => {
+        input.addEventListener('change', () => {
+            const panels = document.querySelectorAll('.tab-panel');
+            panels.forEach(panel => {
+                panel.style.opacity = '0';
+                setTimeout(() => {
+                    panel.style.opacity = '1';
+                }, 300);
+            });
+        });
+    });
+
+    // Messages auto-dismiss
+    const messages = document.querySelectorAll('.messages li');
+    messages.forEach(msg => {
+        setTimeout(() => {
+            msg.style.animation = 'bounceOut 0.5s ease forwards';
+            setTimeout(() => msg.remove(), 500);
+        }, 5000);
+    });
+
+    // Highlight invalid fields on input change
+    const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
+    inputs.forEach(input => {
+        input.addEventListener('input', () => {
+            if (!input.value.trim()) {
+                input.classList.add('validation-error');
+            } else {
+                input.classList.remove('validation-error');
+            }
+        });
     });
 });
+
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
 </script>
 {% endblock %}

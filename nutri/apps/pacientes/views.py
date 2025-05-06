@@ -17,6 +17,8 @@ from django.contrib.auth import update_session_auth_hash
 
 from django.contrib import messages
 
+from django.core.exceptions import ValidationError
+
 
 # Función para verificar si el usuario es nutricionista
 def is_nutricionista(user):
@@ -74,22 +76,36 @@ class PerfilPacienteForm(forms.ModelForm):
         model = Persona
         fields = ['first_name', 'last_name','genero', 'email', 'telefono', 'direccion', 'tipoDocumento', 'numDocumento']
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
-            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
-            'tipoDocumento': forms.TextInput(attrs={'class': 'form-control'}),
-            'numDocumento': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'required': True}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+            'tipoDocumento': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),  # No editable
+            'numDocumento': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),  # No editable
             'genero': forms.Select(
-                attrs={'class': 'form-control selectpicker'},
-                choices=[
-                    ('M', 'Masculino'),
-                    ('F', 'Femenino'),
-                    ('ND', 'No Definido'),
-                ]
+                attrs={'class': 'form-control selectpicker', 'required': True},
+                choices=[('M', 'Masculino'), ('F', 'Femenino'), ('ND', 'No Definido')],
             ),
         }
+
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get('telefono')
+        if not telefono.isdigit() or len(telefono) != 10:
+            raise ValidationError("El teléfono debe contener exactamente 10 dígitos numéricos.")
+        return telefono
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        if first_name.isdigit():
+            raise ValidationError("El nombre no puede ser numérico.")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        if last_name.isdigit():
+            raise ValidationError("El apellido no puede ser numérico.")
+        return last_name
 
 class PacienteForm(forms.ModelForm):
     class Meta:
@@ -102,11 +118,40 @@ class CambiarContraseñaForm(PasswordChangeForm):
     new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
-def editar_perfil_paciente(request):
-    if not request.user.is_paciente:
-        return redirect('inicio')
+# def editar_perfil_paciente(request):
+#     # if not request.user.is_paciente:
+#     #     return redirect('inicio')
 
-    # Inicializar los formularios
+#     # Inicializar los formularios
+#     form = PerfilPacienteForm(instance=request.user)
+#     password_form = CambiarContraseñaForm(request.user)
+
+#     if request.method == 'POST':
+#         if 'guardar_perfil' in request.POST:
+#             form = PerfilPacienteForm(request.POST, instance=request.user)
+#             if form.is_valid():
+#                 form.save()
+#                 messages.success(request, '¡Tu perfil se ha actualizado correctamente!')
+#                 return redirect('pacientes:perfil')
+
+#         if 'cambiar_contraseña' in request.POST:
+#             password_form = CambiarContraseñaForm(request.user, request.POST)
+#             if password_form.is_valid():
+#                 user = password_form.save()  # Actualiza la contraseña
+#                 update_session_auth_hash(request, user)  # Mantener la sesión activa
+#                 messages.success(request, '¡Contraseña cambiada con éxito!')
+#                 return redirect('pacientes:perfil')
+#             else:
+#                 messages.error(request, 'Error al cambiar la contraseña. Verifica los datos ingresados.')
+
+#     contexto = {
+#         'form': form,
+#         'password_form': password_form
+#     }
+
+#     return render(request, 'pacientes/perfil.html', contexto)
+
+def editar_perfil_paciente(request):
     form = PerfilPacienteForm(instance=request.user)
     password_form = CambiarContraseñaForm(request.user)
 
@@ -116,13 +161,13 @@ def editar_perfil_paciente(request):
             if form.is_valid():
                 form.save()
                 messages.success(request, '¡Tu perfil se ha actualizado correctamente!')
-                return redirect('pacientes:perfil')
+                return redirect('pacientes:perfil')  # ✅ <- Este return evita procesar el otro formulario
 
-        if 'cambiar_contraseña' in request.POST:
+        elif 'cambiar_contraseña' in request.POST:
             password_form = CambiarContraseñaForm(request.user, request.POST)
             if password_form.is_valid():
-                user = password_form.save()  # Actualiza la contraseña
-                update_session_auth_hash(request, user)  # Mantener la sesión activa
+                user = password_form.save()
+                update_session_auth_hash(request, user)
                 messages.success(request, '¡Contraseña cambiada con éxito!')
                 return redirect('pacientes:perfil')
             else:
@@ -134,6 +179,7 @@ def editar_perfil_paciente(request):
     }
 
     return render(request, 'pacientes/perfil.html', contexto)
+
 
 
 def mi_seguimiento(request, persona_id):
@@ -279,7 +325,7 @@ def crear_datos_paciente(request, persona_id):
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
             messages.success(request, "¡Todos los datos han sido guardados correctamente!")
-            return redirect('pacientes:listapaciente')
+            return redirect('pacientes:listapacientenuevo')
         else:
             # Si es una solicitud AJAX, devolvemos un JSON con error
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -313,48 +359,57 @@ from django.utils import timezone
 from apps.planNutricional.models import PlanNutricional, PlanDelDia
 
 
+from datetime import timedelta
+from django.http import HttpResponseForbidden
 
-def infopaciente(request):
-    try:
-        paciente = Paciente.objects.get(persona=request.user)
-    except Paciente.DoesNotExist:
-        return redirect('inicio')  # o mostrar error
+@login_required
+def infopaciente(request, paciente_id=None):
+    """
+    * paciente_id == None  ➜ el usuario autenticado debe ser paciente
+    * paciente_id != None  ➜ el usuario autenticado debe ser nutricionista
+    """
+    if paciente_id is None:
+        try:
+            paciente = Paciente.objects.get(persona=request.user)
+        except Paciente.DoesNotExist:
+            return redirect("inicio")
+    else:
+        if not request.user.is_nutricionista:
+            return HttpResponseForbidden("No tienes permiso para ver esto")
+        paciente = get_object_or_404(Paciente, pk=paciente_id)
     
     valores_antropometricos = getattr(paciente, 'valores_antropometricos', None)
     analisis_lab = getattr(paciente, 'analisis_lab', None)
     anamnesis = getattr(paciente, 'anamnesis', None)
     historia_clinica = getattr(paciente, 'historia_clinica', None)
 
-    # Obtener datos de progreso
-    progresos = Progreso.objects.filter(paciente=paciente).order_by('-fecha')
-    progreso_reciente = progresos.first()
+    progresos = Progreso.objects.filter(paciente=paciente).order_by('fecha')
+    progreso_reciente = progresos.last()
     peso_actual = progreso_reciente.peso if progreso_reciente else None
+    ultima_visita = progreso_reciente.fecha if progreso_reciente else None
 
-    # Obtener turnos
-    fecha_actual = timezone.now().strftime('%Y-%m-%d')
+    fecha_actual = timezone.now().date()
     turnos = Turno.objects.filter(paciente=paciente)
     proximos_turnos = turnos.filter(dia__gte=fecha_actual).order_by('dia', 'hora')
     proximo_turno = proximos_turnos.first() if proximos_turnos.exists() else None
     turnos_pasados = turnos.filter(dia__lt=fecha_actual).order_by('-dia', '-hora')
     ultimo_turno = turnos_pasados.first() if turnos_pasados.exists() else None
 
-    # Calcular peso inicial y diferencias
-    peso_inicial = valores_antropometricos.peso if valores_antropometricos else None
-    peso_meta = None  # Ajusta según el modelo si tienes un campo para peso meta
-    diferencia_peso = None
+    peso_inicial = float(valores_antropometricos.peso) if valores_antropometricos and valores_antropometricos.peso is not None else None
+    peso_meta = float(historia_clinica.peso_meta) if historia_clinica and hasattr(historia_clinica, 'peso_meta') and historia_clinica.peso_meta is not None else None
+    diferencia_peso = peso_actual - peso_inicial if peso_actual is not None and peso_inicial is not None else None
     porcentaje_completado = None
-    if peso_inicial and peso_actual and peso_meta:
-        diferencia_peso = peso_actual - peso_inicial
-        if peso_inicial != peso_meta:
+    if peso_inicial is not None and peso_actual is not None and peso_meta is not None and peso_inicial != peso_meta:
+        try:
             porcentaje_completado = ((peso_inicial - peso_actual) / (peso_inicial - peso_meta)) * 100
+        except ZeroDivisionError:
+            porcentaje_completado = None
 
-    # Obtener plan nutricional
     plan_nutricional = paciente.planes_nutricionales.first()
-    plan_data = None
+    plan_data = []
     if plan_nutricional:
         dias = list(range(1, plan_nutricional.duracion_dias + 1))
-        dias_semana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
-        plan_data = []
+        fecha_inicio = plan_nutricional.fecha_inicio.date()
         for dia in dias:
             planes_dia = PlanDelDia.objects.filter(plan_nutricional=plan_nutricional, dia=dia)
             desayuno = planes_dia.filter(tipo_comida="DESAYUNO").first()
@@ -362,12 +417,14 @@ def infopaciente(request):
             merienda = planes_dia.filter(tipo_comida="MERIENDA").first()
             cena = planes_dia.filter(tipo_comida="CENA").first()
 
+            fecha_actual = fecha_inicio + timedelta(days=dia-1)
+
             def obtener_nombres(opciones):
                 if not opciones:
                     return []
                 return [item.get("nombre", "") for item in opciones]
 
-            dia_nombre = dias_semana[(dia - 1) % 7]
+            dia_nombre = fecha_actual.strftime("%d/%m/%Y")
             plan_data.append({
                 'dia': dia,
                 'dia_nombre': dia_nombre,
@@ -403,9 +460,10 @@ def infopaciente(request):
         'analisis_lab': analisis_lab,
         'anamnesis': anamnesis,
         'historia_clinica': historia_clinica,
-        'progresos': progresos,  # Para el selector de fechas en Evolución
+        'progresos': progresos,
         'proximo_turno': proximo_turno,
         'ultimo_turno': ultimo_turno,
+        'ultima_visita': ultima_visita,
         'peso_inicial': peso_inicial,
         'peso_actual': peso_actual,
         'peso_meta': peso_meta,
@@ -413,6 +471,7 @@ def infopaciente(request):
         'porcentaje_completado': porcentaje_completado,
         'plan_data': plan_data,
         'comidas_loop': ['desayuno', 'almuerzo', 'merienda', 'cena'],
-        'today': timezone.now(),  # Para la fecha por defecto en el formulario
+        'today': timezone.now(),
+        'is_nutricionista': request.user.is_nutricionista,  # Añadido explícitamente
     }
     return render(request, 'pacientes/infopaciente.html', contexto)

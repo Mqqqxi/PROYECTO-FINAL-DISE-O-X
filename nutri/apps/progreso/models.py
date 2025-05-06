@@ -18,7 +18,7 @@ class Progreso(models.Model):
     perimetro_brazo = models.FloatField(null=True, blank=True)  # Perímetro de brazo (cm)
     perimetro_pecho = models.FloatField(null=True, blank=True)  # Perímetro de pecho (cm)
     masa_muscular = models.FloatField(null=True, blank=True)  # Masa muscular (kg)
-    agua_corporal = models.FloatField(null=True, blank=True)  # agua corporal (%)
+    agua_corporal = models.FloatField(null=True, blank=True)  # Agua corporal (%)
 
     # Tensión arterial
     tension_arterial_maxima = models.FloatField(null=True, blank=True)  # Tensión arterial máxima

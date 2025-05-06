@@ -3,113 +3,608 @@
 {% block title %}PLATO{% endblock %}
 {% block content %}
 
-<div class="container2 mt-5 form-container">
-    <h2>Editar Plato</h2>
-    <form method="POST" class="styled-form">
-        {% csrf_token %}
-        <div class="form-group">
-            {% for field in form %}
-            <div class="form-field">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                <small>{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
-                <p class="error">{{ error }}</p>
-                {% endfor %}
+<div class="nutri-page">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="form-container">
+            <div class="form-header">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2>Editar Plato</h2>
             </div>
-            {% endfor %}
+
+            <form method="POST" enctype="multipart/form-data" class="smart-form">
+                {% csrf_token %}
+                <div class="form-fields">
+                    {% for field in form %}
+                    <div class="form-field">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        <div class="field-container">
+                            {{ field }}
+                            {% if field.name == "imagen" and field.value %}
+                            <div class="image-preview">
+                                <span class="preview-label">Imagen actual</span>
+                                <div class="preview-container">
+                                    <img src="{{ field.value.url }}" alt="Imagen actual" class="preview-image">
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if field.help_text %}
+                        <span class="help-text">{{ field.help_text }}</span>
+                        {% endif %}
+                        {% for error in field.errors %}
+                        <p class="error-message">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="form-action">
+                    <a href="{% url 'comida:plato' %}" class="btn-cancel">
+                        <span>Cancelar</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <button type="submit" class="btn-submit">
+                        <span>Guardar Cambios</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
         </div>
-        <button type="submit" class="btn-save">Guardar Cambios</button>
-        <a href="{% url 'comida:plato' %}" class="btn-cancel">Cancelar</a>
-    </form>
+    </div>
 </div>
 
 <style>
-    .form-container {
-        background: #fff;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        border: 2px solid #ccc;
-        max-width: 80%;
-        width: 100%;
-        margin: 20px auto;
-        text-align: center;
-        font-family: Arial, sans-serif;
-    }
+:root {
+    /* Color palette from first HTML */
+    --primary: #2A9D8F; /* Teal green for health and vitality */
+    --primary-light: #48C9B0; /* Lighter teal for hover states */
+    --secondary: #F4A261; /* Warm peach for warmth */
+    --secondary-light: #F7B267; /* Lighter peach */
+    --surface: #FFFFFF; /* Clean white */
+    --background: #F6FAF6; /* Soft green-gray for calm background */
+    --text: #1A3C34; /* Dark teal for readability */
+    --text-light: #5E7C76; /* Muted teal for secondary text */
+    --accent: #E76F51; /* Coral for pops of energy */
+    
+    /* Typography */
+    --font-family: 'Outfit', 'Inter', system-ui, sans-serif; /* From first HTML */
+    
+    /* Shadows and effects */
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.12);
+    --glow: 0 0 30px rgba(42, 157, 143, 0.25);
+    
+    /* Border radius */
+    --radius-sm: 16px;
+    --radius-md: 28px;
+    --radius-lg: 36px;
+    --radius-full: 9999px;
+}
 
-    .form-field {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        margin-bottom: 1.5rem;
-        width: 100%;
-    }
+/* Base y reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+}
 
-    .form-field label {
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-        text-align: left;
-        width: 100%;
-    }
+/* Contenedor principal con fondo dinámico */
+.nutri-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #e9f7ef, #f6faf6);
+    padding: 2.5rem;
+    overflow: hidden;
+}
 
-    .styled-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        width: 100%;
-    }
+/* Formas flotantes de fondo (organic shapes) */
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
+}
 
-    .styled-form input,
-    .styled-form select,
-    .styled-form textarea {
-        width: 100%;
-        padding: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 1.1rem;
-    }
+.shape {
+    position: absolute;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* Organic shape */
+    filter: blur(50px);
+    opacity: 0.4;
+}
 
-    .btn-save, .btn-cancel {
-        display: inline-block;
-        padding: 1rem 2rem;
-        border: none;
-        border-radius: 6px;
-        font-size: 1.1rem;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
+.shape-1 {
+    width: 1220px;
+    height: 1220px;
+    background: var(--primary-light);
+    top: -120px;
+    right: -80px;
+    animation: float-slow 14s infinite alternate;
+}
 
-    .btn-save {
-        background-color: #28a745;
-        color: white;
-    }
+.shape-2 {
+    width: 520px;
+    height: 520px;
+    background: var(--secondary-light);
+    bottom: -60px;
+    left: -90px;
+    animation: float-slow 17s infinite alternate-reverse;
+}
 
-    .btn-save:hover {
-        background-color: #218838;
-    }
+.shape-3 {
+    width: 220px;
+    height: 220px;
+    background: var(--accent);
+    top: 25%;
+    right: 15%;
+    opacity: 0.35;
+    animation: float-slow 11s infinite alternate;
+}
 
+.shape-4 {
+    width: 280px;
+    height: 280px;
+    background: var(--primary);
+    bottom: 15%;
+    left: 20%;
+    opacity: 0.25;
+    animation: float-slow 19s infinite alternate-reverse;
+}
+
+@keyframes float-slow {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(50px, 50px) scale(1.15);
+    }
+}
+
+/* Contenedor del contenido */
+.content-wrapper {
+    width: 100%;
+    max-width: 720px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Contenedor del formulario */
+.form-container {
+    background: var(--surface);
+    padding: 3.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    transition: all 0.4s ease;
+}
+
+.form-container:hover {
+    box-shadow: var(--shadow-lg), var(--glow);
+    transform: translateY(-4px);
+}
+
+/* Estilo del encabezado */
+.form-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.icon-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.8rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-badge svg {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    z-index: 1;
+}
+
+.icon-badge::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    opacity: 0.35;
+    filter: blur(10px);
+    z-index: 0;
+}
+
+.form-header h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.8px;
+}
+
+/* Formulario inteligente */
+.smart-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.form-fields {
+    display: grid;
+    gap: 2rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.form-field label {
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin-bottom: 0.85rem;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.field-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.smart-form input:not([type="file"]),
+.smart-form select,
+.smart-form textarea {
+    width: 100%;
+    padding: 0.5rem 1.6rem;
+    background: rgba(246, 250, 246, 0.9);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 1.4rem;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.smart-form input:not([type="file"]):focus,
+.smart-form select:focus,
+.smart-form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 5px rgba(42, 157, 143, 0.2);
+}
+
+select {
+    appearance: none;
+    background-color: rgba(0, 250, 0, 0.9); /* Fondo visible */
+    color: var(--text); /* Color del texto */
+    padding: 1.3rem 1.6rem;
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 1.4rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231A3C34' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.25rem center;
+    background-size: 1.5rem;
+    padding-right: 3rem;
+}
+
+/* Estilo para input type file */
+input[type="file"] {
+    padding: 0.1rem;
+    font-size: 1.4rem;
+}
+
+input[type="file"]::file-selector-button {
+    padding: 0.9rem 1.4rem;
+    margin-right: 1.2rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: var(--primary-light);
+}
+
+/* Vista previa de imagen */
+.image-preview {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.preview-label {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.preview-container {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.preview-image {
+    max-width: 180px;
+    max-height: 180px;
+    border-radius: calc(var(--radius-sm) - 4px);
+    object-fit: cover;
+    display: block;
+}
+
+.preview-container:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+/* Textos de ayuda y errores */
+.help-text {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+}
+
+.error-message {
+    font-size: 0.95rem;
+    color: #F44336; /* Keep error color for visibility */
+    margin: 0.5rem 0 0;
+    padding: 0.5rem 0.75rem;
+    background: rgba(244, 67, 54, 0.08);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid #F44336;
+    font-weight: 500;
+}
+
+/* Botones */
+.form-action {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-submit,
+.btn-cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 1.3rem 2.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+    letter-spacing: 0.6px;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-submit span,
+.btn-cancel span {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.btn-submit svg,
+.btn-cancel svg {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.btn-submit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.btn-submit:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.btn-submit:hover::before {
+    opacity: 1;
+}
+
+.btn-submit:hover svg {
+    transform: translateX(5px);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-cancel {
+    background: rgba(246, 250, 246, 0.9);
+    color: var(--text);
+    border: 2px solid var(--text-light);
+}
+
+.btn-cancel:hover {
+    background: var(--surface);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-cancel:hover svg {
+    transform: translateX(5px);
+}
+
+/* Responsividad */
+@media (min-width: 768px) {
+    .form-action {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+    
+    .btn-submit,
     .btn-cancel {
-        background-color: #dc3545;
-        color: white;
-        margin-top: 1rem;
-        text-decoration: none;
-        display: inline-block;
+        flex: 1;
     }
+}
 
-    .btn-cancel:hover {
-        background-color: #c82333;
+@media (max-width: 768px) {
+    .form-container {
+        padding: 2.5rem;
     }
+    
+    .icon-badge {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .icon-badge svg {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .form-header h2 {
+        font-size: 2.4rem;
+    }
+    
+    .form-field label {
+        font-size: 1.3rem;
+    }
+    
+    .smart-form input:not([type="file"]),
+    .smart-form select,
+    .smart-form textarea {
+        font-size: 1.3rem;
+        padding: 1.2rem 1.4rem;
+    }
+    
+    .btn-submit,
+    .btn-cancel {
+        font-size: 1.15rem;
+        padding: 1.2rem 2rem;
+    }
+    
+    .preview-image {
+        max-width: 140px;
+        max-height: 140px;
+    }
+}
 
-    .container2 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        min-height: 80vh;
+@media (max-width: 480px) {
+    .nutri-page {
+        padding: 1.5rem;
     }
+    
+    .form-container {
+        padding: 2rem;
+        border-radius: var(--radius-sm);
+    }
+    
+    .icon-badge {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.2rem;
+    }
+    
+    .icon-badge svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .form-header h2 {
+        font-size: 2rem;
+    }
+    
+    .form-field label {
+        font-size: 1.1rem;
+    }
+    
+    .smart-form input:not([type="file"]),
+    .smart-form select,
+    .smart-form textarea {
+        font-size: 1.2rem;
+        padding: 1.1rem 1.3rem;
+    }
+    
+    .btn-submit,
+    .btn-cancel {
+        font-size: 1.1rem;
+        padding: 1.1rem 1.8rem;
+    }
+    
+    .preview-image {
+        max-width: 120px;
+        max-height: 120px;
+    }
+}
 </style>
 
 {% endblock %}

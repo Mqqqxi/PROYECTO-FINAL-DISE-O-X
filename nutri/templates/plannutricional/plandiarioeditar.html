@@ -14,22 +14,38 @@
         {% csrf_token %}
         
         <div class="tabset">
-            <!-- Pestañas para los días -->
+            <!-- Pestañas para los días
             {% for i in rango_dias %}
                 <input type="radio" name="tabset" id="tab{{ i }}" 
                     aria-controls="dia{{ i }}" 
                     {% if forloop.first %}checked{% endif %}>
                 <label for="tab{{ i }}">Día {{ i }}</label>
-            {% endfor %}
+            {% endfor %} -->
+
+            <div class="tabset-carousel">
+                <button class="nav-btn prev" type="button">‹</button>
+                
+                <!-- radios + labels (ocultos, pero siguen en el DOM) -->
+                <div class="tabs-track">
+                    {% for i, fecha in dias_fechas %}
+                        <input type="radio" name="tabset" id="tab{{ i }}"
+                               aria-controls="dia{{ i }}"
+                               {% if forloop.first %}checked{% endif %}>
+                        <label for="tab{{ i }}">{{ fecha }}</label>
+                    {% endfor %}
+                </div>
+                
+                <!-- único lugar visible donde se muestra la fecha seleccionada -->
+                <span id="currentDate" class="current-date"></span>
+                
+                <button class="nav-btn next" type="button">›</button>
+            </div>
         
             <div class="tab-panels">
                 {% for i in rango_dias %}
                     <section id="dia{{ i }}" class="tab-panel">
                         <div class="main-container">
                             <div>
-                                <div class="button-container">
-                                    <button type="button" class="btn btn-success" onclick="agregarPlato('{{ tipo|lower }}', '{{ i }}')">Lista de platos</button>
-                                </div>
                                 <!-- Barra lateral con lista (oculta) -->
                                 <div id="listaComidas{{ i }}" class="sidebar hidden">
                                     <input type="text" class="search-box" placeholder="Buscar alimento..." onkeyup="filterList()">
@@ -128,7 +144,6 @@
                             </div>
                             <!-- Tabla de comidas -->
                             <div class="table-container">
-                                <h2>Plan diario</h2>
                                 <table id="tablaComidas{{ i }}" class="bloqueado"></table>
                                 <table>
                                     <thead>
@@ -214,7 +229,7 @@
                                 </table>
                                 <div class="button-group">
                                     <button type="submit" class="btn btn-success mt-3">Guardar Cambios</button>
-                                    <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-danger mt-3">Cancelar</a>
+                                    <a href="{% url 'pacientes:listapacientenuevo' %}" class="btn btn-danger mt-3">Cancelar</a>
                                 </div>
                             </div>
                             <div class="selected-comidas" id="selectedComidas{{ i }}"></div>
@@ -724,7 +739,7 @@
         display: flex;
         flex-direction: row;
         background: var(--bg-white);
-        padding: 30px;
+        /* padding: 30px; */
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-md);
         position: relative;
@@ -812,6 +827,15 @@ td.meal-plan {
 /* Sidebar más angosto */
 .sidebar {
     width: 180px;
+    max-height: 650px; /* altura fija - ajusta según tu diseño */
+    overflow-y: auto;  /* agrega scroll vertical */
+    overflow-x: hidden; /* evita desplazamiento horizontal */
+}
+
+@media (max-height: 800px) {
+    .sidebar {
+        max-height: 500px;
+    }
 }
 
 /* Expande tabla al máximo espacio posible */
@@ -826,8 +850,107 @@ td.meal-plan {
     width: 100%;
 }
 
+.main-container {
+    align-items: flex-start; /* Alinea verticalmente al inicio */
+}
+
+/* Altura fija para las filas aunque estén vacías */
+tbody tr {
+    height: 130px; /* Altura simulando 2 platos aprox. */
+}
+
+/* Centrado vertical del texto tipo "Desayuno" */
+td.meal-plan {
+    vertical-align: middle;
+}
+
+.table-container table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+    width: 25%; /* Reducido a la mitad del tamaño actual */
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+    width: 10%;
+}
+
+th:nth-child(2),
+td:nth-child(2),
+th:nth-child(3),
+td:nth-child(3),
+th:nth-child(4),
+td:nth-child(4) {
+    width: 18.75%; /* Reparten los 75% restantes (75 / 4) */
+}
+
+
+.tabset-carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.tabs-track {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    display: flex;
+    gap: 8px;
+    padding: 2px 0;
+    flex: 1;
+}
+
+.tabs-track::-webkit-scrollbar { height: 6px; }
+.tabs-track::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 3px;
+}
+
+.nav-btn {
+    background: var(--primary-light);
+    border: none;
+    color: #fff;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 18px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: background .2s;
+}
+.nav-btn:hover { background: var(--primary-dark); }
+
+.tabs-track > input { display:none; }          /* radios invisibles */
+.tabs-track > label {                          /* heredas tu estilo original */
+    white-space: nowrap;
+    min-width: 110px;            /* ajusta a gusto */
+}
+
+/* La pista con radios+labels se oculta (pero permanece accesible) */
+.tabs-track {
+    display: none;
+}
+
+/* Muestra grande de la fecha activa */
+.current-date {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+
     
-    </style>
+</style>
 
 <script>
 let platoSeleccionadoId = null;
@@ -853,7 +976,8 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 
-    const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
+    // const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
+    const tabInputs = document.querySelectorAll('.tabset-carousel input[type="radio"]');
     
     tabInputs.forEach(input => {
         input.addEventListener('change', function() {
@@ -1252,6 +1376,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// --- Carrusel de fechas ---
+// ---------------- Carrusel de UNA sola fecha -----------------
+document.querySelectorAll('.tabset-carousel').forEach(carousel => {
+    const radios = [...carousel.querySelectorAll('.tabs-track input')];
+    const prevBtn = carousel.querySelector('.prev');
+    const nextBtn = carousel.querySelector('.next');
+    const out     = carousel.querySelector('#currentDate');
+    let index     = radios.findIndex(r => r.checked) || 0;
+
+    function pintar() {
+        // marca el radio
+        radios[index].checked = true;
+        // muestra la fecha (el texto del label hermano)
+        out.textContent = radios[index].nextElementSibling.textContent;
+        // dispara el evento change para que tu código original oculte/muestre el panel
+        radios[index].dispatchEvent(new Event('change', {bubbles:true}));
+        // desactiva flechas en extremos (opcional)
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index === radios.length - 1;
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (index > 0) { index--; pintar(); }
+    });
+    nextBtn.addEventListener('click', () => {
+        if (index < radios.length - 1) { index++; pintar(); }
+    });
+
+    // inicialización
+    pintar();
+});
+
 </script>
 
 {% endblock %}

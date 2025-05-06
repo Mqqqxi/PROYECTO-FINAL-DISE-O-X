@@ -91,7 +91,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="descripcion" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="descripcion" name="descripcion"></textarea>
+                        <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Guardar Plato</button>
                 </form>
@@ -110,7 +110,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar esta comida?
+                ¿Estás seguro de que deseas eliminar este plato?
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button> -->
@@ -291,6 +291,26 @@
     });
 </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const nombreInput = document.getElementById('nombre');
+  
+      // Mostrar mensaje de error si hay números
+      nombreInput.addEventListener('input', function () {
+          const valor = nombreInput.value;
+          const contieneNumeros = /\d/.test(valor);
+  
+          if (contieneNumeros) {
+              nombreInput.setCustomValidity("El nombre no debe contener números.");
+              nombreInput.reportValidity();
+          } else {
+              nombreInput.setCustomValidity(""); // Limpiar el error si ya no hay números
+          }
+      });
+  });
+  </script>
+  
+
 <style>
  /* Base de Diseño Nutricionista 2025 */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap');
@@ -347,7 +367,7 @@
   box-sizing: border-box;
 }
 
-body {
+body2 {
   font-family: 'Outfit', sans-serif;
   background-color: var(--secondary);
   color: var(--text);

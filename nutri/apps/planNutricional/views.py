@@ -34,7 +34,7 @@ def crear_datos_paciente(request, persona_id):
             historia.paciente = paciente
             historia.save()
             messages.success(request, "¡Datos del paciente creados exitosamente!")
-            return redirect("pacientes:listapaciente")
+            return redirect("pacientes:listapacientenuevo")
         else:
             error_messages = []
             for form in [paciente_form, antropometrico_form, analisis_form, anamnesis_form, historia_form]:
@@ -61,7 +61,7 @@ def crear_plan_nutricional(request, persona_id):
     paciente = get_object_or_404(Paciente, persona_id=persona_id)
     plan_existente = PlanNutricional.objects.filter(paciente=paciente).exists()
     if plan_existente:
-        return redirect(f"{reverse('pacientes:listapaciente')}?plan_existente=1")
+        return redirect(f"{reverse('pacientes:listapacientenuevo')}?plan_existente=1")
     if request.method == "POST":
         form = PlanNutricionalForm(request.POST)
         if form.is_valid():
@@ -69,7 +69,7 @@ def crear_plan_nutricional(request, persona_id):
             plan.paciente = paciente
             plan.save()
             messages.success(request, "Plan Nutricional creado exitosamente.")
-            return redirect("pacientes:listapaciente")
+            return redirect("pacientes:listapacientenuevo")
     else:
         form = PlanNutricionalForm(initial={"paciente": paciente})
     return render(request, "plannutricional/plannutricional.html", {
@@ -77,6 +77,7 @@ def crear_plan_nutricional(request, persona_id):
         "paciente": paciente,
     })
 
+from datetime import timedelta
 
 def crear_plan_dia(request, plan_nutricional_id):
     plan_nutricional = get_object_or_404(PlanNutricional, idPlanN=plan_nutricional_id)
@@ -140,20 +141,25 @@ def crear_plan_dia(request, plan_nutricional_id):
                         plan_dia.save()
 
                 messages.success(request, "Plan diario creado o actualizado exitosamente.")
-                return redirect("pacientes:listapaciente")
+                return redirect("pacientes:listapacientenuevo")
         except Exception as e:
             messages.error(request, f"Error al crear o actualizar el plan diario: {str(e)}")
-            return redirect("pacientes:listapaciente")
+            return redirect("pacientes:listapacientenuevo")
     
     platos = Plato.objects.all()
     rango_dias = range(1, plan_nutricional.duracion_dias + 1)
+    dias_fechas = [
+        (i, (plan_nutricional.fecha_inicio.date() + timedelta(days=i-1)).strftime("%d/%m/%Y"))
+        for i in rango_dias
+    ]
     planes_dia = PlanDelDia.objects.filter(plan_nutricional=plan_nutricional)
     comidas_lista = ["Desayuno", "Almuerzo", "Merienda", "Cena"]
     
     return render(request, "plannutricional/plandiario.html", {
         "paciente": paciente,
         "platos": platos,
-        "rango_dias": rango_dias,
+        "rango_dias": rango_dias,         # si lo sigues usando en otros sitios
+        "dias_fechas": dias_fechas,       # 👉 aquí la novedad
         "tipo": "Plan",
         "planes_dia": planes_dia,
         "plan_nutricional": plan_nutricional,
@@ -225,15 +231,19 @@ def editar_plan_dia(request, plan_nutricional_id):
                         plan_dia.save()
 
                 messages.success(request, "Plan diario editado exitosamente.")
-                return redirect("pacientes:listapaciente")
+                return redirect("pacientes:listapacientenuevo")
         except Exception as e:
             messages.error(request, f"Error al editar el plan diario: {str(e)}")
-            return redirect("pacientes:listapaciente")
+            return redirect("pacientes:listapacientenuevo")
 
     # Obtener datos para renderizar la página
     platos = Plato.objects.all()
     comidas = Comida.objects.all()
     rango_dias = range(1, plan_nutricional.duracion_dias + 1)
+    dias_fechas = [
+        (i, (plan_nutricional.fecha_inicio.date() + timedelta(days=i-1)).strftime("%d/%m/%Y"))
+        for i in rango_dias
+    ]
     planes_dia = PlanDelDia.objects.filter(plan_nutricional=plan_nutricional)
     comidas_lista = ["Desayuno", "Almuerzo", "Merienda", "Cena"]
 
@@ -241,7 +251,8 @@ def editar_plan_dia(request, plan_nutricional_id):
         "paciente": paciente,
         "platos": platos,
         "comidas": comidas,
-        "rango_dias": rango_dias,
+        "rango_dias": rango_dias,         # si lo sigues usando en otros sitios
+        "dias_fechas": dias_fechas,       # 👉 aquí la novedad
         "tipo": "Plan",
         "planes_dia": planes_dia,
         "plan_nutricional": plan_nutricional,
@@ -273,7 +284,7 @@ def editar_paciente(request, persona_id):
             historia.paciente = paciente
             historia.save()
             messages.success(request, "¡Datos del paciente editados exitosamente!")
-            return redirect("pacientes:listapaciente")
+            return redirect("pacientes:listapacientenuevo")
         else:
             messages.error(request, "Por favor, corrige los errores en el formulario.")
     else:
@@ -297,14 +308,14 @@ def eliminar_plan_nutricional(request, plan_nutricional_id):
     if request.method == "POST":
         plan.delete()
         messages.success(request, "Plan nutricional eliminado exitosamente.")
-        return redirect("pacientes:listapaciente")
+        return redirect("pacientes:listapacientenuevo")
     return render(request, "plannutricional/confirm_delete.html", {"plan": plan})
 
 def crear_plan_nutricional_modal(request, paciente_id):
     paciente = get_object_or_404(Paciente, persona_id=paciente_id)
     if paciente.planes_nutricionales.exists():
         messages.warning(request, "Este paciente ya tiene un plan nutricional.")
-        return redirect('pacientes:listapaciente')
+        return redirect('pacientes:listapacientenuevo')
     if request.method == 'POST':
         fecha_inicio_str = request.POST.get('fecha_inicio')
         duracion_dias_str = request.POST.get('duracion_dias')
@@ -322,4 +333,4 @@ def crear_plan_nutricional_modal(request, paciente_id):
         )
         messages.success(request, "Plan Nutricional creado exitosamente.")
         return redirect('plannutricional:crear_plan_dia', plan_nutricional_id=plan.idPlanN)
-    return redirect('pacientes:listapaciente')
+    return redirect('pacientes:listapacientenuevo')

@@ -341,11 +341,16 @@
   }
 
   .data-value {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    flex: 2;
-  }
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 2;
+  word-wrap: break-word; /* Permite que las palabras largas se rompan */
+  word-break: break-all; /* Fuerza el rompimiento de palabras largas */
+  overflow-wrap: break-word; /* Estándar moderno para word-wrap */
+}
+
+  
 
   /* Gráfico de progreso */
   .progress-chart {
@@ -835,6 +840,7 @@
 
 
 
+
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -903,9 +909,9 @@
           <p class="time">{{ proximo_turno.hora|time:"H:i"|default:"--" }}</p>
           <p>Próximo Turno</p>
         </div>
-        <div class="appointment-box">
-          <p class="date">{{ ultimo_turno.dia|default:"--" }}</p>
-          <p class="time">{{ ultimo_turno.hora|time:"H:i"|default:"--" }}</p>
+       <div class="appointment-box">
+          <p class="date">{{ ultima_visita|date:"d F Y"|default:"--" }}</p>
+          <p class="time">--</p> <!-- No se muestra hora para última visita -->
           <p>Última Visita</p>
         </div>
       </div>
@@ -947,27 +953,31 @@
         <i class="fas fa-file-medical clinical-tab-icon"></i> Historia
       </div>
       <div class="spacer"></div>
-      <div class="action-buttons">
-        {% if not paciente.valores_antropometricos %}
-        <a href="{% url 'pacientes:crear_datos_paciente' paciente.pk %}" class="btn btn-success">
-          <i class="fa fa-plus"></i>
-        </a>
-        {% else %}
-        <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning">
-          <i class="fa fa-pencil"></i>
-        </a>
-        {% endif %}
-        {% if paciente.persona.is_active %}
-        <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger">
-          <i class="fa fa-ban"></i>
-        </a>
-        {% else %}
-        <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success">
-          <i class="fa fa-check"></i>
-        </a>
-        {% endif %}
-      </div>
+       <!-- Botones de acción solo para nutricionistas -->
+    {% if is_nutricionista %}
+    <div class="action-buttons">
+      {% if not paciente.valores_antropometricos %}
+      <a href="{% url 'pacientes:crear_datos_paciente' paciente.pk %}" class="btn btn-success">
+        <i class="fa fa-plus"></i> 
+      </a>
+      {% else %}
+      <a href="{% url 'pacientes:editar_paciente' paciente.pk %}" class="btn btn-warning">
+        <i class="fa fa-pencil"></i>
+      </a>
+      {% endif %}
+      {% if paciente.persona.is_active %}
+      <a href="{% url 'pacientes:deshabilitar_paciente' paciente.pk %}" class="btn btn-danger">
+        <i class="fa fa-ban"></i>
+      </a>
+      {% else %}
+      <a href="{% url 'pacientes:habilitar_paciente' paciente.pk %}" class="btn btn-success">
+        <i class="fa fa-check"></i>
+      </a>
+      {% endif %}
     </div>
+    {% endif %}
+  </div>
+    
 
     <!-- Contenido de Paciente -->
     <div id="paciente-content" class="content-section">
@@ -1051,6 +1061,57 @@
           <div class="data-label">Colesterol Total</div>
           <div class="data-value">{{ analisis_lab.colesterolTotal|default:"No registrado" }}</div>
         </div>
+        <div class="data-row">
+          <div class="data-label">Uremia</div>
+          <div class="data-value">{{ analisis_lab.uremia|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">HDL</div>
+          <div class="data-value">{{ analisis_lab.hdl|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">LDL</div>
+          <div class="data-value">{{ analisis_lab.ldl|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Trigiceridos</div>
+          <div class="data-value">{{ analisis_lab.trigiceridos|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Glucemia</div>
+          <div class="data-value">{{ analisis_lab.glucemia|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">VitaminaB12</div>
+          <div class="data-value">{{ analisis_lab.vitaminaB12|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Albumina</div>
+          <div class="data-value">{{ analisis_lab.albumina|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Perritina</div>
+          <div class="data-value">{{ analisis_lab.perritina|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">GlobulosRojos</div>
+          <div class="data-value">{{ analisis_lab.globulosRojos|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Leucositos</div>
+          <div class="data-value">{{ analisis_lab.leucositos|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Hematocrito</div>
+          <div class="data-value">{{ analisis_lab.hematocrito|default:"No registrado" }}</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">VitaminaD</div>
+          <div class="data-value">{{ analisis_lab.vitaminaD|default:"No registrado" }}</div>
+        </div>
+      
+
+
       </div>
     </div>
 
@@ -1125,6 +1186,10 @@
           <div class="data-label">Actividad Laboral</div>
           <div class="data-value">{{ historia_clinica.actiLaboral|default:"No registrado" }}</div>
         </div>
+        <div class="data-row">
+          <div class="data-label">Comentario</div>
+          <div class="data-value">{{ historia_clinica.comentario|default:"No registrado" }}</div>
+        </div>
       </div>
     </div>
 
@@ -1148,6 +1213,7 @@
       </div>
       <div class="spacer"></div>
       <div class="plan-action-buttons action-buttons" style="display: none;">
+        {% if is_nutricionista %}
         {% if not paciente.planes_nutricionales.exists %}
         <button type="button" class="btn" data-toggle="modal" data-target="#crearPlanModal{{ paciente.pk }}">
           <i class="fa fa-plus"></i>
@@ -1155,24 +1221,112 @@
         {% else %}
         {% with plan=paciente.planes_nutricionales.first %}
         <a href="{% url 'plannutricional:editar_plan_dia' plan.idPlanN %}" class="btn">
-          <i class="fa fa-edit"></i>
-        </a>
-        <form action="{% url 'plannutricional:eliminar_plan_nutricional' plan.idPlanN %}" method="post" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" class="btn" style="background: #F56565;" onclick="return confirm('¿Seguro que deseas eliminar este plan nutricional?');">
-            <i class="fa fa-trash"></i>
-          </button>
-        </form>
-        {% endwith %}
-        {% endif %}
-      </div>
-      <div class="evolucion-action-buttons action-buttons" style="display: none;">
-        <button type="button" class="btn edit-progress-btn" data-toggle="modal" data-target="#editarProgresoModal{{ paciente.pk }}">
           <i class="fa fa-edit"></i> Editar
-        </button>
-        <button type="button" class="btn btn-danger delete-progress-btn">
+        </a>
+        <!-- Botón para abrir el modal de eliminación -->
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmarEliminarPlanModal" data-plan-id="{{ plan.idPlanN }}">
           <i class="fa fa-trash"></i> Eliminar
         </button>
+        {% endwith %}
+        {% endif %}
+        {% endif %}
+        {% if paciente.planes_nutricionales.exists %}
+        <a href="#" class="btn" onclick="printPlanNutricional()">
+          <i class="fa fa-print"></i> Imprimir
+        </a>
+        {% endif %}
+      </div><div class="plan-action-buttons action-buttons" style="display: none;">
+        {% if is_nutricionista %}
+        {% if not paciente.planes_nutricionales.exists %}
+        <button type="button" class="btn" data-toggle="modal" data-target="#crearPlanModal{{ paciente.pk }}">
+          <i class="fa fa-plus"></i>
+        </button>
+        {% else %}
+        {% with plan=paciente.planes_nutricionales.first %}
+        <a href="{% url 'plannutricional:editar_plan_dia' plan.idPlanN %}" class="btn">
+          <i class="fa fa-edit"></i> Editar
+        </a>
+        <!-- Botón para abrir el modal de eliminación -->
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmarEliminarPlanModal" data-plan-id="{{ plan.idPlanN }}">
+          <i class="fa fa-trash"></i> Eliminar
+        </button>
+        {% endwith %}
+        {% endif %}
+        {% endif %}
+        {% if paciente.planes_nutricionales.exists %}
+        <a href="#" class="btn" onclick="printPlanNutricional()">
+          <i class="fa fa-print"></i> Imprimir
+        </a>
+        {% endif %}
+      </div><div class="plan-action-buttons action-buttons" style="display: none;">
+        {% if is_nutricionista %}
+        {% if not paciente.planes_nutricionales.exists %}
+        <button type="button" class="btn" data-toggle="modal" data-target="#crearPlanModal{{ paciente.pk }}">
+          <i class="fa fa-plus"></i>
+        </button>
+        {% else %}
+        {% with plan=paciente.planes_nutricionales.first %}
+        <a href="{% url 'plannutricional:editar_plan_dia' plan.idPlanN %}" class="btn">
+          <i class="fa fa-edit"></i> Editar
+        </a>
+        <!-- Botón para abrir el modal de eliminación -->
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmarEliminarPlanModal" data-plan-id="{{ plan.idPlanN }}">
+          <i class="fa fa-trash"></i> Eliminar
+        </button>
+        {% endwith %}
+        {% endif %}
+        {% endif %}
+        {% if paciente.planes_nutricionales.exists %}
+        <a href="#" class="btn" onclick="printPlanNutricional()">
+          <i class="fa fa-print"></i> Imprimir
+        </a>
+        {% endif %}
+      </div><div class="plan-action-buttons action-buttons" style="display: none;">
+        {% if is_nutricionista %}
+        {% if not paciente.planes_nutricionales.exists %}
+        <button type="button" class="btn" data-toggle="modal" data-target="#crearPlanModal{{ paciente.pk }}">
+          <i class="fa fa-plus"></i>
+        </button>
+        {% else %}
+        {% with plan=paciente.planes_nutricionales.first %}
+        <a href="{% url 'plannutricional:editar_plan_dia' plan.idPlanN %}" class="btn">
+          <i class="fa fa-edit"></i> Editar
+        </a>
+        <!-- Botón para abrir el modal de eliminación -->
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmarEliminarPlanModal" data-plan-id="{{ plan.idPlanN }}">
+          <i class="fa fa-trash"></i> Eliminar
+        </button>
+        {% endwith %}
+        {% endif %}
+        {% endif %}
+        {% if paciente.planes_nutricionales.exists %}
+        <a href="#" class="btn" onclick="printPlanNutricional()">
+          <i class="fa fa-print"></i> Imprimir
+        </a>
+        {% endif %}
+      </div><div class="plan-action-buttons action-buttons" style="display: none;">
+        {% if is_nutricionista %}
+        {% if not paciente.planes_nutricionales.exists %}
+        <button type="button" class="btn" data-toggle="modal" data-target="#crearPlanModal{{ paciente.pk }}">
+          <i class="fa fa-plus"></i>
+        </button>
+        {% else %}
+        {% with plan=paciente.planes_nutricionales.first %}
+        <a href="{% url 'plannutricional:editar_plan_dia' plan.idPlanN %}" class="btn">
+          <i class="fa fa-edit"></i> Editar
+        </a>
+        <!-- Botón para abrir el modal de eliminación -->
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmarEliminarPlanModal" data-plan-id="{{ plan.idPlanN }}">
+          <i class="fa fa-trash"></i> Eliminar
+        </button>
+        {% endwith %}
+        {% endif %}
+        {% endif %}
+        {% if paciente.planes_nutricionales.exists %}
+        <a href="#" class="btn" onclick="printPlanNutricional()">
+          <i class="fa fa-print"></i> Imprimir
+        </a>
+        {% endif %}
       </div>
     </div>
 
@@ -1192,8 +1346,8 @@
               <div class="form-group">
                 <label for="fecha_inicio_{{ paciente.pk }}">Fecha Inicio</label>
                 <input type="date" class="form-control" id="fecha_inicio_{{ paciente.pk }}" name="fecha_inicio"
-                  required>
-              </div>
+                       min="2000-01-01" max="2200-12-31" required>
+            </div>
               <div class="form-group">
                 <label for="duracion_dias_{{ paciente.pk }}">Duración (días)</label>
                 <input type="number" class="form-control" id="duracion_dias_{{ paciente.pk }}" name="duracion_dias"
@@ -1214,11 +1368,32 @@
       </div>
     </div>
 
+    <!-- Modal para confirmar eliminación del plan nutricional -->
+<div class="modal fade" id="confirmarEliminarPlanModal" tabindex="-1" role="dialog" aria-labelledby="confirmarEliminarPlanModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmarEliminarPlanModalLabel">Confirmar Eliminación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas eliminar este plan nutricional? Esta acción no se puede deshacer.
+      </div>
+      <div class="modal-footer">
+        <form id="eliminarPlanForm" method="post" action="">
+          {% csrf_token %}
+          <button type="button" class="btn" style="background: #A0AEC0;" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- Contenido de Progreso -->
     <div id="progreso-content" class="content-section">
-      <div class="progress-chart">
-        <canvas id="progressChart"></canvas>
-      </div>
       <div class="content-card">
         <h4>Evolución de Medidas</h4>
         <div class="data-row">
@@ -1484,6 +1659,7 @@
         </div>
     
         <!-- Formulario para actualizar datos -->
+        {% if is_nutricionista %}
         <div class="card form-section mt-4">
           <h5><i class="fa fa-heartbeat" aria-hidden="true"></i> Actualizar Evolución</h5>
           <button class="btn-toggle" type="button" data-toggle="collapse" data-target="#formEvolucion" aria-expanded="false"
@@ -1497,67 +1673,67 @@
               <div class="row g-3">
                 <div class="col-md-4">
                   <label for="peso" class="form-label">Peso (kg):</label>
-                  <input type="text" class="form-control" id="peso" name="peso" placeholder="Peso" required>
+                  <input type="text" class="form-control" id="peso" name="peso" placeholder="Peso" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="perimetro_pecho" class="form-label">Perímetro pecho (cm):</label>
                   <input type="text" class="form-control" id="perimetro_pecho" name="perimetro_pecho"
-                    placeholder="Perímetro pecho">
+                    placeholder="Perímetro pecho" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="indice_grasa_corporal" class="form-label">Índice de grasa corporal (%):</label>
                   <input type="text" class="form-control" id="indice_grasa_corporal" name="indice_grasa_corporal"
-                    placeholder="Índice de grasa">
+                    placeholder="Índice de grasa" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="masa_muscular" class="form-label">Masa muscular (kg):</label>
                   <input type="text" class="form-control" id="masa_muscular" name="masa_muscular"
-                    placeholder="Masa muscular">
+                    placeholder="Masa muscular" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="agua_corporal" class="form-label">Agua corporal (%):</label>
                   <input type="text" class="form-control" id="agua_corporal" name="agua_corporal"
-                    placeholder="Agua corporal">
+                    placeholder="Agua corporal" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="perimetro_cintura" class="form-label">Perímetro cintura (cm):</label>
                   <input type="text" class="form-control" id="perimetro_cintura" name="perimetro_cintura"
-                    placeholder="Perímetro cintura">
+                    placeholder="Perímetro cintura" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="perimetro_cadera" class="form-label">Perímetro cadera (cm):</label>
                   <input type="text" class="form-control" id="perimetro_cadera" name="perimetro_cadera"
-                    placeholder="Perímetro cadera">
+                    placeholder="Perímetro cadera" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="perimetro_muslo" class="form-label">Perímetro muslo (cm):</label>
                   <input type="text" class="form-control" id="perimetro_muslo" name="perimetro_muslo"
-                    placeholder="Perímetro muslo">
+                    placeholder="Perímetro muslo" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="perimetro_brazo" class="form-label">Perímetro brazo (cm):</label>
                   <input type="text" class="form-control" id="perimetro_brazo" name="perimetro_brazo"
-                    placeholder="Perímetro brazo">
+                    placeholder="Perímetro brazo" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="tension_arterial_maxima" class="form-label">Tensión arterial máxima (mmHg):</label>
                   <input type="text" class="form-control" id="tension_arterial_maxima" name="tension_arterial_maxima"
-                    placeholder="Tensión arterial máxima">
+                    placeholder="Tensión arterial máxima" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-4">
                   <label for="tension_arterial_minima" class="form-label">Tensión arterial mínima (mmHg):</label>
                   <input type="text" class="form-control" id="tension_arterial_minima" name="tension_arterial_minima"
-                    placeholder="Tensión arterial mínima">
+                    placeholder="Tensión arterial mínima" required data-type="numeric" inputmode="decimal">
                 </div>
                 <div class="col-md-6">
                   <label for="comentario" class="form-label">Comentario:</label>
                   <textarea class="form-control" id="comentario" name="comentario" rows="3"
-                    placeholder="Comentario opcional"></textarea>
+                    placeholder="Comentario opcional" required></textarea>
                 </div>
                 <div class="col-md-6">
                   <label for="fecha" class="form-label">Fecha:</label>
                   <input type="date" class="form-control" id="fecha" name="fecha" value="{{ today|date:'Y-m-d' }}"
-                    required>
+                  min="1900-01-01" max="2100-12-31" required>>
                 </div>
               </div>
               <div class="row g-3 mt-3">
@@ -1570,8 +1746,9 @@
             </form>
           </div>
         </div>
-    
+        {% endif %}
         <!-- Modal para editar datos de evolución -->
+        {% if is_nutricionista %}
         <div class="modal fade" id="editarProgresoModal{{ paciente.pk }}" tabindex="-1" role="dialog" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <form method="POST" enctype="multipart/form-data" action="{% url 'progreso:editar_progreso' paciente.pk %}">
@@ -1588,62 +1765,62 @@
                   <div class="row g-3">
                     <div class="col-md-6">
                       <label for="edit_peso" class="form-label">Peso (kg):</label>
-                      <input type="text" class="form-control" id="edit_peso" name="peso" placeholder="Peso" required>
+                      <input type="text" class="form-control" id="edit_peso" name="peso" placeholder="Peso" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_perimetro_pecho" class="form-label">Perímetro pecho (cm):</label>
                       <input type="text" class="form-control" id="edit_perimetro_pecho" name="perimetro_pecho"
-                        placeholder="Perímetro pecho">
+                        placeholder="Perímetro pecho" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_indice_grasa_corporal" class="form-label">Índice de grasa corporal (%):</label>
                       <input type="text" class="form-control" id="edit_indice_grasa_corporal" name="indice_grasa_corporal"
-                        placeholder="Índice de grasa">
+                        placeholder="Índice de grasa" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_masa_muscular" class="form-label">Masa muscular (kg):</label>
                       <input type="text" class="form-control" id="edit_masa_muscular" name="masa_muscular"
-                        placeholder="Masa muscular">
+                        placeholder="Masa muscular" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_agua_corporal" class="form-label">Agua corporal (%):</label>
                       <input type="text" class="form-control" id="edit_agua_corporal" name="agua_corporal"
-                        placeholder="Agua corporal">
+                        placeholder="Agua corporal" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_perimetro_cintura" class="form-label">Perímetro cintura (cm):</label>
                       <input type="text" class="form-control" id="edit_perimetro_cintura" name="perimetro_cintura"
-                        placeholder="Perímetro cintura">
+                        placeholder="Perímetro cintura" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_perimetro_cadera" class="form-label">Perímetro cadera (cm):</label>
                       <input type="text" class="form-control" id="edit_perimetro_cadera" name="perimetro_cadera"
-                        placeholder="Perímetro cadera">
+                        placeholder="Perímetro cadera" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_perimetro_muslo" class="form-label">Perímetro muslo (cm):</label>
                       <input type="text" class="form-control" id="edit_perimetro_muslo" name="perimetro_muslo"
-                        placeholder="Perímetro muslo">
+                        placeholder="Perímetro muslo" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_perimetro_brazo" class="form-label">Perímetro brazo (cm):</label>
                       <input type="text" class="form-control" id="edit_perimetro_brazo" name="perimetro_brazo"
-                        placeholder="Perímetro brazo">
+                        placeholder="Perímetro brazo" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_tension_arterial_maxima" class="form-label">Tensión arterial máxima (mmHg):</label>
                       <input type="text" class="form-control" id="edit_tension_arterial_maxima" name="tension_arterial_maxima"
-                        placeholder="Tensión arterial máxima">
+                        placeholder="Tensión arterial máxima" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-6">
                       <label for="edit_tension_arterial_minima" class="form-label">Tensión arterial mínima (mmHg):</label>
                       <input type="text" class="form-control" id="edit_tension_arterial_minima" name="tension_arterial_minima"
-                        placeholder="Tensión arterial mínima">
+                        placeholder="Tensión arterial mínima" required data-type="numeric" inputmode="decimal">
                     </div>
                     <div class="col-md-12">
                       <label for="edit_comentario" class="form-label">Comentario:</label>
                       <textarea class="form-control" id="edit_comentario" name="comentario" rows="3"
-                        placeholder="Comentario opcional"></textarea>
+                        placeholder="Comentario opcional" required></textarea>
                     </div>
                   </div>
                 </div>
@@ -1655,12 +1832,16 @@
             </form>
           </div>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
 </div>
 
 <script>
+  // Definir is_nutricionista desde el contexto de Django
+  const isNutricionista = "{{ is_nutricionista|yesno:'true,false' }}" === "true";
+
   document.addEventListener('DOMContentLoaded', function () {
     // Navegación de pestañas principales
     const mainTabs = document.querySelectorAll('.main-tab');
@@ -1697,40 +1878,22 @@
 
         // Mostrar u ocultar botones de acción en plan-content
         if (parentId === 'plan') {
-          const actionButtons = document.querySelector('#plan-content .plan-action-buttons');
-          if (actionButtons) {
-            actionButtons.style.display = tabId === 'plan-nutricional' ? 'flex' : 'none';
+          const planActionButtons = document.querySelector('#plan-content .plan-action-buttons');
+          const evolucionActionButtons = document.querySelector('#plan-content .evolucion-action-buttons');
+          
+          // Mostrar plan-action-buttons solo en la pestaña plan-nutricional
+          if (planActionButtons) {
+            planActionButtons.style.display = tabId === 'plan-nutricional' ? 'flex' : 'none';
+          }
+          
+          // Mostrar evolucion-action-buttons solo en la pestaña evolucion y si es nutricionista
+          if (evolucionActionButtons && isNutricionista) {
+            evolucionActionButtons.style.display = tabId === 'evolucion' ? 'flex' : 'none';
+          } else if (evolucionActionButtons) {
+            evolucionActionButtons.style.display = 'none';
           }
         }
       });
-    });
-
-    // Gráfico de progreso
-    const ctx = document.getElementById('progressChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
-        datasets: [{
-          label: 'Peso (kg)',
-          data: [70, 68, 67, 65],
-          borderColor: 'var(--primary-color)',
-          backgroundColor: 'rgba(72, 187, 120, 0.2)',
-          borderWidth: 3,
-          fill: true,
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-        },
-        scales: {
-          y: { beginAtZero: false },
-          x: { grid: { display: false } }
-        }
-      }
     });
 
     // Activar pestaña Evolución si se indica en la URL
@@ -1753,103 +1916,110 @@
   });
 
   function cargarDatosEvolucion() {
-  const fecha = $('#fechaSelectEvolucion').val();
-  const datosContainer = $('#datosEvolucionContainer');
+    const fecha = $('#fechaSelectEvolucion').val();
+    const datosContainer = $('#datosEvolucionContainer');
 
-  if (fecha) {
-    console.log(`Cargando datos para fecha: ${fecha}`);
-    $.ajax({
-      url: `/progreso/obtener_datos_progreso/{{ paciente.pk }}/${fecha}/`,
-      method: 'GET',
-      success: function (data) {
-        console.log('Datos recibidos:', data);
-        if (data.error) {
-          datosContainer.html('<p>' + data.error + '</p>');
-          return;
-        }
-        let html = `
-          <div class="data-row">
-            <div class="data-label">Peso</div>
-            <div class="data-value">${data.peso || '-'} kg</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Índice de grasa corporal</div>
-            <div class="data-value">${data.indice_grasa_corporal || '-'} %</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Perímetro cintura</div>
-            <div class="data-value">${data.perimetro_cintura || '-'} cm</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Perímetro cadera</div>
-            <div class="data-value">${data.perimetro_cadera || '-'} cm</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Perímetro muslo</div>
-            <div class="data-value">${data.perimetro_muslo || '-'} cm</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Perímetro brazo</div>
-            <div class="data-value">${data.perimetro_brazo || '-'} cm</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Perímetro pecho</div>
-            <div class="data-value">${data.perimetro_pecho || '-'} cm</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Masa muscular</div>
-            <div class="data-value">${data.masa_muscular || '-'} kg</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Agua corporal</div>
-            <div class="data-value">${data.agua_corporal || '-'} %</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Tensión arterial</div>
-            <div class="data-value">${data.tension_arterial_maxima || '-'} / ${data.tension_arterial_minima || '-'} mmHg</div>
-          </div>
-          <div class="data-row">
-            <div class="data-label">Comentario</div>
-            <div class="data-value">${data.comentario || '-'}</div>
-          </div>
-          <div class="action-buttons" style="margin-top: 20px;">
-            <button type="button" class="btn edit-progress-btn" data-toggle="modal" data-target="#editarProgresoModal{{ paciente.pk }}" data-fecha="${fecha}" data-progreso='${JSON.stringify(data)}'>
-              <i class="fa fa-edit"></i> Editar
-            </button>
-          </div>
-        `;
-        if (data.fotos && data.fotos.length > 0) {
-          html += '<h5>Fotos:</h5><div class="photo-upload">';
-          data.fotos.forEach(foto => {
+    if (fecha) {
+      console.log(`Cargando datos para fecha: ${fecha}`);
+      $.ajax({
+        url: `/progreso/obtener_datos_progreso/{{ paciente.pk }}/${fecha}/`,
+        method: 'GET',
+        success: function (data) {
+          console.log('Datos recibidos:', data);
+          if (data.error) {
+            datosContainer.html('<p>' + data.error + '</p>');
+            return;
+          }
+          let html = `
+            <div class="data-row">
+              <div class="data-label">Peso</div>
+              <div class="data-value">${data.peso || '-'} kg</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Índice de grasa corporal</div>
+              <div class="data-value">${data.indice_grasa_corporal || '-'} %</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Perímetro cintura</div>
+              <div class="data-value">${data.perimetro_cintura || '-'} cm</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Perímetro cadera</div>
+              <div class="data-value">${data.perimetro_cadera || '-'} cm</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Perímetro muslo</div>
+              <div class="data-value">${data.perimetro_muslo || '-'} cm</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Perímetro brazo</div>
+              <div class="data-value">${data.perimetro_brazo || '-'} cm</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Perímetro pecho</div>
+              <div class="data-value">${data.perimetro_pecho || '-'} cm</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Masa muscular</div>
+              <div class="data-value">${data.masa_muscular || '-'} kg</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Agua corporal</div>
+              <div class="data-value">${data.agua_corporal || '-'} %</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Tensión arterial</div>
+              <div class="data-value">${data.tension_arterial_maxima || '-'} / ${data.tension_arterial_minima || '-'} mmHg</div>
+            </div>
+            <div class="data-row">
+              <div class="data-label">Comentario</div>
+              <div class="data-value">${data.comentario || '-'}</div>
+            </div>
+          `;
+          // Agregar el botón "Editar" solo si el usuario es nutricionista
+          if (isNutricionista) {
             html += `
-              <div>
-                <label>${foto.descripcion}</label>
-                <div class="image-preview">
-                  <img src="${foto.url}" alt="${foto.descripcion}">
-                </div>
+              <div class="action-buttons" style="margin-top: 20px;">
+                <button type="button" class="btn edit-progress-btn" data-toggle="modal" data-target="#editarProgresoModal{{ paciente.pk }}" data-fecha="${fecha}" data-progreso='${JSON.stringify(data)}'>
+                  <i class="fa fa-edit"></i> Editar
+                </button>
               </div>
             `;
-          });
-          html += '</div>';
-        }
-        datosContainer.html(html);
+          }
+          if (data.fotos && data.fotos.length > 0) {
+            html += '<h5>Fotos:</h5><div class="photo-upload">';
+            data.fotos.forEach(foto => {
+              html += `
+                <div>
+                  <label>${foto.descripcion}</label>
+                  <div class="image-preview">
+                    <img src="${foto.url}" alt="${foto.descripcion}">
+                  </div>
+                </div>
+              `;
+            });
+            html += '</div>';
+          }
+          datosContainer.html(html);
 
-        // Asignar evento de clic a los botones de edición
-        $('.edit-progress-btn').on('click', function () {
-          const fecha = $(this).data('fecha');
-          const progresoData = $(this).data('progreso');
-          prellenarFormularioEdicion(fecha, progresoData);
-        });
-      },
-      error: function (xhr, status, error) {
-        console.error('Error AJAX:', xhr.status, error, xhr.responseText);
-        datosContainer.html(`<p>Error al cargar los datos: ${xhr.status} - ${xhr.responseText || error}</p>`);
-      }
-    });
-  } else {
-    datosContainer.html('<p>Selecciona una fecha para ver los datos.</p>');
+          // Asignar evento de clic a los botones de edición (si existen)
+          if (isNutricionista) {
+            $('.edit-progress-btn').on('click', function () {
+              const fecha = $(this).data('fecha');
+              const progresoData = $(this).data('progreso');
+              prellenarFormularioEdicion(fecha, progresoData);
+            });
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error('Error AJAX:', xhr.status, error, xhr.responseText);
+          datosContainer.html(`<p>Error al cargar los datos: ${xhr.status} - ${xhr.responseText || error}</p>`);
+        }
+      });
+    } else {
+      datosContainer.html('<p>Selecciona una fecha para ver los datos.</p>');
+    }
   }
-}
 
   function prellenarFormularioEdicion(fecha, data) {
     // Establecer la fecha en el campo oculto
@@ -1874,4 +2044,145 @@
     $('.selectpicker').selectpicker();
   });
 </script>
+
+<!-- <script>
+  function printPlanNutricional() {
+    const planContent = document.querySelector('#plan-nutricional-content .content-card').innerHTML;
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Imprimir Plan Nutricional</title>
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+          <style>
+            body { font-family: 'Inter', sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; font-size: 12px; }
+            th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
+            th { background-color: #f2f2f2; }
+            .meal-option { margin-bottom: 10px; }
+            .meal-option strong { display: block; font-weight: bold; }
+            ul { padding-left: 20px; }
+          </style>
+        </head>
+        <body>
+          <h2>Plan Nutricional</h2>
+          ${planContent}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 500); // Esperar que se cargue todo
+  }
+</script> -->
+
+<script>
+function printPlanNutricional() {
+  const planContent = document.querySelector('#plan-nutricional-content .content-card');
+
+  // Clonamos el contenido original
+  const cloned = planContent.cloneNode(true);
+
+  // Reemplazar opciones OP1, OP2, OP3 por texto plano con '+'
+  const cells = cloned.querySelectorAll('.nutrition-meal');
+  cells.forEach(cell => {
+    const platos = [];
+    cell.querySelectorAll('li').forEach(li => {
+      const texto = li.textContent.trim();
+      if (texto && texto !== '-') {
+        platos.push(texto);
+      }
+    });
+
+    // Obtener descripción si hay
+    const descripcion = cell.querySelector('small')?.textContent.trim();
+    
+    // Limpiar el contenido de la celda
+    cell.innerHTML = '';
+
+    // Agregar línea de platos
+    if (platos.length > 0) {
+      const p = document.createElement('p');
+      p.textContent = platos.join(' + ');
+      cell.appendChild(p);
+    } else {
+      cell.innerHTML = '<p>-</p>';
+    }
+
+    // Agregar la descripción si existe
+    if (descripcion) {
+      const small = document.createElement('p');
+      small.textContent = `Descripción: ${descripcion}`;
+      small.style.fontStyle = 'italic';
+      small.style.fontSize = '11px';
+      small.style.marginTop = '4px';
+      small.style.color = '#666';
+      cell.appendChild(small);
+    }
+  });
+
+  // Imprimir contenido modificado
+  const htmlContent = `
+    <html>
+      <head>
+        <title>Plan Nutricional</title>
+        <style>
+          body { font-family: 'Inter', sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; font-size: 12px; }
+          th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
+          th { background-color: #f2f2f2; }
+          th:first-child, td:first-child { width: 60px; }
+          p { margin: 0 0 5px; }
+        </style>
+      </head>
+      <body>
+        <h2>Plan Nutricional</h2>
+        ${cloned.innerHTML}
+      </body>
+    </html>
+  `;
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => printWindow.print(), 500);
+}
+
+</script>
+
+<!-- Incluye este script antes del cierre del body -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const numericFields = document.querySelectorAll("input[data-type='numeric']");
+    numericFields.forEach(field => {
+      field.addEventListener('input', () => {
+        const value = field.value;
+        const valid = /^\d+(\.\d{0,2})?$/.test(value);
+        if (!valid && value !== "") {
+          field.setCustomValidity("Solo se permiten números con hasta dos decimales.");
+        } else {
+          field.setCustomValidity("");
+        }
+      });
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Cuando se abre el modal, configurar la URL del formulario
+    $('#confirmarEliminarPlanModal').on('show.bs.modal', function (event) {
+      const button = $(event.relatedTarget); // Botón que abrió el modal
+      const planId = button.data('plan-id'); // Obtener el ID del plan
+      const form = $('#eliminarPlanForm');
+      
+      // Configurar la acción del formulario dinámicamente
+      form.attr('action', `/plannutricional/eliminar_plan_nutricional/${planId}/`);
+    });
+  });
+
+  
+</script>
+
+
 {% endblock %}

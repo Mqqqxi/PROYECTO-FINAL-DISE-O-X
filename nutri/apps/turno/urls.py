@@ -11,5 +11,5 @@ urlpatterns = [
     path('cancelar_turno', views.cancelar_turno, name='cancelar_turno'),
     path('obtener_horarios_ocupados/', views.obtener_horarios_ocupados, name='obtener_horarios_ocupados'),
     path('turnos-dia/', views.obtener_turnos_dia, name='obtener_turnos_dia'),
-	
+	path('eliminar-turno/', views.eliminar_turno, name='eliminar_turno'),  # Nueva URL
 ]

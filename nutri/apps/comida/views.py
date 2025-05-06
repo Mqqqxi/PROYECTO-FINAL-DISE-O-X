@@ -21,7 +21,7 @@ def is_paciente(user):
 
 # Vista para ver todas las comidas
 @login_required
-@user_passes_test(is_paciente)
+##@user_passes_test(is_paciente)
 # Create your views here.
 def comida(request):
     comidas = Comida.objects.all()  # Obtén todas las comidas de la base de datos
