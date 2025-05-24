@@ -5,553 +5,641 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REGISTRARSE - Nutrición Vital</title>
     <style>
-        /* 2025 Design Trends for Nutritionist Website */
         :root {
-            --primary-color: #2ACB92; /* Vibrant eco-green */
-            --secondary-color: #24B583;
-            --accent-color: #F7F9FC; 
-            --dark-accent: #145D56;
-            --text-color: #2D3748;
-            --error-color: #FF5C5C;
-            --input-bg: rgba(255, 255, 255, 0.8);
-            --gradient-start: #2ACB92;
-            --gradient-end: #24B583;
-            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            /* Color palette from first HTML */
+            --primary: #2A9D8F; /* Teal green for health and vitality */
+            --primary-light: #48C9B0; /* Lighter teal for hover states */
+            --secondary: #F4A261; /* Warm peach for warmth */
+            --secondary-light: #F7B267; /* Lighter peach */
+            --surface: #FFFFFF; /* Clean white */
+            --background: #F6FAF6; /* Soft green-gray for calm background */
+            --text: #1A3C34; /* Dark teal for readability */
+            --text-light: #5E7C76; /* Muted teal for secondary text */
+            --accent: #E76F51; /* Coral for pops of energy */
+            
+            /* Typography */
+            --font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+            
+            /* Shadows and effects */
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.12);
+            --glow: 0 0 30px rgba(42, 157, 143, 0.25);
+            
+            /* Border radius */
+            --radius-sm: 10px; /* Reducido de 12px */
+            --radius-md: 16px; /* Reducido de 20px */
+            --radius-lg: 24px; /* Reducido de 28px */
+            --radius-full: 9999px;
         }
 
-        body {
+        /* Base y reset */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: var(--font-main);
-            background: linear-gradient(135deg, #F7F9FC 0%, #E6F5F0 100%);
-            color: var(--text-color);
+            font-family: var(--font-family);
+        }
+
+        /* Contenedor principal con fondo dinámico */
+        .nutri-page {
+            position: relative;
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 40px 20px;
+            align-items: center;
+            background: linear-gradient(135deg, #e9f7ef, #f6faf6);
+            padding: 1rem; /* Reducido de 1.5rem */
+            overflow: hidden;
         }
 
-        /* Glass morphism container - 2025 trend */
-        .register-container {
-            width: 500px;
-            max-width: 100%;
-            padding: 35px 40px;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px);
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.06),
-                0 1px 3px rgba(0, 0, 0, 0.03),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(209, 213, 219, 0.3);
-            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* Organic shapes background - 2025 trend */
-        .register-container::before {
-            content: "";
+        /* Formas flotantes de fondo */
+        .floating-shapes {
             position: absolute;
-            top: -50px;
-            right: -120px;
-            width: 250px;
-            height: 250px;
-            background-color: rgba(42, 203, 146, 0.1);
-            border-radius: 50% 60% 70% 40% / 40% 50% 60% 50%;
-            z-index: -1;
-            filter: blur(5px);
-            animation: floatBubble 15s infinite alternate ease-in-out;
-        }
-
-        .register-container::after {
-            content: "";
-            position: absolute;
-            bottom: -90px;
-            left: -70px;
-            width: 200px;
-            height: 200px;
-            background-color: rgba(20, 93, 86, 0.08);
-            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-            z-index: -1;
-            filter: blur(5px);
-            animation: floatBubble 12s infinite alternate-reverse ease-in-out;
-        }
-
-        @keyframes floatBubble {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(20px, 20px) rotate(10deg); }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Modern, minimalist logo-icon */
-        .logo {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .logo svg {
-            width: 40px;
-            height: 40px;
-        }
-
-        /* Clean, modern heading */
-        h2 {
-            color: var(--text-color);
-            text-align: center;
-            margin: 0 0 25px;
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-
-        /* Form group with animated labels - 2025 trend */
-        .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 16px 18px;
-            border: 1px solid rgba(209, 213, 219, 0.6);
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-            background: var(--input-bg);
-            color: var(--text-color);
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(42, 203, 146, 0.15);
-            outline: none;
-        }
-
-        /* Floating label style */
-        .form-group {
-            position: relative;
-        }
-
-        .form-group label {
-            position: absolute;
-            top: 50%;
-            left: 18px;
-            transform: translateY(-50%);
-            background: transparent;
-            padding: 0 5px;
-            color: #6B7280;
-            transition: all 0.25s ease;
-            pointer-events: none;
-            font-size: 15px;
-        }
-
-        .form-control:focus + label,
-        .form-control:not(:placeholder-shown) + label {
-            top: 0;
-            left: 12px;
-            transform: translateY(-50%);
-            font-size: 12px;
-            color: var(--primary-color);
-            background: var(--input-bg);
-            padding: 0 6px;
-        }
-
-        /* Special styling for select boxes */
-        select.form-control {
-            appearance: none;
-            padding-right: 40px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 16px;
-        }
-
-        /* Special styling for date inputs */
-        input[type="date"].form-control {
-            position: relative;
-            color: var(--text-color);
-        }
-
-        input[type="date"].form-control::-webkit-calendar-picker-indicator {
-            position: absolute;
-            top: 0;
-            right: 0;
             width: 100%;
             height: 100%;
-            opacity: 0;
-            cursor: pointer;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
         }
 
-        input[type="date"] + label {
+        .shape {
+            position: absolute;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            filter: blur(50px);
+            opacity: 0.4;
+        }
+
+        .shape-1 {
+            width: 1420px;
+            height: 1420px;
+            background: var(--primary-light);
+            top: -120px;
+            right: -80px;
+            animation: float-slow 14s infinite alternate;
+        }
+
+        .shape-2 {
+            width: 820px;
+            height: 820px;
+            background: var(--secondary-light);
+            bottom: -60px;
+            left: -90px;
+            animation: float-slow 17s infinite alternate-reverse;
+        }
+
+        .shape-3 {
+            width: 220px;
+            height: 220px;
+            background: var(--accent);
+            top: 25%;
+            right: 15%;
+            opacity: 0.35;
+            animation: float-slow 11s infinite alternate;
+        }
+
+        .shape-4 {
+            width: 280px;
+            height: 280px;
+            background: var(--primary);
+            bottom: 15%;
+            left: 20%;
+            opacity: 0.25;
+            animation: float-slow 19s infinite alternate-reverse;
+        }
+
+        @keyframes float-slow {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(50px, 50px) scale(1.15);
+            }
+        }
+
+        /* Contenedor del contenido */
+        .content-wrapper {
+            width: 100%;
+            max-width: 480px; /* Reducido de 540px */
+            position: relative;
             z-index: 1;
         }
 
-        /* Neomorphic button style - refined for 2025 */
-        button {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+        /* Contenedor del formulario */
+        .form-container {
+            background: var(--surface);
+            padding: 1.5rem; /* Reducido de 2rem */
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
             position: relative;
+            z-index: 10;
             overflow: hidden;
-            box-shadow: 0 6px 15px rgba(42, 203, 146, 0.2);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            transition: all 0.4s ease;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(42, 203, 146, 0.3);
+        .form-container:hover {
+            box-shadow: var(--shadow-lg), var(--glow);
+            transform: translateY(-4px);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        /* Button ripple effect - modern touch */
-        button::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%, -50%);
-            transform-origin: 50% 50%;
-        }
-
-        button:focus:not(:active)::after {
-            animation: ripple 0.8s ease-out;
-        }
-
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(20, 20);
-                opacity: 0;
-            }
-        }
-
-        /* Minimalist links with hover effects */
-        .message {
-            margin-top: 25px;
+        /* Estilo del encabezado */
+        .form-header {
             text-align: center;
-            line-height: 1.8;
-            font-size: 14px;
-            color: #6B7280;
-        }
-
-        .message a {
-            color: var(--text-color);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-block;
-            font-weight: 500;
-            padding: 4px 0;
+            margin-bottom: 1.5rem; /* Reducido de 2rem */
             position: relative;
         }
 
-        .message a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: var(--primary-color);
-            transition: width 0.3s ease;
-        }
-
-        .message a:hover {
-            color: var(--primary-color);
-        }
-
-        .message a:hover::after {
-            width: 100%;
-        }
-
-        /* Modern error message style */
-        .alert-danger {
-            color: #fff;
-            margin-bottom: 20px;
-            padding: 14px 16px;
-            border-radius: 12px;
-            background: rgba(255, 92, 92, 0.9);
-            border-left: 4px solid #FF3B3B;
-            font-size: 14px;
-            animation: shakeError 0.6s cubic-bezier(.36,.07,.19,.97) both;
+        .icon-badge {
             display: flex;
             align-items: center;
-        }
-
-        .alert-danger::before {
-            content: "⚠️";
-            margin-right: 10px;
-            font-size: 16px;
-        }
-
-        @keyframes shakeError {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-
-        /* Placeholder styling */
-        ::placeholder {
-            color: transparent;
-            opacity: 0;
-        }
-
-        /* Form sections */
-        .form-sections {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-        }
-
-        .form-section-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        /* Progress indicator */
-        .register-progress {
-            display: flex;
-            margin-bottom: 20px;
             justify-content: center;
+            width: 50px; /* Reducido de 60px */
+            height: 50px; /* Reducido de 60px */
+            margin: 0 auto 1rem; /* Reducido de 1.2rem */
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
         }
 
-        .progress-step {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #E2E8F0;
-            margin: 0 6px;
+        .icon-badge svg {
+            width: 28px; /* Reducido de 32px */
+            height: 28px; /* Reducido de 32px */
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon-badge::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            right: -12px;
+            bottom: -12px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            opacity: 0.35;
+            filter: blur(10px);
+            z-index: 0;
+        }
+
+        .form-header h2 {
+            font-size: 1.8rem; /* Reducido de 2rem */
+            font-weight: 800;
+            margin-bottom: 0.4rem; /* Reducido de 0.5rem */
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.8px;
+        }
+
+        /* Formulario */
+        .smart-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* Reducido de 1.5rem */
+        }
+
+        .form-fields {
+            display: grid;
+            gap: 1rem; /* Reducido de 1.2rem */
+            grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+            align-items: start; /* Alinea los elementos al inicio */
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem; /* Reducido de 0.5rem */
+        }
+
+        /* Ajustar campos que deben ocupar ambas columnas */
+        .form-field.full-width {
+            grid-column: span 2; /* Ocupa ambas columnas */
+        }
+
+        .form-field label {
+            font-weight: 600;
+            font-size: 1rem; /* Reducido de 1.2rem */
+            margin-bottom: 0.4rem; /* Reducido de 0.5rem */
+            color: var(--text);
             transition: all 0.3s ease;
         }
 
-        .progress-step.active {
-            background: var(--primary-color);
-            transform: scale(1.2);
-        }
-
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            .register-container {
-                width: 90%;
-                padding: 30px 25px;
-                margin: 20px auto;
-                border-radius: 20px;
-            }
-            
-            h2 {
-                font-size: 22px;
-            }
-
-            .form-section-grid {
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-
-            body {
-                padding: 20px 10px;
-            }
-        }
-
-        .page-title {
-            position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--dark-accent);
-            opacity: 0.8;
-        }
-
-        /* Health icons background */
-        .health-icons {
-            position: absolute;
+        .field-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem; /* Reducido de 0.6rem */
             width: 100%;
-            height: 100%;
+        }
+
+        .smart-form input,
+        .smart-form select {
+            width: 100%;
+            padding: 0.7rem 1rem; /* Reducido de 0.9rem 1.2rem */
+            background: rgba(246, 250, 246, 0.9);
+            border: 2px solid transparent;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem; /* Reducido de 1.1rem */
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .smart-form input:focus,
+        .smart-form select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 5px rgba(42, 157, 143, 0.2);
+        }
+
+        /* Estilo personalizado para select */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231A3C34' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); /* Reducido tamaño */
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center; /* Ajustado */
+            background-size: 1rem; /* Reducido de 1.2rem */
+            padding-right: 2rem; /* Reducido de 2.5rem */
+        }
+
+        /* Textos de ayuda y errores */
+        .error-message {
+            font-size: 0.75rem; /* Reducido de 0.85rem */
+            color: #F44336;
+            margin: 0.2rem 0 0; /* Reducido */
+            padding: 0.3rem 0.5rem; /* Reducido */
+            background: rgba(244, 67, 54, 0.08);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid #F44336;
+            font-weight: 500;
+        }
+
+        /* Botones */
+        .form-action {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem; /* Reducido de 0.8rem */
+            margin-top: 0.8rem; /* Reducido de 1rem */
+        }
+
+        .btn-submit,
+        .btn-login {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem; /* Reducido de 0.6rem */
+            width: 100%;
+            padding: 0.8rem 1.5rem; /* Reducido de 1rem 2rem */
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem; /* Reducido de 1.1rem */
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            box-shadow: var(--shadow-sm);
+            letter-spacing: 0.3px; /* Reducido de 0.4px */
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.05;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
-        /* Privacy note */
-        .privacy-note {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #94A3B8;
+        .btn-submit:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+
+        .btn-submit:hover::before {
+            opacity: 1;
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-login {
+            background: rgba(246, 250, 246, 0.9);
+            color: var(--text);
+            border: 2px solid var(--text-light);
             text-align: center;
-            padding: 0 10px;
+        }
+
+        .btn-login:hover {
+            background: var(--surface);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Nota de privacidad */
+        .privacy-note {
+            font-size: 0.75rem; /* Reducido de 0.85rem */
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 0.8rem; /* Reducido de 1rem */
+        }
+
+        /* Responsividad */
+        @media (min-width: 768px) {
+            .form-action {
+                flex-direction: row;
+                gap: 0.8rem; /* Reducido de 1rem */
+            }
+            
+            .btn-submit,
+            .btn-login {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 1.2rem; /* Reducido de 1.5rem */
+            }
+            
+            .icon-badge {
+                width: 40px; /* Reducido de 50px */
+                height: 40px; /* Reducido de 50px */
+            }
+            
+            .icon-badge svg {
+                width: 24px; /* Reducido de 28px */
+                height: 24px; /* Reducido de 28px */
+            }
+            
+            .form-header h2 {
+                font-size: 1.5rem; /* Reducido de 1.8rem */
+            }
+            
+            .form-field label {
+                font-size: 0.9rem; /* Reducido de 1rem */
+            }
+            
+            .smart-form input,
+            .smart-form select {
+                font-size: 0.85rem; /* Reducido de 1rem */
+                padding: 0.6rem 0.9rem; /* Reducido de 0.8rem 1rem */
+            }
+            
+            .btn-submit,
+            .btn-login {
+                font-size: 0.9rem; /* Reducido de 1rem */
+                padding: 0.7rem 1.4rem; /* Reducido de 0.9rem 1.8rem */
+            }
+            
+            /* Una columna en pantallas más pequeñas */
+            .form-fields {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-field.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nutri-page {
+                padding: 0.8rem; /* Reducido de 1rem */
+            }
+            
+            .form-container {
+                padding: 1rem; /* Reducido de 1.2rem */
+                border-radius: var(--radius-sm);
+            }
+            
+            .icon-badge {
+                width: 36px; /* Reducido de 40px */
+                height: 36px; /* Reducido de 40px */
+                margin-bottom: 0.6rem; /* Reducido de 0.8rem */
+            }
+            
+            .icon-badge svg {
+                width: 20px; /* Reducido de 24px */
+                height: 20px; /* Reducido de 24px */
+            }
+            
+            .form-header h2 {
+                font-size: 1.3rem; /* Reducido de 1.5rem */
+            }
+            
+            .form-field label {
+                font-size: 0.8rem; /* Reducido de 0.9rem */
+            }
+            
+            .smart-form input,
+            .smart-form select {
+                font-size: 0.8rem; /* Reducido de 0.9rem */
+                padding: 0.5rem 0.8rem; /* Reducido de 0.7rem 0.9rem */
+            }
+            
+            .btn-submit,
+            .btn-login {
+                font-size: 0.85rem; /* Reducido de 0.95rem */
+                padding: 0.6rem 1.2rem; /* Reducido de 0.8rem 1.5rem */
+            }
         }
     </style>
 </head>
 <body>
-    <div class="page-title">Nutrición Vital</div>
-    
-    <div class="register-container">
-        <div class="logo">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15.5 12C15.5 13.933 13.933 15.5 12 15.5C10.067 15.5 8.5 13.933 8.5 12C8.5 10.067 10.067 8.5 12 8.5C13.933 8.5 15.5 10.067 15.5 12Z" stroke="#2ACB92" stroke-width="1.5"/>
-                <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" stroke="#2ACB92" stroke-width="1.5"/>
-                <path d="M13.5 6C13.5 6 13 8 12 8C11 8 10.5 6 10.5 6" stroke="#2ACB92" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M10.5 18C10.5 18 11 16 12 16C13 16 13.5 18 13.5 18" stroke="#2ACB92" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M18 13.5C18 13.5 16 13 16 12C16 11 18 10.5 18 10.5" stroke="#2ACB92" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M6 10.5C6 10.5 8 11 8 12C8 13 6 13.5 6 13.5" stroke="#2ACB92" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
+    <div class="nutri-page">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
         </div>
-        
-        <h2>Crear perfil nutricional</h2>
-        
-        <div class="register-progress">
-            <div class="progress-step active"></div>
-            <div class="progress-step"></div>
-            <div class="progress-step"></div>
-        </div>
-        
-        <form method="post">
-            {% csrf_token %}
-            
-            {% if error %}
-            <div class="alert-danger">{{ error }}</div>
-            {% endif %}
-            
-            <div class="form-sections">
-                <!-- Datos personales -->
-                <div class="form-section-grid">
-                    <div class="form-group">
-                        <input type="text" name="first_name" id="first_name" class="form-control" placeholder=" " value="{{ form.first_name.value }}" required>
-                        <label for="first_name">Nombre</label>
-                        {% if form.first_name.errors %}
-                        <div class="alert-danger">{{ form.first_name.errors|striptags }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder=" " value="{{ form.last_name.value }}" required>
-                        <label for="last_name">Apellido</label>
-                        {% if form.last_name.errors %}
-                        <div class="alert-danger">{{ form.last_name.errors|striptags }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <select name="genero" id="genero" class="form-control" required>
-                        <option value="" disabled selected hidden></option>
-                        <option value="masculino" {% if form.genero.value and form.genero.value == "Masculino" %}selected{% endif %}>Masculino</option>
-                        <option value="femenino" {% if form.genero.value and form.genero.value == "Femenino" %}selected{% endif %}>Femenino</option>
-                        <option value="no_definido" {% if form.genero.value and form.genero.value == "No_definido" %}selected{% endif %}>No definido</option>
-                    </select>
-                    <label for="genero">Género</label>
-                    {% if form.genero.errors %}
-                    <div class="alert-danger">{{ form.genero.errors|striptags }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <input type="date" name="fechaNacimiento" id="fechaNacimiento" class="form-control" placeholder=" " value="{{ form.fechaNacimiento.value }}" required>
-                    <label for="fechaNacimiento">Fecha de nacimiento</label>
-                    {% if form.fechaNacimiento.errors %}
-                    <div class="alert-danger">{{ form.fechaNacimiento.errors|striptags }}</div>
-                    {% endif %}
-                </div>
-                
-                <!-- Documentación -->
-                <div class="form-section-grid">
-                    <div class="form-group">
-                        <select name="tipoDocumento" id="tipoDocumento" class="form-control" required>
-                            <option value="" disabled selected hidden></option>
-                            <option value="DNI" {% if form.tipoDocumento.value and form.tipoDocumento.value == "DNI" %}selected{% endif %}>DNI</option>
-                            <option value="Pasaporte" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Pasaporte" %}selected{% endif %}>Pasaporte</option>
-                            <option value="Cédula" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Cédula" %}selected{% endif %}>Cédula</option>
-                            <option value="Licencia" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Licencia" %}selected{% endif %}>Licencia de conducir</option>
-                            <option value="Otro" {% if form.tipoDocumento.value and form.tipoDocumento.value == "Otro" %}selected{% endif %}>Otro</option>
-                        </select>
-                        <label for="tipoDocumento">Tipo de documento</label>
-                        {% if form.tipoDocumento.errors %}
-                        <div class="alert-danger">{{ form.tipoDocumento.errors|striptags }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="text" name="numDocumento" id="numDocumento" class="form-control" placeholder=" " value="{{ form.numDocumento.value }}" required>
-                        <label for="numDocumento">Nro. de documento</label>
-                        {% if form.numDocumento.errors %}
-                        <div class="alert-danger">{{ form.numDocumento.errors|striptags }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <!-- Cuenta -->
-                <div class="form-group">
-                    <input type="email" name="email" id="email" class="form-control" placeholder=" " value="{{ form.email.value }}" required>
-                    <label for="email">Correo electrónico</label>
-                    {% if form.email.errors %}
-                    <div class="alert-danger">{{ form.email.errors|striptags }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-section-grid">
-                    <div class="form-group">
-                        <input type="password" name="password1" id="password1" class="form-control" placeholder=" " required>
-                        <label for="password1">Contraseña</label>
-                        {% if form.password1.errors %}
-                        <div class="alert-danger">{{ form.password1.errors|striptags }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="password" name="password2" id="password2" class="form-control" placeholder=" " required>
-                        <label for="password2">Confirmar contraseña</label>
-                        {% if form.password2.errors %}
-                        <div class="alert-danger">{{ form.password2.errors|striptags }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            
-            <button type="submit">CREAR CUENTA</button>
-            
-            <div class="privacy-note">
-                Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad. Tus datos están seguros con nosotros.
-            </div>
-            
-            <p class="message">¿Ya estás registrado? <a href="{% url 'login' %}">Inicia sesión</a></p>
-        </form>
-    </div>
 
-    <div class="health-icons">
-        <!-- Background decorative elements -->
+        <div class="content-wrapper">
+            <div class="form-container">
+                <div class="form-header">
+                    <div class="icon-badge">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.5 12C15.5 13.933 13.933 15.5 12 15.5C10.067 15.5 8.5 13.933 8.5 12C8.5 10.067 10.067 8.5 12 8.5C13.933 8.5 15.5 10.067 15.5 12Z" stroke="white" stroke-width="1.5"/>
+                            <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" stroke="white" stroke-width="1.5"/>
+                            <path d="M13.5 6C13.5 6 13 8 12 8C11 8 10.5 6 10.5 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M10.5 18C10.5 18 11 16 12 16C13 16 13.5 18 13.5 18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M18 13.5C18 13.5 16 13 16 12C16 11 18 10.5 18 10.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M6 10.5C6 10.5 8 11 8 12C8 13 6 13.5 6 13.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h2>Crear perfil nutricional</h2>
+                </div>
+
+                <form method="post" class="smart-form">
+                    {% csrf_token %}
+                    <div class="form-fields">
+                        {% if error %}
+                            <div class="error-message full-width">{{ error }}</div>
+                        {% endif %}
+
+                        <!-- Nombre y Apellido -->
+                        <div class="form-field">
+                            <label for="first_name">Nombre</label>
+                            <div class="field-container">
+                                <input type="text" name="first_name" id="first_name" value="{{ form.first_name.value }}" required>
+                                {% if form.first_name.errors %}
+                                    <p class="error-message">{{ form.first_name.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="last_name">Apellido</label>
+                            <div class="field-container">
+                                <input type="text" name="last_name" id="last_name" value="{{ form.last_name.value }}" required>
+                                {% if form.last_name.errors %}
+                                    <p class="error-message">{{ form.last_name.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Género y Fecha de Nacimiento -->
+                        <div class="form-field">
+                            <label for="genero">Género</label>
+                            <div class="field-container">
+                                <select name="genero" id="genero" required>
+                                    <option value="" disabled selected hidden>Selecciona una opción</option>
+                                    <option value="masculino" {% if form.genero.value == "Masculino" %}selected{% endif %}>Masculino</option>
+                                    <option value="femenino" {% if form.genero.value == "Femenino" %}selected{% endif %}>Femenino</option>
+                                    <option value="no_definido" {% if form.genero.value == "No_definido" %}selected{% endif %}>No definido</option>
+                                </select>
+                                {% if form.genero.errors %}
+                                    <p class="error-message">{{ form.genero.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="fechaNacimiento">Fecha de nacimiento</label>
+                            <div class="field-container">
+                                <input type="date" name="fechaNacimiento" id="fechaNacimiento" value="{{ form.fechaNacimiento.value }}" required>
+                                {% if form.fechaNacimiento.errors %}
+                                    <p class="error-message">{{ form.fechaNacimiento.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Tipo de Documento y Número de Documento -->
+                        <div class="form-field">
+                            <label for="tipoDocumento">Tipo de documento</label>
+                            <div class="field-container">
+                                <select name="tipoDocumento" id="tipoDocumento" required>
+                                    <option value="" disabled selected hidden>Selecciona una opción</option>
+                                    <option value="DNI" {% if form.tipoDocumento.value == "DNI" %}selected{% endif %}>DNI</option>
+                                    <option value="Pasaporte" {% if form.tipoDocumento.value == "Pasaporte" %}selected{% endif %}>Pasaporte</option>
+                                    <option value="Cédula" {% if form.tipoDocumento.value == "Cédula" %}selected{% endif %}>Cédula</option>
+                                    <option value="Licencia" {% if form.tipoDocumento.value == "Licencia" %}selected{% endif %}>Licencia de conducir</option>
+                                    <option value="Otro" {% if form.tipoDocumento.value == "Otro" %}selected{% endif %}>Otro</option>
+                                </select>
+                                {% if form.tipoDocumento.errors %}
+                                    <p class="error-message">{{ form.tipoDocumento.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="numDocumento">Nro. de documento</label>
+                            <div class="field-container">
+                                <input type="text" name="numDocumento" id="numDocumento" value="{{ form.numDocumento.value }}" required>
+                                {% if form.numDocumento.errors %}
+                                    <p class="error-message">{{ form.numDocumento.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Correo Electrónico (ancho completo) -->
+                        <div class="form-field full-width">
+                            <label for="email">Correo electrónico</label>
+                            <div class="field-container">
+                                <input type="email" name="email" id="email" value="{{ form.email.value }}" required>
+                                {% if form.email.errors %}
+                                    <p class="error-message">{{ form.email.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Contraseña y Confirmar Contraseña -->
+                        <div class="form-field">
+                            <label for="password1">Contraseña</label>
+                            <div class="field-container">
+                                <input type="password" name="password1" id="password1" required>
+                                {% if form.password1.errors %}
+                                    <p class="error-message">{{ form.password1.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="password2">Confirmar contraseña</label>
+                            <div class="field-container">
+                                <input type="password" name="password2" id="password2" required>
+                                {% if form.password2.errors %}
+                                    <p class="error-message">{{ form.password2.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-action">
+                        <button type="submit" class="btn-submit">
+                            <span>Crear cuenta</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <a href="{% url 'login' %}" class="btn-login">
+                            <span>Inicia sesión</span>
+                        </a>
+                    </div>
+
+                    <div class="privacy-note">
+                        Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad. Tus datos están seguros con nosotros.
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
+
+<script>
+    document.getElementById('numDocumento').addEventListener('input', function(e) {
+        const value = e.target.value;
+        const errorMessage = document.querySelector('#numDocumento + .error-message') || document.createElement('p');
+        
+        if (!/^\d*$/.test(value)) {
+            errorMessage.className = 'error-message';
+            errorMessage.textContent = 'El número de documento solo puede contener números.';
+            e.target.parentNode.appendChild(errorMessage);
+            e.target.value = value.replace(/\D/g, ''); // Elimina caracteres no numéricos
+        } else {
+            if (errorMessage.parentNode) {
+                errorMessage.remove();
+            }
+        }
+    });
+</script>
+
 </html>

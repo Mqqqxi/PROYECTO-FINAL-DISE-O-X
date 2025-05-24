@@ -2,66 +2,82 @@
 {% load static %}
 {% block title %}PLATOS{% endblock %}
 {% block content %}
-<section class="container">
-    <div class="section-title">
-        <h2>
-            <span>LISTA DE</span>
-            <span>PLATOS</span>
-          </h2>
+
+<div class="nutri-page">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
     </div>
-</section>
 
-<div class="container">
-    <div class="table-container">
+    <div class="content-wrapper">
+        <div class="form-container">
+            <div class="form-header">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6h16M4 12h16m-7 6h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2>Lista de Platos</h2>
+            </div>
 
-        <!-- Botón para abrir el modal -->
-        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalAgregarPlato" style="margin-bottom: 20px;">
-            AGREGAR PLATO
-        </button>
+            <div class="table-container">
+                <button class="btn-submit" data-toggle="modal" data-target="#modalAgregarPlato">
+                    <span>Agregar Plato</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
 
-        <table id="miTabla" class="table display">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Tipo</th>
-                    <th>Comidas</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for plato in platos %}
-                <tr>
-                    <td>{{ plato.nombre }}</td>
-                    <td>{{ plato.descripcion }}</td>
-                    <td>{{ plato.tipo }}</td>
-                    <td>
-                        <ul>
-                            {% for platocomida in plato.platocomida_set.all %}
-                            <li>{{ platocomida.comida.nombre }} ({{ platocomida.peso }}g)</li>
-                            {% empty %}
-                            <li>Sin comidas asignadas</li>
-                            {% endfor %}
-                            <a href="{% url 'comida:agregar_comida_plato' plato.pk %}"
-                                class="btn btn-success btn-sm btn-agregar-comida">
-                                <i class="fa fa-plus"></i>
-                            </a>
-                        </ul>
-                    </td>
-                    <td>
-                        <a href="{% url 'comida:editar_plato' plato.pk %}" class="btn btn-warning btn-sm">
-                            <i class="fa fa-pencil"></i>
-                        </a>
-                        <a href="#" class="btn btn-danger btn-sm btn-eliminar" data-id="{{ plato.pk }}">
-                            <i class="fa fa-ban"></i>
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-
+                <table id="miTabla" class="table display">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Tipo</th>
+                            <th>Comidas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plato in platos %}
+                        <tr>
+                            <td data-label="Nombre">{{ plato.nombre }}</td>
+                            <td data-label="Descripción">{{ plato.descripcion }}</td>
+                            <td data-label="Tipo">{{ plato.tipo }}</td>
+                            <td data-label="Comidas">
+                                <ul>
+                                    {% for platocomida in plato.platocomida_set.all %}
+                                    <li>{{ platocomida.comida.nombre }}</li>
+                                    {% empty %}
+                                    <li>Sin comidas asignadas</li>
+                                    {% endfor %}
+                                    <a href="{% url 'comida:agregar_comida_plato' plato.pk %}" class="btn-action btn-add">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </a>
+                                </ul>
+                            </td>
+                            <td data-label="Acciones">
+                                <a href="{% url 'comida:editar_plato' plato.pk %}" class="btn-action btn-edit">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
+                                <a href="#" class="btn-action btn-delete btn-eliminar" data-id="{{ plato.pk }}">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-1 5v7a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7m-3-1h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -74,35 +90,43 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formAgregarPlato" method="post">
+                <form id="formAgregarPlato" method="post" class="smart-form">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    <div class="form-field">
+                        <label for="nombre">Nombre</label>
+                        <div class="field-container">
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="tipo" class="form-label">Tipo</label>
-                        <select class="form-select" id="tipo" name="tipo" required>
-                            <option value="desayuno">Desayuno</option>
-                            <option value="almuerzo">Almuerzo</option>
-                            <option value="merienda">Merienda</option>
-                            <option value="cena">Cena</option>
-                        </select>
+                    <div class="form-field">
+                        <label for="tipo">Tipo</label>
+                        <div class="field-container">
+                            <select class="form-select" id="tipo" name="tipo" required>
+                                <option value="desayuno">Desayuno</option>
+                                <option value="almuerzo">Almuerzo</option>
+                                <option value="merienda">Merienda</option>
+                                <option value="cena">Cena</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                    <div class="form-field">
+                        <label for="descripcion">Descripción</label>
+                        <div class="field-container">
+                            <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Guardar Plato</button>
+                    <div class="form-action">
+                        <button type="submit" class="btn-submit btn-guardar">Guardar Plato</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+
 <!-- Modal de Confirmación -->
-<div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel"
-    aria-hidden="true">
+<div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -113,9 +137,8 @@
                 ¿Estás seguro de que deseas eliminar este plato?
             </div>
             <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button> -->
-                <a href="{% url 'comida:plato' %}" class="btn btn-secondary">Cancelar</a>
-                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn-submit" id="btnConfirmarEliminar">Eliminar</button>
             </div>
         </div>
     </div>
@@ -133,732 +156,764 @@
                 <!-- Aquí se mostrará el mensaje dinámico -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+                <button type="button" class="btn-submit" data-bs-dismiss="modal">Aceptar</button>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
 <script>
-    function showDetails(id) {
-        const item = document.querySelector(`.gallery-item[data-id='${id}']`);
-        if (item) {
-            document.getElementById("detalle-nombre").textContent = item.dataset.nombre;
-            document.getElementById("detalle-calorias").textContent = item.dataset.calorias;
-            document.getElementById("detalle-proteina").textContent = item.dataset.proteina;
-            document.getElementById("detalle-colesterol").textContent = item.dataset.colesterol;
-            document.getElementById("detalle-carbohidratos").textContent = item.dataset.carbohidratos;
-            document.getElementById("detalle-grasaTotales").textContent = item.dataset.grasaTotales;
-            document.getElementById("detalle-sodio").textContent = item.dataset.sodio;
-            document.getElementById("detalle-categoria").textContent = item.dataset.categoria;
-        }
-    }
-
-    $(document).ready(function () {
-        $('#miTabla').DataTable({
-            paging: true,
-            ordering: true,
-            searching: true,
-            pageLength: 10,
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-            },
-            dom: 'Bfrtip',
-            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-        });
-
-        // Mostrar detalles al hacer clic en una fila de la tabla
-        $("#miTabla tbody").on("click", "tr", function () {
-            // Obtener los datos de la fila
-            let nombre = $(this).data("nombre");
-            let calorias = $(this).data("calorias");
-            let proteina = $(this).data("proteina");
-            let colesterol = $(this).data("colesterol");
-            let carbohidratos = $(this).data("carbohidratos");
-            let grasaTotales = $(this).data("grasatotales");
-            let sodio = $(this).data("sodio");
-            let categoria = $(this).data("categoria");
-
-            // Actualizar los detalles en el panel
-            $("#detalle-nombre").text(nombre);
-            $("#detalle-calorias").text(calorias);
-            $("#detalle-proteina").text(proteina);
-            $("#detalle-colesterol").text(colesterol);
-            $("#detalle-carbohidratos").text(carbohidratos);
-            $("#detalle-grasaTotales").text(grasaTotales);
-            $("#detalle-sodio").text(sodio);
-            $("#detalle-categoria").text(categoria);
-        });
-
-        // Manejar clic en el botón de eliminar
-        // $(".btn-eliminar").click(function (event) {
-        //     event.preventDefault(); // Evita la recarga de la página
-
-        //     let platoId = $(this).data("id");
-        //     let confirmar = confirm("¿Estás seguro de que deseas eliminar este plato?");
-
-        //     if (confirmar) {
-        //         fetch(`/comida/plato/eliminar/${platoId}/`, {
-        //             method: "POST",
-        //             headers: {
-        //                 "X-CSRFToken": "{{ csrf_token }}",
-        //                 "Content-Type": "application/json"
-        //             }
-        //         })
-        //             .then(response => response.json())
-        //             .then(data => {
-        //                 if (data.success) {
-        //                     alert("Plato eliminado con éxito.");
-        //                     location.reload();
-        //                 } else {
-        //                     alert("Error al eliminar el plato.");
-        //                 }
-        //             })
-        //             .catch(error => console.error("Error:", error));
-        //     }
-        // });
+$(document).ready(function () {
+    $('#miTabla').DataTable({
+        paging: true,
+        ordering: true,
+        searching: true,
+        pageLength: 10,
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        },
+        dom: 'Bfrtip',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
     });
 
-    document.getElementById('formAgregarPlato').addEventListener('submit', function (event) {
-        event.preventDefault();
-        let formData = new FormData(this);
+    let platoIdAEliminar = null;
 
-        fetch("{% url 'comida:agregar_plato' %}", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();  // Recarga la página para ver el nuevo plato
-                } else {
-                    alert("Error al agregar el plato");
+    $(".btn-eliminar").click(function (event) {
+        event.preventDefault();
+        platoIdAEliminar = $(this).data("id");
+        $("#modalConfirmacion").modal("show");
+    });
+
+    $("#btnConfirmarEliminar").click(function () {
+        if (platoIdAEliminar) {
+            fetch(`/comida/plato/eliminar/${platoIdAEliminar}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
                 }
             })
-            .catch(error => console.error('Error:', error));
-    });
-
-    // Model de Exito/Error y Confirmación
-
-    let platoIdAEliminar = null; // Variable global para guardar el ID del plato
-
-    $(document).ready(function () {
-        // Evento para abrir el modal de confirmación cuando se quiere eliminar un plato
-        $(".btn-eliminar").click(function (event) {
-            event.preventDefault(); // Evita la recarga de la página
-            platoIdAEliminar = $(this).data("id"); // Guarda el ID del plato
-            $("#modalConfirmacion").modal("show"); // Muestra el modal de confirmación
-        });
-
-        // Evento para confirmar la eliminación
-        $("#btnConfirmarEliminar").click(function () {
-            if (platoIdAEliminar) {
-                fetch(`/comida/plato/eliminar/${platoIdAEliminar}/`, {  // Verifica la URL
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}", // Si usas Django
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        $("#modalConfirmacion").modal("hide"); // Cierra el modal de confirmación
-                        if (data.success) {
-                            mostrarModal("Éxito", "El plato ha sido eliminado con éxito.");
-                            setTimeout(() => location.reload(), 2000); // Recarga la página después de 2 segundos
-                        } else {
-                            mostrarModal("Error", "Hubo un error al eliminar el plato.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        mostrarModal("Error", "Ocurrió un error inesperado.");
-                    });
-            }
-        });
-
-        // Función para mostrar el modal de éxito o error
-        function mostrarModal(titulo, mensaje) {
-            $("#modalMensajeLabel").text(titulo); // Cambia el título del modal
-            $("#modalMensajeBody").text(mensaje); // Cambia el cuerpo del mensaje
-            $("#modalMensaje").modal("show"); // Muestra el modal
+            .then(response => response.json())
+            .then(data => {
+                $("#modalConfirmacion").modal("hide");
+                if (data.success) {
+                    mostrarModal("Éxito", "El plato ha sido eliminado con éxito.");
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    mostrarModal("Error", "Hubo un error al eliminar el plato.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                mostrarModal("Error", "Ocurrió un error inesperado.");
+            });
         }
     });
+
+    function mostrarModal(titulo, mensaje) {
+        $("#modalMensajeLabel").text(titulo);
+        $("#modalMensajeBody").text(mensaje);
+        $("#modalMensaje").modal("show");
+    }
+});
+
+document.getElementById('formAgregarPlato').addEventListener('submit', function (event) {
+    event.preventDefault();
+    let formData = new FormData(this);
+
+    fetch("{% url 'comida:agregar_plato' %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            $("#modalAgregarPlato").modal("hide");
+
+            // Obtener los valores del formulario
+            let nombre = document.getElementById('nombre').value;
+            let tipo = document.getElementById('tipo').value;
+            let descripcion = document.getElementById('descripcion').value;
+
+            // Crear una nueva fila para la tabla
+            let newRow = `
+                <tr>
+                    <td data-label="Nombre">${nombre}</td>
+                    <td data-label="Descripción">${descripcion}</td>
+                    <td data-label="Tipo">${tipo}</td>
+                    <td data-label="Comidas">
+                        <ul>
+                            <li>Sin comidas asignadas</li>
+                            <a href="{% url 'comida:agregar_comida_plato' 0 %}" class="btn-action btn-add" data-id="${data.plato_id}">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                        </ul>
+                    </td>
+                    <td data-label="Acciones">
+                        <a href="{% url 'comida:editar_plato' 0 %}" class="btn-action btn-edit" data-id="${data.plato_id}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="btn-action btn-delete btn-eliminar" data-id="${data.plato_id}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-1 5v7a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7m-3-1h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            `;
+
+            // Agregar la nueva fila a la tabla
+            $('#miTabla').DataTable().row.add($(newRow)).draw();
+
+            // Mostrar mensaje de éxito
+            mostrarModal("Éxito", "El plato ha sido agregado con éxito.");
+
+            // Limpiar el formulario
+            document.getElementById('formAgregarPlato').reset();
+        } else {
+            mostrarModal("Error", "Error al agregar el plato.");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarModal("Error", "Ocurrió un error inesperado.");
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const nombreInput = document.getElementById('nombre');
+
+    nombreInput.addEventListener('input', function () {
+        const valor = nombreInput.value;
+        const contieneNumeros = /\d/.test(valor);
+
+        if (contieneNumeros) {
+            nombreInput.setCustomValidity("El nombre no debe contener números.");
+            nombreInput.reportValidity();
+        } else {
+            nombreInput.setCustomValidity("");
+        }
+    });
+});
 </script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-      const nombreInput = document.getElementById('nombre');
-  
-      // Mostrar mensaje de error si hay números
-      nombreInput.addEventListener('input', function () {
-          const valor = nombreInput.value;
-          const contieneNumeros = /\d/.test(valor);
-  
-          if (contieneNumeros) {
-              nombreInput.setCustomValidity("El nombre no debe contener números.");
-              nombreInput.reportValidity();
-          } else {
-              nombreInput.setCustomValidity(""); // Limpiar el error si ya no hay números
-          }
-      });
-  });
-  </script>
-  
-
 <style>
- /* Base de Diseño Nutricionista 2025 */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap');
-
 :root {
-  /* Paleta de colores moderna y saludable */
-  --primary: #13846B;
-  --primary-light: #1AAB89;
-  --primary-dark: #0E6351;
-  --secondary: #F8F5F0;
-  --accent: #FF7E54;
-  --text: #1A2238;
-  --text-light: #5A6478;
-  --success: #64D2A3;
-  --warning: #FFB661;
-  --danger: #FF6B6B;
-  --light: #FFFFFF;
-  --dark: #0B1023;
-  
-  /* Variables para espaciado y tamaños */
-  --border-radius-sm: 8px;
-  --border-radius-md: 16px;
-  --border-radius-lg: 24px;
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 1.5rem;
-  --spacing-lg: 2.5rem;
-  --spacing-xl: 4rem;
-  
-  /* Sombras modernos con efecto de profundidad */
-  --shadow-sm: 0 2px 10px rgba(10, 16, 35, 0.06);
-  --shadow-md: 0 4px 20px rgba(10, 16, 35, 0.08);
-  --shadow-lg: 0 10px 40px rgba(10, 16, 35, 0.1);
-  
-  /* Transiciones suaves */
-  --transition-fast: 0.2s ease;
-  --transition: 0.3s ease;
-  --transition-slow: 0.5s ease;
-  
-  /* Tamaños de fuente aumentados */
-  --font-size-base: 18px;      /* Tamaño base aumentado (era 16px) */
-  --font-size-sm: 16px;        /* Pequeño */
-  --font-size-md: 20px;        /* Mediano */
-  --font-size-lg: 22px;        /* Grande */
-  --font-size-xl: 24px;        /* Extra grande */
-  --font-size-xxl: 32px;       /* Doble extra grande */
-  --font-size-hero: 64px;      /* Para títulos principales */
+    --primary: #2A9D8F;
+    --primary-light: #48C9B0;
+    --secondary: #F4A261;
+    --secondary-light: #F7B267;
+    --surface: #FFFFFF;
+    --background: #F6FAF6;
+    --text: #1A3C34;
+    --text-light: #5E7C76;
+    --accent: #E76F51;
+    --danger: #F44336;
+    --font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.12);
+    --glow: 0 0 30px rgba(42, 157, 143, 0.25);
+    --radius-sm: 16px;
+    --radius-md: 28px;
+    --radius-lg: 36px;
+    --radius-full: 9999px;
 }
 
-/* Reset y estilos base */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
 }
 
-body2 {
-  font-family: 'Outfit', sans-serif;
-  background-color: var(--secondary);
-  color: var(--text);
-  line-height: 1.6;
-  font-size: var(--font-size-base);  /* Tamaño base de fuente aumentado */
-  overflow-x: hidden;
+.nutri-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #e9f7ef, #f6faf6);
+    padding: 2.5rem;
+    overflow: hidden;
 }
 
-/* Container con márgenes automáticos en dispositivos móviles */
-.container {
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
 }
 
-section.container {
-  padding-top: var(--spacing-lg);
-  padding-bottom: var(--spacing-lg);
+.shape {
+    position: absolute;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    filter: blur(50px);
+    opacity: 0.4;
 }
 
-/* Estilos de encabezado con diseño 2025 */
-.section-title {
-  text-align: left;
-  padding: var(--spacing-lg) var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-  position: relative;
-  overflow: hidden;
+.shape-1 {
+    width: 1420px;
+    height: 1420px;
+    background: var(--primary-light);
+    top: -120px;
+    right: -80px;
+    animation: float-slow 14s infinite alternate;
 }
 
-.section-title::after {
-  content: '';
-  position: absolute;
-  left: var(--spacing-md);
-  bottom: var(--spacing-lg);
-  width: 80px;
-  height: 6px;
-  background: var(--accent);
-  border-radius: 3px;
+.shape-2 {
+    width: 820px;
+    height: 820px;
+    background: var(--secondary-light);
+    bottom: -60px;
+    left: -90px;
+    animation: float-slow 17s infinite alternate-reverse;
 }
 
-.section-title h2 {
-  color: var(--primary);
-  font-weight: 900;
-  font-size: clamp(3.5rem, 5vw, 5rem);  /* Aumentado desde 3rem */
-  line-height: 1;
-  text-transform: uppercase;
-  margin: 0;
-  letter-spacing: -1px;
+.shape-3 {
+    width: 220px;
+    height: 220px;
+    background: var(--accent);
+    top: 25%;
+    right: 15%;
+    opacity: 0.35;
+    animation: float-slow 11s infinite alternate;
 }
 
-.section-title h2 span {
-  display: block;
+.shape-4 {
+    width: 280px;
+    height: 280px;
+    background: var(--primary);
+    bottom: 15%;
+    left: 20%;
+    opacity: 0.25;
+    animation: float-slow 19s infinite alternate-reverse;
 }
 
-.section-title h2 span:last-child {
-  color: var(--accent);
+@keyframes float-slow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, 50px) scale(1.15); }
 }
 
-/* Tabla con diseño moderno y minimalista */
+.content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    z-index: 1;
+}
+
+.form-container {
+    background: var(--surface);
+    padding: 3.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    transition: all 0.4s ease;
+}
+
+.form-container:hover {
+    box-shadow: var(--shadow-lg), var(--glow);
+    transform: translateY(-4px);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.icon-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.8rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-badge svg {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    z-index: 1;
+}
+
+.icon-badge::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    opacity: 0.35;
+    filter: blur(10px);
+    z-index: 0;
+}
+
+.form-header h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.8px;
+}
+
 .table-container {
-  width: 100%;
-  border: none;
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-md);
-  background-color: var(--light);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
-  margin-bottom: var(--spacing-xl);
+    margin-top: 2rem;
 }
 
 #miTabla {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: var(--spacing-md);
-  background-color: var(--light);
-  border-radius: var(--border-radius-md);
-  overflow: hidden;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
 }
 
 #miTabla thead th {
-  background-color: var(--primary);
-  color: var(--light);
-  padding: var(--spacing-md);
-  font-weight: 600;
-  font-size: var(--font-size-md);  /* Aumentado desde 1rem */
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  position: relative;
-}
-
-#miTabla thead th:after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--accent);
-  transform: scaleX(0.3);
-  transform-origin: left;
-  transition: transform var(--transition);
-}
-
-#miTabla thead th:hover:after {
-  transform: scaleX(0.6);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 1.2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    text-align: left;
 }
 
 #miTabla tbody td {
-  padding: var(--spacing-md);
-  border-bottom: 1px solid rgba(10, 16, 35, 0.05);
-  font-size: var(--font-size-base);  /* Aumentado desde 0.95rem */
-  transition: all var(--transition);
-}
-
-#miTabla tbody tr {
-  transition: all var(--transition);
-}
-
-#miTabla tbody tr:last-child td {
-  border-bottom: none;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 1rem;
+    color: var(--text);
 }
 
 #miTabla tbody tr:hover {
-  background-color: rgba(19, 132, 107, 0.05);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+    background: rgba(42, 157, 143, 0.05);
+    transform: translateY(-2px);
 }
 
-/* Botones modernos con efectos de hover */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6rem 1.5rem;  /* Aumentado desde 0.5rem 1.25rem */
-  font-weight: 500;
-  border-radius: var(--border-radius-sm);
-  border: none;
-  transition: all var(--transition);
-  cursor: pointer;
-  font-size: var(--font-size-sm);  /* Aumentado desde 0.9rem */
-  gap: 0.5rem;
-  letter-spacing: 0.3px;
-}
-
-.btn-sm {
-  padding: 0.5rem 1rem;  /* Aumentado desde 0.4rem 0.9rem */
-  font-size: var(--font-size-sm);  /* Aumentado desde 0.85rem */
-}
-
-.btn-success {
-  background-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(19, 132, 107, 0.2);
-}
-
-.btn-success:hover {
-  background-color: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(19, 132, 107, 0.3);
-}
-
-.btn-success:active {
-  transform: translateY(0);
-}
-
-.btn-warning {
-  background-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(19, 132, 107, 0.2);
-}
-
-.btn-warning:hover {
-  background-color: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(19, 132, 107, 0.3);
-}
-
-.btn-danger {
-  background-color: white;
-  color: var(--danger);
-  border: 1px solid var(--danger);
-}
-
-.btn-danger:hover {
-  background-color: var(--danger);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
-}
-
-.btn-primary {
-  background-color: var(--primary-dark);
-  color: white;
-  box-shadow: 0 4px 12px rgba(10, 16, 35, 0.15);
-}
-
-.btn-primary:hover {
-  background-color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(10, 16, 35, 0.2);
-}
-
-.btn-secondary {
-  background-color: var(--secondary);
-  color: var(--text);
-  border: 1px solid rgba(10, 16, 35, 0.1);
-}
-
-.btn-secondary:hover {
-  background-color: var(--light);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-agregar-comida {
-  width: 36px;   /* Aumentado desde 32px */
-  height: 36px;  /* Aumentado desde 32px */
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-}
-
-/* Modales con diseño moderno */
-.modal-content {
-  border: none;
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-
-.modal-header {
-  background-color: var(--primary);
-  color: white;
-  border-bottom: none;
-  padding: var(--spacing-md) var(--spacing-lg);
-}
-
-.modal-title {
-  font-weight: 600;
-  font-size: var(--font-size-xl);  /* Aumentado desde 1.25rem */
-}
-
-.modal-body {
-  background-color: var(--light);
-  color: var(--text);
-  padding: var(--spacing-lg);
-  font-size: var(--font-size-base);  /* Añadido para consistencia */
-}
-
-.modal-footer {
-  border-top: none;
-  padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--light);
-}
-
-/* Formularios modernos */
-.form-control, .form-select {
-  padding: 0.85rem 1.2rem;  /* Aumentado desde 0.75rem 1rem */
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(10, 16, 35, 0.1);
-  background-color: var(--light);
-  transition: all var(--transition);
-  font-size: var(--font-size-base);  /* Aumentado desde 0.95rem */
-  box-shadow: inset 0 2px 4px rgba(10, 16, 35, 0.03);
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(19, 132, 107, 0.15);
-  outline: none;
-}
-
-.form-label {
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: var(--text);
-  font-size: var(--font-size-md);  /* Aumentado desde 0.95rem */
-}
-
-.mb-3 {
-  margin-bottom: var(--spacing-md);
-}
-
-/* Listas dentro de la tabla */
 #miTabla ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 #miTabla li {
-  padding: 0.35rem 0;  /* Aumentado desde 0.25rem */
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: var(--font-size-base);  /* Añadido para consistencia */
+    padding: 0.25rem 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 #miTabla li:before {
-  content: "•";
-  color: var(--accent);
-  font-weight: bold;
-  margin-right: 0.35rem;  /* Aumentado ligeramente */
-  font-size: var(--font-size-lg);  /* Añadido - punto más grande */
+    content: "•";
+    color: var(--accent);
+    font-weight: bold;
+    margin-right: 0.35rem;
 }
 
-/* Botón de cerrar del modal */
+.btn-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.btn-submit:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.btn-submit:hover svg {
+    transform: translateX(5px);
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-add {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-add:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.btn-edit {
+    background: var(--secondary);
+    color: white;
+}
+
+.btn-edit:hover {
+    background: var(--secondary-light);
+    transform: translateY(-2px);
+}
+
+.btn-delete {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #d32f2f;
+    transform: translateY(-2px);
+}
+
+.btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+    background: rgba(246, 250, 246, 0.9);
+    color: var(--text);
+    border: 2px solid var(--text-light);
+}
+
+.btn-cancel:hover {
+    background: var(--surface);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.smart-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.form-field label {
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin-bottom: 0.85rem;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.field-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.smart-form input,
+.smart-form select,
+.smart-form textarea {
+    width: 100%;
+    padding: 1.3rem 1.6rem;
+    background: rgba(246, 250, 246, 0.9);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 1.4rem;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.smart-form input:focus,
+.smart-form select:focus,
+.smart-form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 5px rgba(42, 157, 143, 0.2);
+}
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231A3C34' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.25rem center;
+    background-size: 1.5rem;
+    padding-right: 3rem;
+}
+
+.form-action {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.modal-content {
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    background: var(--surface);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1rem 1.5rem;
+    background: var(--surface);
+}
+
 .btn-close {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  width: 28px;  /* Aumentado desde 24px */
-  height: 28px;  /* Aumentado desde 24px */
-  opacity: 0.8;
-  transition: all var(--transition);
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
 }
 
 .btn-close:hover {
-  opacity: 1;
-  background-color: rgba(255, 255, 255, 0.5);
-  transform: rotate(90deg);
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.5);
+    transform: rotate(90deg);
 }
 
-/* DataTables personalizado */
-.dataTables_wrapper .dataTables_filter input {
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(10, 16, 35, 0.1);
-  padding: 0.6rem 1.2rem;  /* Aumentado desde 0.5rem 1rem */
-  margin-left: 0.5rem;
-  font-size: var(--font-size-base);  /* Añadido para consistencia */
-}
-
-.dataTables_wrapper .dataTables_filter label {
-  font-size: var(--font-size-base);  /* Añadido para consistencia */
-}
-
+.dataTables_wrapper .dataTables_filter input,
 .dataTables_wrapper .dataTables_length select {
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(10, 16, 35, 0.1);
-  padding: 0.5rem 0.85rem;  /* Aumentado desde 0.4rem 0.75rem */
-  font-size: var(--font-size-base);  /* Añadido para consistencia */
-}
-
-.dataTables_wrapper .dataTables_length label {
-  font-size: var(--font-size-base);  /* Añadido para consistencia */
-}
-
-.dataTables_wrapper .dataTables_info {
-  font-size: var(--font-size-base);  /* Añadido para consistencia */
-  padding-top: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--text-light);
+    padding: 0.5rem;
+    font-size: 1rem;
+    background: rgba(246, 250, 246, 0.9);
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(10, 16, 35, 0.1) !important;
-  background: var(--light) !important;
-  color: var(--text) !important;
-  padding: 0.5rem 1rem !important;  /* Aumentado desde 0.4rem 0.8rem */
-  margin: 0 0.3rem;  /* Aumentado desde 0.2rem */
-  font-size: var(--font-size-base);  /* Añadido para consistencia */
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--text-light);
+    background: var(--surface);
+    color: var(--text);
+    padding: 0.4rem 0.8rem;
+    margin: 0 0.2rem;
+    font-size: 1rem;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-  background: var(--primary) !important;
-  color: var(--light) !important;
-  border: 1px solid var(--primary) !important;
+    background: var(--primary);
+    color: white;
+    border: 2px solid var(--primary);
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-  background: var(--secondary) !important;
-  color: var(--primary) !important;
+    background: var(--primary-light);
+    color: white;
 }
 
-/* Efectos de glassmorfismo - tendencia 2025 */
-.glass-effect {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+@media (min-width: 768px) {
+    .form-action {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+
+    .modal-footer {
+        display: flex;
+        gap: 1rem;
+    }
 }
 
-/* Animaciones de entrada */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.table-container {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-/* Responsividad mejorada */
 @media (max-width: 992px) {
-  .section-title h2 {
-    font-size: clamp(3rem, 8vw, 4rem);  /* Aumentado desde 2.5rem */
-  }
-  
-  #miTabla thead {
-    display: none;
-  }
-  
-  #miTabla, 
-  #miTabla tbody, 
-  #miTabla tr, 
-  #miTabla td {
-    display: block;
-    width: 100%;
-  }
-  
-  #miTabla tr {
-    margin-bottom: var(--spacing-md);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid rgba(10, 16, 35, 0.05);
-  }
-  
-  #miTabla td {
-    text-align: right;
-    padding-left: 50%;
-    position: relative;
-    border-bottom: 1px solid rgba(10, 16, 35, 0.05);
-    font-size: var(--font-size-base);  /* Mantener consistencia */
-  }
-  
-  #miTabla td:before {
-    content: attr(data-label);
-    position: absolute;
-    left: var(--spacing-md);
-    width: 45%;
-    text-align: left;
-    font-weight: 600;
-    color: var(--primary);
-    font-size: var(--font-size-base);  /* Mantener consistencia */
-  }
-  
-  .btn {
-    padding: 0.7rem 1.2rem;  /* Aumentado desde 0.6rem 1rem */
-  }
+    #miTabla thead {
+        display: none;
+    }
+
+    #miTabla, #miTabla tbody, #miTabla tr, #miTabla td {
+        display: block;
+        width: 100%;
+    }
+
+    #miTabla tr {
+        margin-bottom: 1rem;
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-sm);
+    }
+
+    #miTabla td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    #miTabla td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        width: 45%;
+        text-align: left;
+        font-weight: 600;
+        color: var(--primary);
+    }
 }
 
-@media (max-width: 576px) {
-  :root {
-    --font-size-base: 16px;  /* Ajustado ligeramente más pequeño en móviles */
-  }
-  
-  .section-title {
-    padding: var(--spacing-md) var(--spacing-sm);
-  }
-  
-  .section-title h2 {
-    font-size: clamp(2.5rem, 10vw, 3rem);  /* Aumentado desde 2rem */
-  }
-  
-  .btn {
-    font-size: var(--font-size-sm);
-  }
-  
-  .modal-body, .modal-footer {
-    padding: var(--spacing-md);
-  }
+@media (max-width: 768px) {
+    .form-container {
+        padding: 2.5rem;
+    }
+
+    .form-header h2 {
+        font-size: 2.4rem;
+    }
+
+    .icon-badge {
+        width: 70px;
+        height: 70px;
+    }
+
+    .icon-badge svg {
+        width: 36px;
+        height: 36px;
+    }
+
+    .smart-form input,
+    .smart-form select,
+    .smart-form textarea {
+        font-size: 1.3rem;
+        padding: 1.2rem 1.4rem;
+    }
+
+    .btn-submit, .btn-cancel {
+        font-size: 1.15rem;
+        padding: 1.2rem 2rem;
+    }
 }
 
-/* Decoración sutil - formas orgánicas modernas */
-.table-container:before {
-  content: '';
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 150px;
-  height: 150px;
-  background-color: rgba(255, 126, 84, 0.1);
-  border-radius: 50%;
-  z-index: -1;
+@media (max-width: 480px) {
+    .nutri-page {
+        padding: 1.5rem;
+    }
+
+    .form-container {
+        padding: 2rem;
+    }
+
+    .form-header h2 {
+        font-size: 2rem;
+    }
+
+    .icon-badge {
+        width: 60px;
+        height: 60px;
+    }
+
+    .icon-badge svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .smart-form input,
+    .smart-form select,
+    .smart-form textarea {
+        font-size: 1.2rem;
+        padding: 1.1rem 1.3rem;
+    }
+
+    .btn-submit, .btn-cancel {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
 }
 
-.table-container {
-  position: relative;
+.form-action {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
-/* Mejora de legibilidad */
-p, li, td, th, input, select, textarea, button, label {
-  letter-spacing: 0.3px;  /* Añadido para mejor legibilidad con tamaños más grandes */
+.btn-guardar {
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+    .form-action {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-guardar {
+        margin-left: 0;
+        order: 2; /* Coloca "Guardar Plato" después de "Cancelar" en pantallas pequeñas */
+    }
+
+    .btn-cancel {
+        order: 1;
+    }
 }
 </style>
 {% endblock %}

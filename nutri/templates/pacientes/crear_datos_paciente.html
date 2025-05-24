@@ -935,15 +935,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Tab switch animation
-    document.querySelectorAll('.tabset input').forEach(input => {
+    document.querySelectorAll('.tabset input[type="radio"]').forEach(input => {
         input.addEventListener('change', () => {
-            const panels = document.querySelectorAll('.tab-panel');
-            panels.forEach(panel => {
-                panel.style.opacity = '0';
+            const panelId = input.getAttribute('aria-controls');
+            const activePanel = document.getElementById(panelId);
+            
+            // Asegurarse de que solo el panel activo tenga la animación
+            if (activePanel) {
+                activePanel.style.opacity = '0';
                 setTimeout(() => {
-                    panel.style.opacity = '1';
-                }, 300);
-            });
+                    activePanel.style.opacity = '1';
+                }, 200); // Reducido a 200ms para mayor suavidad
+            }
+        });
+    });
+
+    // Prevenir que los clics en inputs del formulario afecten las pestañas
+    document.querySelectorAll('.tab-panel input, .tab-panel textarea, .tab-panel select').forEach(input => {
+        input.addEventListener('click', (event) => {
+            event.stopPropagation();
         });
     });
 

@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'nutri.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bdnuevax5',
+        'NAME': 'bdnashe',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': '127.0.0.1',  # O el host correspondiente

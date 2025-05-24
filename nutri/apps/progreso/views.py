@@ -8,6 +8,17 @@ from apps.persona.models import Nutricionista
 from django.utils import timezone
 from django.http import JsonResponse
 
+import logging
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import Progreso, FotoProgreso
+from apps.pacientes.models import Paciente
+from apps.persona.models import Nutricionista
+from django.utils import timezone
+from django.http import JsonResponse
+
+@login_required
 def CrearProgreso(request, paciente_pk):
     paciente = get_object_or_404(Paciente, pk=paciente_pk)
     progresos = Progreso.objects.filter(paciente=paciente).order_by('-fecha')
@@ -15,11 +26,19 @@ def CrearProgreso(request, paciente_pk):
     if request.method == 'POST':
         form_type = request.POST.get('form_type')
 
+        # Obtener la única nutricionista
+        try:
+            nutricionista = Nutricionista.objects.get()
+        except Nutricionista.DoesNotExist:
+            messages.error(request, 'No hay una nutricionista registrada.')
+            return redirect('pacientes:infopaciente', persona_id=paciente.persona_id)
+
         # Formulario de evolución
         if form_type == 'evolucion':
             try:
                 progreso = Progreso(
                     paciente=paciente,
+                    nutricionista=nutricionista,  # Asignar la nutricionista
                     fecha=request.POST.get('fecha'),
                     peso=float(request.POST.get('peso')) if request.POST.get('peso') else 0.0,
                     comentario=request.POST.get('comentario', ''),
@@ -47,6 +66,7 @@ def CrearProgreso(request, paciente_pk):
             try:
                 progreso, created = Progreso.objects.get_or_create(
                     paciente=paciente,
+                    nutricionista=nutricionista,  # Asignar la nutricionista
                     fecha=request.POST.get('fecha', timezone.now().date()),
                     defaults={'peso': 0.0}
                 )
@@ -76,7 +96,8 @@ def CrearProgreso(request, paciente_pk):
         'fechas': fechas,
         'progresos': progresos,
     }
-    return render(request, 'pacientes/infopaciente.html', context)
+    # return render(request, 'pacientes/infopaciente.html', context)
+    return redirect('pacientes:infopaciente_detalle', paciente_id=paciente.pk)
 
 # Configurar un logger
 logger = logging.getLogger(__name__)

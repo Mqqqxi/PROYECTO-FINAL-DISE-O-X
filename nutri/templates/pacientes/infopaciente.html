@@ -899,7 +899,7 @@
           <p>Peso Inicial</p>
         </div>
         <div class="weight-box">
-          <h4>{{ peso_meta|default:"--" }} kg</h4>
+          <h4>{{ valores_antropometricos.peso_meta|default:"--" }} kg</h4>
           <p>Peso Meta</p>
         </div>
       </div>
@@ -1031,8 +1031,12 @@
           <div class="data-value">{{ valores_antropometricos.IMC|default:"No registrado" }}</div>
         </div>
         <div class="data-row">
-          <div class="data-label">Peso</div>
+          <div class="data-label">Peso inicial</div>
           <div class="data-value">{{ valores_antropometricos.peso|default:"No registrado" }} kg</div>
+        </div>
+        <div class="data-row">
+          <div class="data-label">Peso meta</div>
+          <div class="data-value">{{ valores_antropometricos.peso_meta|default:"No registrado" }} kg</div>
         </div>
         <div class="data-row">
           <div class="data-label">Altura</div>
@@ -1216,7 +1220,7 @@
         {% if is_nutricionista %}
         {% if not paciente.planes_nutricionales.exists %}
         <button type="button" class="btn" data-toggle="modal" data-target="#crearPlanModal{{ paciente.pk }}">
-          <i class="fa fa-plus"></i>
+          <i class="fa fa-plus"></i> Crear Plan
         </button>
         {% else %}
         {% with plan=paciente.planes_nutricionales.first %}
@@ -1405,6 +1409,10 @@
           <div class="data-value">{{ peso_actual|default:"--" }} kg</div>
         </div>
         <div class="data-row">
+          <div class="data-label">Peso Meta</div>
+          <div class="data-value">{{ peso_meta|default:"--" }} kg</div>
+        </div>
+        <div class="data-row">
           <div class="data-label">Diferencia</div>
           <div class="data-value">
             {% if diferencia_peso is not None %}
@@ -1430,6 +1438,13 @@
     <div id="plan-nutricional-content" class="content-section" style="display: none;">
       <div class="content-card">
         <h4>Plan Nutricional</h4>
+        <!-- Agregamos recomendación si existe -->
+        {% if recomendacion %}
+        <div id="recomendacion-impresion" class="mb-3">
+          <strong>Recomendación nutricional:</strong>
+          <p>{{ recomendacion }}</p>
+        </div>
+        {% endif %}
         {% if plan_data %}
         <!-- Tabla para mostrar los días y tipos de comida con opciones -->
         <div style="overflow-x: auto;">
@@ -2084,6 +2099,10 @@ function printPlanNutricional() {
   // Clonamos el contenido original
   const cloned = planContent.cloneNode(true);
 
+  // Tomamos la recomendación si existe
+  // const recomendacionElem = document.getElementById('recomendacion-impresion');
+  // const recomendacionHTML = recomendacionElem ? recomendacionElem.outerHTML : '';
+
   // Reemplazar opciones OP1, OP2, OP3 por texto plano con '+'
   const cells = cloned.querySelectorAll('.nutrition-meal');
   cells.forEach(cell => {
@@ -2133,7 +2152,8 @@ function printPlanNutricional() {
           th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
           th { background-color: #f2f2f2; }
           th:first-child, td:first-child { width: 60px; }
-          p { margin: 0 0 5px; }
+          p { margin: 0 0 5px; display: inline-block; }
+          strong { display: block; margin-bottom: 5px; }
         </style>
       </head>
       <body>

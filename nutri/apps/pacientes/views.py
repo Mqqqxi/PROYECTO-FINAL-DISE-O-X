@@ -10,6 +10,7 @@ from .forms import PacienteForm, ValorAntropometricoForm, AnalisisLabForm, Anamn
 from apps.progreso.models import Progreso  # Ajusta según la ubicación real
 from apps.persona.models import Persona
 from apps.pacientes.models import Paciente
+from apps.planNutricional.models import PlanDelDia
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import RegistroPacienteForm
 from django.contrib.auth.forms import PasswordChangeForm
@@ -110,7 +111,7 @@ class PerfilPacienteForm(forms.ModelForm):
 class PacienteForm(forms.ModelForm):
     class Meta:
         model = Paciente
-        fields = ['obraSocial']
+        fields = ['obraSocial', 'objetivo']
 
 
 class CambiarContraseñaForm(PasswordChangeForm):
@@ -396,7 +397,7 @@ def infopaciente(request, paciente_id=None):
     ultimo_turno = turnos_pasados.first() if turnos_pasados.exists() else None
 
     peso_inicial = float(valores_antropometricos.peso) if valores_antropometricos and valores_antropometricos.peso is not None else None
-    peso_meta = float(historia_clinica.peso_meta) if historia_clinica and hasattr(historia_clinica, 'peso_meta') and historia_clinica.peso_meta is not None else None
+    peso_meta = float(valores_antropometricos.peso_meta) if valores_antropometricos and hasattr(valores_antropometricos, 'peso_meta') and valores_antropometricos.peso_meta is not None else None
     diferencia_peso = peso_actual - peso_inicial if peso_actual is not None and peso_inicial is not None else None
     porcentaje_completado = None
     if peso_inicial is not None and peso_actual is not None and peso_meta is not None and peso_inicial != peso_meta:
@@ -404,8 +405,12 @@ def infopaciente(request, paciente_id=None):
             porcentaje_completado = ((peso_inicial - peso_actual) / (peso_inicial - peso_meta)) * 100
         except ZeroDivisionError:
             porcentaje_completado = None
-
+    
     plan_nutricional = paciente.planes_nutricionales.first()
+    if plan_nutricional:
+        recomendacion = plan_nutricional.recomendacion
+    else:
+        recomendacion = None
     plan_data = []
     if plan_nutricional:
         dias = list(range(1, plan_nutricional.duracion_dias + 1))
@@ -470,6 +475,7 @@ def infopaciente(request, paciente_id=None):
         'diferencia_peso': diferencia_peso,
         'porcentaje_completado': porcentaje_completado,
         'plan_data': plan_data,
+        'recomendación' : recomendacion,
         'comidas_loop': ['desayuno', 'almuerzo', 'merienda', 'cena'],
         'today': timezone.now(),
         'is_nutricionista': request.user.is_nutricionista,  # Añadido explícitamente

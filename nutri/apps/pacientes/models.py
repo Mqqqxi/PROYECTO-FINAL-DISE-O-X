@@ -43,6 +43,7 @@ class ValorAntropometrico(models.Model):
     circunferencia = models.DecimalField(max_digits=5, decimal_places=2)
     IMC = models.DecimalField(max_digits=5, decimal_places=2)
     peso = models.DecimalField(max_digits=5, decimal_places=2)
+    peso_meta = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     altura = models.DecimalField(max_digits=5, decimal_places=2)
 
     class Meta:
@@ -96,7 +97,6 @@ class HistoriaClinica(models.Model):
     suplemento = models.TextField()
     alergia = models.TextField()
     edad = models.PositiveIntegerField()
-    fechaNac = models.DateField()
     intolerancia = models.TextField()
     anteFamiliar = models.TextField()
     antePatologico = models.TextField()
@@ -104,7 +104,6 @@ class HistoriaClinica(models.Model):
     hsActiFisica = models.IntegerField()
     tipoActiFisica = models.TextField()
     actiLaboral = models.TextField()
-    sexo = models.TextField()
     comentario = models.TextField()
 
     class Meta:

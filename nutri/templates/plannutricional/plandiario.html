@@ -159,7 +159,7 @@
                             </table>
                             <div class="button-group">
                                 <button type="submit" class="btn btn-success mt-3">Guardar Plato</button>
-                                <a href="{% url 'pacientes:listapaciente' %}" class="btn btn-danger mt-3">Cancelar</a>
+                                <a href="{% url 'pacientes:listapacientenuevo' %}" class="btn btn-danger mt-3">Cancelar</a>
                             </div>
                         </div>
                     </div>
@@ -205,6 +205,26 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary hidden" id="guardarModalBtn" onclick="guardarPlatoDesdeModal()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para opciones de platos vacios -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="errorModalLabel">Error al guardar</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="errorModalBody">
+                    <!-- Se llena dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -881,11 +901,8 @@ td:nth-child(4) {
     
 </style>
 
-
-
-
 <script>
-let platoSeleccionadoId = null;
+    let platoSeleccionadoId = null;
 let opcionSeleccionada = null;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -906,6 +923,7 @@ document.addEventListener('DOMContentLoaded', function() {
             cursor: pointer;
             font-weight: bold;
             color: red;
+            z-index: 10; /* Asegura que esté por encima de otros elementos */
         }
     `;
     document.head.appendChild(style);
@@ -928,7 +946,8 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 targetPanel.classList.add('active');
             }, 50);
-            createRippleEffect(this.nextElementSibling, event);
+            // Comentado para evitar errores si createRippleEffect no está definido
+            // createRippleEffect(this.nextElementSibling, event);
         });
     });
 
@@ -944,6 +963,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar visibilidad de botones de opciones
     updateOptionButtons();
+    
+    // Añadir delegación de eventos para manejar clics en botones de eliminar
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('remove-plato')) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const platoElement = e.target.closest('.selected-comida');
+            if (!platoElement) return;
+            
+            // Encontrar el contenedor padre para identificar día, tipo y opción
+            const containerDiv = platoElement.closest('[id^="plato"]');
+            if (!containerDiv) return;
+            
+            // Extraer día, tipo y opción del ID del contenedor
+            const containerId = containerDiv.id; // formato: "platoTipoX_Y" donde X es el día y Y es la opción
+            const matches = containerId.match(/plato(\w+)(\d+)_(\d+)/);
+            
+            if (matches && matches.length === 4) {
+                const tipo = matches[1]; // Tipo (Desayuno, Almuerzo, etc.)
+                const dia = matches[2]; // Día
+                const opcion = matches[3]; // Opción
+                
+                // Eliminar el input hidden asociado
+                const nextElement = platoElement.nextElementSibling;
+                if (nextElement && nextElement.tagName === 'INPUT') {
+                    nextElement.remove();
+                }
+                
+                // Eliminar el elemento del plato
+                platoElement.remove();
+                
+                // Actualizar la visibilidad de los botones de opciones
+                updateOptionButtons();
+                
+                console.log(`Plato eliminado - Día: ${dia}, Tipo: ${tipo}, Opción: ${opcion}`);
+            }
+        }
+    });
 });
 
 let seleccionHabilitada = false;
@@ -961,8 +1019,8 @@ function filterList() {
     const searchTerm = document.getElementById("searchInput").value.toLowerCase();
     const items = document.querySelectorAll('.food-list li');
     if (searchTerm) {
-        document.querySelectorAll('.category-items').forEach(list => {
-            list.classList.add("hidden");
+        document.querySelectorAll('.food-list ul').forEach(list => {
+            list.classList.remove("hidden");
         });
     }
     let visibleCategories = new Set();
@@ -983,7 +1041,7 @@ function filterList() {
         if (arrow) arrow.innerHTML = "▼";
     });
     if (!searchTerm) {
-        document.querySelectorAll('.category-items').forEach(list => {
+        document.querySelectorAll('.food-list ul').forEach(list => {
             list.classList.remove("hidden");
         });
         document.querySelectorAll('.toggle-arrow').forEach(arrow => {
@@ -993,6 +1051,15 @@ function filterList() {
 }
 
 function habilitarSeleccion(dia, comida, opcion) {
+    const divPrevPlato = document.getElementById(`plato${comida}${dia}_${parseInt(opcion) - 1}`);
+    const platosPrevios = divPrevPlato ? divPrevPlato.querySelectorAll('button.selected-comida').length : 0;
+
+    // Si no es opción 1 y no hay platos en la opción anterior, bloquear selección
+    if (parseInt(opcion) > 1 && platosPrevios === 0) {
+        alert(`Debes seleccionar un plato en Opción ${parseInt(opcion) - 1} primero.`);
+        return;
+    }
+
     seleccionHabilitada = true;
     diaSeleccionado = dia;
     comidaSeleccionada = comida;
@@ -1000,8 +1067,15 @@ function habilitarSeleccion(dia, comida, opcion) {
     console.log(`Habilitado - Día: ${diaSeleccionado}, Comida: ${comidaSeleccionada}, Opción: ${opcionSeleccionada}`);
 }
 
+
 function seleccionarComida(nombre, dia, idPlato) {
-    event.preventDefault();
+    if (!event) {
+        event = window.event || {};
+    }
+    if (event) {
+        event.preventDefault();
+    }
+    
     if (seleccionHabilitada && diaSeleccionado === dia) {
         let divId = `plato${comidaSeleccionada}${dia}_${opcionSeleccionada}`;
         let inputName = `plato${opcionSeleccionada}_dia${dia}_${comidaSeleccionada.toLowerCase()}`;
@@ -1018,10 +1092,6 @@ function seleccionarComida(nombre, dia, idPlato) {
             let removeBtn = document.createElement("span");
             removeBtn.classList.add("remove-plato");
             removeBtn.innerHTML = "×";
-            removeBtn.onclick = function (e) {
-                e.stopPropagation();
-                removePlato(this, dia, comidaSeleccionada.toLowerCase(), opcionSeleccionada);
-            };
             platoElement.appendChild(removeBtn);
 
             // Insertar el botón en el div
@@ -1104,30 +1174,69 @@ function abrirModalPlato(idPlato, dia, comida) {
 }
 
 function guardarPlatoDesdeModal() {
-    if (seleccionHabilitada && diaSeleccionado && comidaSeleccionada && opcionSeleccionada && platoSeleccionadoId) {
-        const platoButton = document.querySelector(`button[onclick*="abrirModalPlato('${platoSeleccionadoId}'"]`);
-        const nombrePlato = platoButton ? platoButton.textContent.trim() : "Plato desconocido";
-        seleccionarComida(nombrePlato, diaSeleccionado, platoSeleccionadoId);
-        
-        // Ocultar el botón "Guardar" después de guardar
-        const guardarModalBtn = document.getElementById('guardarModalBtn');
-        if (guardarModalBtn) {
-            guardarModalBtn.classList.add('hidden');
+    if (!seleccionHabilitada || !diaSeleccionado || !comidaSeleccionada || !opcionSeleccionada || !platoSeleccionadoId) {
+        mostrarErrorModal("Por favor, seleccioná un día, comida y opción antes de guardar.");
+        return;
+    }
+
+    const opcionNum = parseInt(opcionSeleccionada);
+
+    // Verifica que TODAS las opciones anteriores tengan al menos un plato
+    for (let i = 1; i < opcionNum; i++) {
+        const divPrev = document.getElementById(`plato${comidaSeleccionada}${diaSeleccionado}_${i}`);
+        const countPrev = divPrev ? divPrev.querySelectorAll('button.selected-comida').length : 0;
+        if (countPrev === 0) {
+            mostrarErrorModal(`No podés guardar en Opción ${opcionNum} sin haber completado la Opción ${i}.`);
+            return;
         }
-    } else {
-        console.warn("No se puede guardar el plato: faltan datos de selección");
-        alert("Por favor, selecciona un día, comida y opción para poder guardar.");
+    }
+
+    // Guardar normalmente
+    const platoButton = document.querySelector(`button[onclick*="abrirModalPlato('${platoSeleccionadoId}'"]`);
+    const nombrePlato = platoButton ? platoButton.textContent.trim() : "Plato desconocido";
+    seleccionarComida(nombrePlato, diaSeleccionado, platoSeleccionadoId);
+
+    // Ocultar el botón "Guardar"
+    const guardarModalBtn = document.getElementById('guardarModalBtn');
+    if (guardarModalBtn) {
+        guardarModalBtn.classList.add('hidden');
     }
 }
 
-function removePlato(element, dia, tipo, opcion) {
-    const platoElement = element.parentElement;
-    const inputElement = platoElement.nextElementSibling;
-    if (inputElement && inputElement.tagName === 'INPUT') {
-        inputElement.remove();
+function mostrarErrorModal(mensaje) {
+    const modalBody = document.getElementById('errorModalBody');
+    if (modalBody) {
+        modalBody.innerText = mensaje;
+        $('#errorModal').modal('show');
+    } else {
+        // Si el modal no está en el DOM, como fallback:
+        alert(mensaje);
     }
+}
+
+
+
+// La función removePlato ya no es necesaria ya que se maneja con delegación de eventos,
+// pero la dejamos por compatibilidad con el resto del código
+function removePlato(element, dia, tipo, opcion) {
+    if (!element) return;
+    
+    const platoElement = element.closest('.selected-comida');
+    if (!platoElement) return;
+    
+    // Eliminar el input hidden asociado si existe
+    const nextElement = platoElement.nextElementSibling;
+    if (nextElement && nextElement.tagName === 'INPUT') {
+        nextElement.remove();
+    }
+    
+    // Eliminar el elemento del plato
     platoElement.remove();
+    
+    // Actualizar la visibilidad de los botones de opciones
     updateOptionButtons();
+    
+    console.log(`Plato eliminado - Día: ${dia}, Tipo: ${tipo}, Opción: ${opcion}`);
 }
 
 function updateOptionButtons() {
@@ -1140,56 +1249,114 @@ function updateOptionButtons() {
             const btnOpcion2 = document.getElementById(`btn${tipo}${dia}_2`);
             const btnOpcion3 = document.getElementById(`btn${tipo}${dia}_3`);
 
-            // Mostrar botón de Opción 2 si hay al menos un plato en Opción 1
-            const plato1Count = divPlato1.querySelectorAll('button.selected-comida').length;
-            if (plato1Count > 0) {
+            if (!divPlato1 || !divPlato2 || !divPlato3 || !btnOpcion2 || !btnOpcion3) return;
+
+            const countOp1 = divPlato1.querySelectorAll('button.selected-comida').length;
+            const countOp2 = divPlato2.querySelectorAll('button.selected-comida').length;
+
+            // Mostrar u ocultar botón para Opción 2
+            if (countOp1 > 0) {
                 btnOpcion2.classList.remove('hidden');
             } else {
                 btnOpcion2.classList.add('hidden');
-                divPlato2.innerHTML = '';
             }
 
-            // Mostrar botón de Opción 3 si hay al menos un plato en Opción 2
-            const plato2Count = divPlato2.querySelectorAll('button.selected-comida').length;
-            if (plato2Count > 0) {
+            // Mostrar u ocultar botón para Opción 3
+            if (countOp2 > 0 && countOp1 > 0) {
                 btnOpcion3.classList.remove('hidden');
             } else {
                 btnOpcion3.classList.add('hidden');
-                divPlato3.innerHTML = '';
             }
         });
     });
 }
 
-// ---------------- Carrusel de UNA sola fecha -----------------
-document.querySelectorAll('.tabset-carousel').forEach(carousel => {
-    const radios = [...carousel.querySelectorAll('.tabs-track input')];
-    const prevBtn = carousel.querySelector('.prev');
-    const nextBtn = carousel.querySelector('.next');
-    const out     = carousel.querySelector('#currentDate');
-    let index     = radios.findIndex(r => r.checked) || 0;
 
-    function pintar() {
-        // marca el radio
-        radios[index].checked = true;
-        // muestra la fecha (el texto del label hermano)
-        out.textContent = radios[index].nextElementSibling.textContent;
-        // dispara el evento change para que tu código original oculte/muestre el panel
-        radios[index].dispatchEvent(new Event('change', {bubbles:true}));
-        // desactiva flechas en extremos (opcional)
-        prevBtn.disabled = index === 0;
-        nextBtn.disabled = index === radios.length - 1;
+// ---------------- Carrusel de UNA sola fecha -----------------
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.tabset-carousel').forEach(carousel => {
+        const radios = [...carousel.querySelectorAll('.tabs-track input')];
+        const prevBtn = carousel.querySelector('.prev');
+        const nextBtn = carousel.querySelector('.next');
+        const out     = carousel.querySelector('#currentDate');
+        let index     = radios.findIndex(r => r.checked) || 0;
+
+        function pintar() {
+            // marca el radio
+            radios[index].checked = true;
+            // muestra la fecha (el texto del label hermano)
+            out.textContent = radios[index].nextElementSibling.textContent;
+            // dispara el evento change para que tu código original oculte/muestre el panel
+            radios[index].dispatchEvent(new Event('change', {bubbles:true}));
+            // desactiva flechas en extremos (opcional)
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === radios.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (index > 0) { index--; pintar(); }
+        });
+        nextBtn.addEventListener('click', () => {
+            if (index < radios.length - 1) { index++; pintar(); }
+        });
+
+        // inicialización
+        pintar();
+    });
+});
+
+function validarFormularioAntesDeEnviar() {
+    let errores = [];
+
+    // Construir mapa de día -> fecha (usa los radios de los tabs)
+    const diaFechaMap = {};
+    document.querySelectorAll('.tabs-track input').forEach(radio => {
+        const dia = radio.id.replace('tab', '');
+        const label = radio.nextElementSibling;
+        const fecha = label ? label.textContent.trim() : `Día ${dia}`;
+        diaFechaMap[dia] = fecha;
+    });
+
+    // Validar cada panel de día
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+        const dia = panel.id.replace('dia', '');
+        const fechaTexto = diaFechaMap[dia] || `Día ${dia}`;
+
+        ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'].forEach(tipo => {
+            const op1 = document.querySelector(`#plato${tipo}${dia}_1`);
+            const op2 = document.querySelector(`#plato${tipo}${dia}_2`);
+            const op3 = document.querySelector(`#plato${tipo}${dia}_3`);
+
+            const count1 = op1 ? op1.querySelectorAll('button.selected-comida').length : 0;
+            const count2 = op2 ? op2.querySelectorAll('button.selected-comida').length : 0;
+            const count3 = op3 ? op3.querySelectorAll('button.selected-comida').length : 0;
+
+            if (count1 === 0 && (count2 > 0 || count3 > 0)) {
+                errores.push(`${tipo} del ${fechaTexto}: falta completar Opción 1`);
+            } else if (count2 === 0 && count3 > 0) {
+                errores.push(`${tipo} del ${fechaTexto}: falta completar Opción 2`);
+            }
+        });
+    });
+
+    if (errores.length > 0) {
+        mostrarErrorModal("Errores detectados:\n\n" + errores.join('\n'));
+        return false;
     }
 
-    prevBtn.addEventListener('click', () => {
-        if (index > 0) { index--; pintar(); }
-    });
-    nextBtn.addEventListener('click', () => {
-        if (index < radios.length - 1) { index++; pintar(); }
-    });
+    return true;
+}
 
-    // inicialización
-    pintar();
+
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector("form");
+    if (!form) return;
+
+    form.addEventListener("submit", function(e) {
+        if (!validarFormularioAntesDeEnviar()) {
+            e.preventDefault(); // Bloquea el envío si hay errores
+        }
+    });
 });
 
 

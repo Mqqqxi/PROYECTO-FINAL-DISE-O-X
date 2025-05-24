@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-     <title>{% block title %}NUTRICIONISTA EMILIA FERREIRA PAULON{% endblock %}</title>
+     <title>{% block title %}NUTRICIONISTA EMILIA FERREIRA{% endblock %}</title>
      <meta charset="UTF-8">
      <meta http-equiv="X-UA-Compatible" content="IE=Edge">
      <meta name="description" content="">
@@ -150,6 +150,26 @@
                     font-size: 0.9rem;
                }
           }
+
+
+     /* Footer Copyright */
+.footer-info .copyright-text Ten {
+    display: block;
+    margin-top: 20px;
+}
+
+.copyright-text {
+    text-align: center;
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.copyright-text p {
+    margin: 0;
+}
+          
      </style>
 </head>
 
@@ -184,7 +204,7 @@
                          <li><a href="{% url 'pacientes:listapacientenuevo' %}" class="smoothScroll">Pacientes</a></li>
                          {% endif %}
                          <li><a href="{% url 'inicio' %}#feature" class="smoothScroll">Sobre mí</a></li>
-                         <li><a href="{% url 'inicio' %}#courses" class="smoothScroll">Consultorio</a></li>
+                         <li><a href="{% url 'inicio' %}#courses" class="smoothScroll">Servicios</a></li>
                          <li><a href="{% url 'inicio' %}#contact" class="smoothScroll">Contact</a></li>
                     </ul>
 
@@ -216,69 +236,54 @@
           {% endblock %}
      </div>
      <!-- FOOTER -->
-     <footer id="footer">
-          <div class="container">
-               <div class="row">
-                    <div class="col-md-4 col-sm-6">
-                         <div class="footer-info">
-                              <div class="section-title">
-                                   <h2>Headquarter</h2>
-                              </div>
-                              <address>
-                                   <p>1800 dapibus a tortor pretium,<br> Integer nisl dui, ABC 12000</p>
-                              </address>
-                              <ul class="social-icon">
-                                   <li><a href="#" class="fa fa-facebook-square" attr="facebook icon"></a></li>
-                                   <li><a href="#" class="fa fa-twitter"></a></li>
-                                   <li><a href="#" class="fa fa-instagram"></a></li>
-                              </ul>
-                              <div class="copyright-text">
-                                   <p>Copyright © 2019 Company Name</p>
-                                   <p>Design: TemplateMo</p>
-                              </div>
-                         </div>
+<!-- FOOTER -->
+<footer id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-sm-6">
+                <div class="footer-info">
+                    <div class="section-title">
+                        <h2>Datilera</h2>
                     </div>
-                    <div class="col-md-4 col-sm-6">
-                         <div class="footer-info">
-                              <div class="section-title">
-                                   <h2>Contact Info</h2>
-                              </div>
-                              <address>
-                                   <p>+65 2244 1100, +66 1800 1100</p>
-                                   <p><a href="mailto:youremail.co">hello@youremail.co</a></p>
-                              </address>
-                              <div class="footer_menu">
-                                   <h2>Quick Links</h2>
-                                   <ul>
-                                        <li><a href="#">Career</a></li>
-                                        <li><a href="#">Investor</a></li>
-                                        <li><a href="#">Terms & Conditions</a></li>
-                                        <li><a href="#">Refund Policy</a></li>
-                                   </ul>
-                              </div>
-                         </div>
+                    <address>
+                        <p>Nutricionista Emilia Ferreyra<br>Av. Alberdi 1234, Resistencia, Chaco, Argentina</p>
+                        <p>Horario de atención: Lunes a Viernes de 9:00 a 18:00</p>
+                    </address>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="footer-info">
+                    <div class="section-title">
+                        <h2>Contacto</h2>
                     </div>
-                    <div class="col-md-4 col-sm-12">
-                         <div class="footer-info newsletter-form">
-                              <div class="section-title">
-                                   <h2>Newsletter Signup</h2>
-                              </div>
-                              <div>
-                                   <div class="form-group">
-                                        <form action="#" method="get">
-                                             <input type="email" class="form-control" placeholder="Enter your email"
-                                                  name="email" id="email" required="">
-                                             <input type="submit" class="form-control" name="submit" id="form-submit"
-                                                  value="Send me">
-                                        </form>
-                                        <span><sup>*</sup> Please note - we do not spam your email.</span>
-                                   </div>
-                              </div>
-                         </div>
+                    <address>
+                        <p>+54 362 412 3456</p>
+                        <p><a href="mailto:info@emiliaferreyra.com">info@emiliaferreyra.com</a></p>
+                        <ul class="social-icon">
+                            <li><a href="https://www.facebook.com/emiliaferreyranutricion" class="fa fa-facebook-square" title="Facebook"></a></li>
+                            <li><a href="https://www.instagram.com/emiliaferreyranutricion" class="fa fa-instagram" title="Instagram"></a></li>
+                            <li><a href="https://wa.me/+543624123456" class="fa fa-whatsapp" title="WhatsApp"></a></li>
+                        </ul>
+                    </address>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-12">
+                <div class="footer-info">
+                    <div class="section-title">
+                        <h2>Únete al Cambio</h2>
                     </div>
-               </div>
-          </div>
-     </footer>
+                    <p>Recibe consejos de nutrición, recetas saludables y promociones exclusivas.</p>
+                    <div class="form-group">
+                        <span><sup>*</sup> No compartimos tu información ni enviamos spam.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-text">
+            <p>© 2025 DATILERA. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
 
      <!-- SCRIPTS -->
      <script src="{% static 'js/jquery.js' %}"></script>

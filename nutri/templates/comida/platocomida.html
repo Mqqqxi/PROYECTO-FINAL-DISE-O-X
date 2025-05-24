@@ -21,6 +21,14 @@
                 </div>
                 <h2>Agregar Comidas a {{plato.nombre}}</h2>
             </div>
+            <!-- Modal para mensajes -->
+<div id="modalMensaje" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <p id="modalMensajeTexto">Esta comida ya fue agregada.</p>
+        <button class="modal-btn">Aceptar</button>
+    </div>
+</div>
 
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Buscar por nombre..." onkeyup="filterComidas()" class="search-input" />
@@ -678,6 +686,76 @@
             padding: 1.1rem 1.8rem;
         }
     }
+
+    /* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 60, 52, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: var(--surface);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.modal-content.show {
+    transform: scale(1);
+}
+
+.modal-content:not(.show) {
+    transform: scale(0.8);
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: var(--accent);
+}
+
+.modal-btn {
+    margin-top: 1.5rem;
+    padding: 0.8rem 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.modal-btn:hover {
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
 </style>
 
 <script>
@@ -714,55 +792,94 @@
     }
 
     function drop(event) {
-        event.preventDefault();
-        event.target.classList.remove("dragover");
+    event.preventDefault();
+    event.target.classList.remove("dragover");
 
-        let comidaId = event.dataTransfer.getData("text");
-        let comidaElement = document.getElementById(comidaId);
+    let comidaId = event.dataTransfer.getData("text");
+    let comidaElement = document.getElementById(comidaId);
 
-        if (!comidaElement) return;
+    if (!comidaElement) return;
 
-        let dropzone = document.querySelector(".dropzone");
+    let dropzone = document.querySelector(".dropzone");
 
-        let existingItems = dropzone.querySelectorAll(".food-item");
-        for (let item of existingItems) {
-            if (item.dataset.comidaId === comidaElement.dataset.id) {
-                alert("Esta comida ya fue agregada.");
-                return;
-            }
+    let existingItems = dropzone.querySelectorAll(".food-item");
+    for (let item of existingItems) {
+        if (item.dataset.comidaId === comidaElement.dataset.id) {
+            showModal("Esta comida ya fue agregada.");
+            return;
         }
-
-        let foodItem = document.createElement("div");
-        foodItem.classList.add("food-item");
-        foodItem.dataset.comidaId = comidaElement.dataset.id;
-        foodItem.dataset.platoId = comidaElement.dataset.platoId;
-
-        Object.keys(comidaElement.dataset).forEach(key => {
-            foodItem.dataset[key] = comidaElement.dataset[key];
-        });
-
-        foodItem.onclick = function () {
-            showDetails(this.dataset.comidaId);
-        };
-
-        let img = comidaElement.querySelector("img").cloneNode(true);
-
-        let deleteButton = document.createElement("button");
-        deleteButton.classList.add("delete-btn");
-        deleteButton.innerHTML = "✖";
-        deleteButton.onclick = function (e) {
-            e.stopPropagation();
-            eliminarComidaGuardada(this);
-        };
-
-        foodItem.appendChild(img);
-        foodItem.appendChild(deleteButton);
-
-        dropzone.appendChild(foodItem);
-
-        updateTotalDetails();
-        adjustImageSize();
     }
+
+    let foodItem = document.createElement("div");
+    foodItem.classList.add("food-item");
+    foodItem.dataset.comidaId = comidaElement.dataset.id;
+    foodItem.dataset.platoId = comidaElement.dataset.platoId;
+
+    Object.keys(comidaElement.dataset).forEach(key => {
+        foodItem.dataset[key] = comidaElement.dataset[key];
+    });
+
+    foodItem.onclick = function () {
+        showDetails(this.dataset.comidaId);
+    };
+
+    let img = comidaElement.querySelector("img").cloneNode(true);
+
+    let deleteButton = document.createElement("button");
+    deleteButton.classList.add("delete-btn");
+    deleteButton.innerHTML = "✖";
+    deleteButton.onclick = function (e) {
+        e.stopPropagation();
+        eliminarComidaGuardada(this);
+    };
+
+    foodItem.appendChild(img);
+    foodItem.appendChild(deleteButton);
+
+    dropzone.appendChild(foodItem);
+
+    updateTotalDetails();
+    adjustImageSize();
+}
+
+function showModal(mensaje) {
+    const modal = document.getElementById("modalMensaje");
+    const modalTexto = document.getElementById("modalMensajeTexto");
+    const modalClose = document.querySelector(".modal-close");
+    const modalBtn = document.querySelector(".modal-btn");
+
+    modalTexto.textContent = mensaje;
+    modal.style.display = "flex";
+    setTimeout(() => {
+        modal.querySelector(".modal-content").classList.add("show");
+    }, 10);
+
+    const closeModal = () => {
+        modal.querySelector(".modal-content").classList.remove("show");
+        setTimeout(() => {
+            modal.style.display = "none";
+        }, 300);
+    };
+
+    modalClose.onclick = closeModal;
+    modalBtn.onclick = closeModal;
+
+    // Cerrar el modal al hacer clic fuera del contenido
+    modal.onclick = function (event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+
+    // Cerrar el modal con la tecla Escape
+    document.addEventListener("keydown", function handler(event) {
+        if (event.key === "Escape") {
+            closeModal();
+            document.removeEventListener("keydown", handler);
+        }
+    });
+}
+
 
     function adjustImageSize() {
         let foodItems = document.querySelectorAll(".dropzone .food-item");

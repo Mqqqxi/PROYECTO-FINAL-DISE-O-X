@@ -2,159 +2,357 @@
 {% load static %}
 {% block title %}Reservar Turno{% endblock %}
 {% block content %}
-<section class="container2">
-    <div class="section-title">
-        <h2>Reserva tu <span>Turno</span></h2>
-        <p>Elige un día y horario para tu consulta con nuestra nutricionista.</p>
-    </div>
-    <div class="calendar-wrapper">
-        <div id="calendar"></div>
+<div class="nutri-page">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
     </div>
 
-    {% if is_nutricionista %}
-    <div class="nutricionista-notice">
-        <p>Como nutricionista, puedes ver los turnos reservados por día.</p>
-    </div>
-    {% else %}
-    <a href="https://wa.me/+543644350877?text=Hola {{ turno.paciente.persona.first_name|urlencode }} {{ turno.paciente.persona.last_name|urlencode }}, te recordamos tu consulta con la nutricionista el {{ turno.dia|urlencode }} a las {{ turno.hora|time:'H:i'|urlencode }}. Motivo: {{ turno.motivo|urlencode }}. ¡Te esperamos!"
-       class="btn btn-primary" target="_blank">Enviar Recordatorio por WhatsApp</a>
-    {% endif %}
-</section>
+    <div class="content-wrapper">
+        <div class="form-container">
+            <div class="form-header">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v4H7v2h4v4h2v-4h4v-2h-4V7z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <h2>Reserva tu <span>Turno</span></h2>
+                <p class="subtitle">Elige un día y horario para tu consulta con nuestra nutricionista.</p>
+            </div>
 
-<!-- Modal para Selección de Horarios (para Pacientes) -->
-<div class="modal" id="time-modal" style="display: none;">
-    <div class="modal-content">
-        <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('time-modal')">×</button>
-        <h3>Horarios Disponibles</h3>
-        <p id="modal-date" class="modal-subtitle"></p>
-        <div class="time-grid" id="available-times"></div>
-        <div class="reserved-turn" id="reserved-turn" style="display: none;">
-            <h4>Tu Turno Reservado</h4>
-            <p id="reserved-details"></p>
-            <button class="btn btn-secondary" id="cancel-turn-btn">Cancelar Turno</button>
+            <div class="calendar-wrapper">
+                <div id="calendar"></div>
+            </div>
+
+            {% if is_nutricionista %}
+            <div class="nutricionista-notice">
+                <p></p>
+            </div>
+            {% else %}
+            <a href="https://wa.me/+543644350877?text=Hola {{ turno.paciente.persona.first_name|urlencode }} {{ turno.paciente.persona.last_name|urlencode }}, te recordamos tu consulta con la nutricionista el {{ turno.dia|urlencode }} a las {{ turno.hora|time:'H:i'|urlencode }}. Motivo: {{ turno.motivo|urlencode }}. ¡Te esperamos!"
+               class="btn-submit" target="_blank">
+                <span>Enviar Recordatorio por WhatsApp</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.76.45 3.43 1.24 4.88L2 22l5.29-1.36c1.42.79 3.03 1.2 4.75 1.2 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </a>
+            {% endif %}
         </div>
+
+        <!-- Modal para Selección de Horarios (para Pacientes) -->
+        <div class="modal" id="time-modal" style="display: none;">
+            <div class="modal-content">
+                <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('time-modal')">×</button>
+                <h3>Horarios Disponibles</h3>
+                <p id="modal-date" class="modal-subtitle"></p>
+                <div class="time-grid" id="available-times"></div>
+                <div class="reserved-turn" id="reserved-turn" style="display: none;">
+                    <h4>Tu Turno Reservado</h4>
+                    <p id="reserved-details"></p>
+                    <button class="btn-cancel" id="cancel-turn-btn">
+                        <span>Cancelar Turno</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Selección de Motivo (para Pacientes) -->
+        <div class="modal" id="reason-modal" style="display: none;">
+            <div class="modal-content">
+                <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('reason-modal')">×</button>
+                <h3>Motivo de la Consulta</h3>
+                <select id="reason-select" class="form-control" aria-label="Seleccionar motivo de la consulta">
+                    <option value="" disabled selected>Seleccione un motivo</option>
+                    <option value="Consulta general">Consulta general</option>
+                    <option value="Chequeo médico">Chequeo médico</option>
+                    <option value="Resultados de análisis">Resultados de análisis</option>
+                    <option value="Consulta de seguimiento">Consulta de seguimiento</option>
+                    <option value="Otro">Otro</option>
+                </select>
+                <div class="modal-actions">
+                    <button class="btn-submit" id="reserve-btn">
+                        <span>Reservar Turno</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="btn-cancel" id="close-reason-modal-btn">
+                        <span>Cancelar</span>
+                        <svg width="24" height="24mitter" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Turnos de Nutricionista -->
+        <div class="modal" id="appointments-modal" style="display: none;">
+            <div class="modal-content">
+                <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('appointments-modal')">×</button>
+                <h3>Turnos Reservados</h3>
+                <p id="appointments-modal-date" class="modal-subtitle"></p>
+                <div class="appointments-table-wrapper">
+                    <table class="appointments-table">
+                        <thead>
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Hora</th>
+                                <th>Motivo</th>
+                                <th>Contacto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Confirmaciones y Notificaciones -->
+        <div class="modal" id="message-modal" style="display: none;">
+            <div class="modal-content">
+                <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('message-modal')">×</button>
+                <h3 id="message-modal-title"></h3>
+                <p id="message-modal-text"></p>
+                <div class="modal-actions" id="message-modal-actions">
+                    <!-- Los botones se generarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Overlay del Modal -->
+        <div class="modal-overlay" id="modal-overlay" style="display: none;"></div>
     </div>
 </div>
-
-<!-- Modal para Selección de Motivo (para Pacientes) -->
-<div class="modal" id="reason-modal" style="display: none;">
-    <div class="modal-content">
-        <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('reason-modal')">×</button>
-        <h3>Motivo de la Consulta</h3>
-        <select id="reason-select" class="form-control" aria-label="Seleccionar motivo de la consulta">
-            <option value="" disabled selected>Seleccione un motivo</option>
-            <option value="Consulta general">Consulta general</option>
-            <option value="Chequeo médico">Chequeo médico</option>
-            <option value="Resultados de análisis">Resultados de análisis</option>
-            <option value="Consulta de seguimiento">Consulta de seguimiento</option>
-            <option value="Otro">Otro</option>
-        </select>
-        <div class="modal-actions">
-            <button class="btn btn-primary" id="reserve-btn">Reservar Turno</button>
-            <button class="btn btn-secondary" id="close-reason-modal-btn">Cancelar</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para Turnos de Nutricionista -->
-<div class="modal" id="appointments-modal" style="display: none;">
-    <div class="modal-content">
-        <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('appointments-modal')">×</button>
-        <h3>Turnos Reservados</h3>
-        <p id="appointments-modal-date" class="modal-subtitle"></p>
-        <div class="appointments-table-wrapper">
-            <table class="appointments-table">
-                <thead>
-                    <tr>
-                        <th>Paciente</th>
-                        <th>Hora</th>
-                        <th>Motivo</th>
-                        <th>Contacto</th>
-                    </tr>
-                </thead>
-                <tbody id="appointments-table-body"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para Confirmaciones y Notificaciones -->
-<div class="modal" id="message-modal" style="display: none;">
-    <div class="modal-content">
-        <button class="modal-close" aria-label="Cerrar modal" onclick="closeModal('message-modal')">×</button>
-        <h3 id="message-modal-title"></h3>
-        <p id="message-modal-text"></p>
-        <div class="modal-actions" id="message-modal-actions">
-            <!-- Los botones se generarán dinámicamente -->
-        </div>
-    </div>
-</div>
-
-
-
-<!-- Overlay del Modal -->
-<div class="modal-overlay" id="modal-overlay" style="display: none;"></div>
 
 <style>
-/* Estilos existentes */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 :root {
-    --primary-color: #2A9D8F;
-    --secondary-color: #F4F1DE;
-    --accent-color: #E9C46A;
-    --text-color: #264653;
-    --card-bg: rgba(255, 255, 255, 0.9);
-    --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    --backdrop: blur(12px);
-    --danger-color: #e63946; /* Color rojo para el botón de eliminar */
+    /* Color palette from first HTML */
+    --primary: #2A9D8F; /* Teal green for health and vitality */
+    --primary-light: #48C9B0; /* Lighter teal for hover states */
+    --secondary: #F4A261; /* Warm peach for warmth */
+    --secondary-light: #F7B267; /* Lighter peach */
+    --surface: #FFFFFF; /* Clean white */
+    --background: #F6FAF6; /* Soft green-gray for calm background */
+    --text: #1A3C34; /* Dark teal for readability */
+    --text-light: #5E7C76; /* Muted teal for secondary text */
+    --accent: #E76F51; /* Coral for pops of energy */
+    
+    /* Typography */
+    --font-family: 'Outfit', 'Inter', system-ui, sans-serif; /* From first HTML */
+    
+    /* Shadows and effects */
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.12);
+    --glow: 0 0 30px rgba(42, 157, 143, 0.25);
+    
+    /* Border radius */
+    --radius-sm: 16px;
+    --radius-md: 28px;
+    --radius-lg: 36px;
+    --radius-full: 9999px;
+
+    /* Additional colors from second HTML */
+    --danger-color: #e63946; /* Red for delete buttons */
 }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, var(--secondary-color), #EAF4F4);
-    color: var(--text-color);
-    line-height: 1.6;
+/* Base y reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
 }
 
-.container2 {
+/* Contenedor principal con fondo dinámico */
+.nutri-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #e9f7ef, #f6faf6);
+    padding: 2.5rem;
+    overflow: hidden;
+}
+
+/* Formas flotantes de fondo (organic shapes) */
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* Organic shape */
+    filter: blur(50px);
+    opacity: 0.4;
+}
+
+.shape-1 {
+    width: 1420px;
+    height: 1420px;
+    background: var(--primary-light);
+    top: -120px;
+    right: -80px;
+    animation: float-slow 14s infinite alternate;
+}
+
+.shape-2 {
+    width: 820px;
+    height: 820px;
+    background: var(--secondary-light);
+    bottom: -60px;
+    left: -90px;
+    animation: float-slow 17s infinite alternate-reverse;
+}
+
+.shape-3 {
+    width: 220px;
+    height: 220px;
+    background: var(--accent);
+    top: 25%;
+    right: 15%;
+    opacity: 0.35;
+    animation: float-slow 11s infinite alternate;
+}
+
+.shape-4 {
+    width: 280px;
+    height: 280px;
+    background: var(--primary);
+    bottom: 15%;
+    left: 20%;
+    opacity: 0.25;
+    animation: float-slow 19s infinite alternate-reverse;
+}
+
+@keyframes float-slow {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(50px, 50px) scale(1.15);
+    }
+}
+
+/* Contenedor del contenido */
+.content-wrapper {
+    width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    position: relative;
+    z-index: 1;
 }
 
-.section-title {
+/* Contenedor del formulario */
+.form-container {
+    background: var(--surface);
+    padding: 3.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    transition: all 0.4s ease;
+}
+
+.form-container:hover {
+    box-shadow: var(--shadow-lg), var(--glow);
+    transform: translateY(-4px);
+}
+
+/* Estilo del encabezado */
+.form-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 3rem;
+    position: relative;
 }
 
-.section-title h2 {
+.icon-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.8rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-badge svg {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    z-index: 1;
+}
+
+.icon-badge::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    opacity: 0.35;
+    filter: blur(10px);
+    z-index: 0;
+}
+
+.form-header h2 {
     font-size: 2.8rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 10px;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.8px;
 }
 
-.section-title h2 span {
-    color: var(--accent-color);
+.form-header h2 span {
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.section-title p {
-    font-size: 1.1rem;
-    color: var(--text-color);
-    opacity: 0.8;
+.subtitle {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    margin-bottom: 0;
+    line-height: 1.5;
 }
 
+/* Calendar Wrapper */
 .calendar-wrapper {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    backdrop-filter: var(--backdrop);
+    background: rgba(246, 250, 246, 0.9);
+    padding: 1.5rem;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
 }
 
 .fc {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-family);
 }
 
 .fc .fc-daygrid-day {
@@ -170,23 +368,27 @@ body {
 }
 
 .fc .fc-button {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
     border: none;
-    border-radius: 50px;
-    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    padding: 0.8rem 1.6rem;
     text-transform: capitalize;
+    color: white;
+    font-weight: 500;
     transition: all 0.3s ease;
 }
 
 .fc .fc-button:hover {
-    background: #21867a;
-    box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .fc .fc-daygrid-day.fc-day-today {
-    background: rgba(233, 196, 106, 0.2);
+    background: rgba(244, 162, 97, 0.2);
 }
 
+/* Modal Styles */
 .modal {
     position: fixed;
     top: 0;
@@ -200,17 +402,18 @@ body {
 }
 
 .modal-content {
-    background: var(--card-bg);
-    backdrop-filter: var(--backdrop);
-    border-radius: 16px;
-    padding: 24px;
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: 2.5rem;
     width: 100%;
-    max-width: 500px;
-    box-shadow: var(--shadow);
+    max-width: 600px;
+    box-shadow: var(--shadow-md);
     position: relative;
     transform: translateY(50px);
     opacity: 0;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.85);
 }
 
 .modal.active .modal-content {
@@ -220,55 +423,60 @@ body {
 
 .modal-close {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 1rem;
+    right: 1rem;
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: var(--text-color);
+    color: var(--text);
     cursor: pointer;
     transition: color 0.3s ease;
 }
 
 .modal-close:hover {
-    color: var(--primary-color);
+    color: var(--primary);
 }
 
 .modal h3 {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    margin-bottom: 10px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .modal-subtitle {
-    font-size: 1rem;
-    color: var(--text-color);
-    opacity: 0.7;
-    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
 }
 
 .time-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
 }
 
 .time-btn {
-    padding: 10px;
-    background: var(--card-bg);
-    border: 1px solid rgba(42, 157, 143, 0.2);
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: var(--text-color);
+    padding: 0.8rem;
+    background: rgba(246, 250, 246, 0.9);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    color: var(--text);
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .time-btn:hover {
-    background: var(--primary-color);
-    color: #fff;
-    border-color: var(--primary-color);
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: var(--shadow-sm);
 }
 
 .time-btn:disabled {
@@ -278,73 +486,141 @@ body {
 }
 
 .reserved-turn {
-    margin-top: 20px;
-    padding: 16px;
-    background: rgba(233, 196, 106, 0.1);
-    border-radius: 8px;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(244, 162, 97, 0.1);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 .reserved-turn h4 {
-    font-size: 1.2rem;
-    color: var(--accent-color);
-    margin-bottom: 10px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--secondary);
+    margin-bottom: 0.75rem;
 }
 
 .reserved-turn p {
-    font-size: 0.9rem;
-    color: var(--text-color);
+    font-size: 1rem;
+    color: var(--text);
 }
 
+/* Form Controls */
 .form-control {
     width: 100%;
-    padding: 4px;
-    border: 1px solid rgba(42, 157, 143, 0.2);
-    border-radius: 8px;
-    font-size: 1rem;
-    margin-bottom: 20px;
-    background: var(--card-bg);
+    padding: 1.3rem 1.6rem;
+    background: rgba(246, 250, 246, 0.9);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 1.4rem;
+    color: var(--text);
     transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231A3C34' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.25rem center;
+    background-size: 1.5rem;
+    padding-right: 3rem;
 }
 
 .form-control:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 5px rgba(42, 157, 143, 0.2);
 }
 
-.btn {
-    padding: 12px 24px;
-    border-radius: 50px;
-    font-weight: 500;
-    font-size: 0.9rem;
-    border: none;
+/* Buttons */
+.btn-submit,
+.btn-cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 1.3rem 2.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.25rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+    letter-spacing: 0.6px;
 }
 
-.btn-primary {
-    background: var(--primary-color);
-    color: #fff;
+.btn-submit {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
 }
 
-.btn-primary:hover {
-    background: #21867a;
-    box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
+.btn-submit span,
+.btn-cancel span {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
 }
 
-.btn-secondary {
-    background: #E9C46A;
-    color: var(--text-color);
+.btn-submit svg,
+.btn-cancel svg {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
 }
 
-.btn-secondary:hover {
-    background: #d4a548;
+.btn-submit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.btn-submit:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.btn-submit:hover::before {
+    opacity: 1;
+}
+
+.btn-submit:hover svg {
+    transform: translateX(5px);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-cancel {
+    background: rgba(246, 250, 246, 0.9);
+    color: var(--text);
+    border: 2px solid var(--text-light);
+}
+
+.btn-cancel:hover {
+    background: var(--surface);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-cancel:hover svg {
+    transform: translateX(5px);
 }
 
 .modal-actions {
     display: flex;
-    gap: 10px;
+    gap: 1rem;
     justify-content: flex-end;
+    margin-top: 1.5rem;
 }
 
 .modal-overlay {
@@ -359,63 +635,50 @@ body {
 }
 
 .nutricionista-notice {
-    margin-top: 20px;
-    padding: 16px;
+    margin-top: 1.5rem;
+    padding: 1rem;
     background: rgba(42, 157, 143, 0.1);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     text-align: center;
+    box-shadow: var(--shadow-sm);
 }
 
 .nutricionista-notice p {
-    font-size: 1rem;
-    color: var(--primary-color);
+    font-size: 1.1rem;
+    color: var(--primary);
     font-weight: 500;
 }
 
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 8px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #21867a;
-}
-
+/* Appointments Table */
 .appointments-table-wrapper {
     max-height: 400px;
     overflow-y: auto;
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
 }
 
 .appointments-table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--card-bg);
+    background: rgba(246, 250, 246, 0.9);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
 }
 
 .appointments-table th,
 .appointments-table td {
-    padding: 12px;
+    padding: 1rem;
     text-align: left;
     border-bottom: 1px solid rgba(42, 157, 143, 0.2);
 }
 
 .appointments-table th {
-    background: var(--primary-color);
-    color: #fff;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
     font-weight: 600;
 }
 
 .appointments-table td {
-    color: var(--text-color);
+    color: var(--text);
 }
 
 .appointments-table tr:hover {
@@ -429,8 +692,8 @@ body {
     width: 32px;
     height: 32px;
     background: #25D366;
-    border-radius: 50%;
-    color: #fff;
+    border-radius: var(--radius-full);
+    color: white;
     text-decoration: none;
     transition: background 0.3s ease;
 }
@@ -446,11 +709,11 @@ body {
     width: 32px;
     height: 32px;
     background: var(--danger-color);
-    border-radius: 50%;
-    color: #fff;
+    border-radius: var(--radius-full);
+    color: white;
     border: none;
     cursor: pointer;
-    margin-left: 8px;
+    margin-left: 0.5rem;
     transition: background 0.3s ease;
 }
 
@@ -458,17 +721,73 @@ body {
     background: #d00000;
 }
 
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-light);
+}
+
+/* Responsividad */
+@media (min-width: 768px) {
+    .modal-actions {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+}
+
 @media (max-width: 768px) {
-    .container2 {
-        padding: 20px;
+    .nutri-page {
+        padding: 1.5rem;
     }
 
-    .section-title h2 {
-        font-size: 2rem;
+    .form-container {
+        padding: 2.5rem;
+    }
+
+    .icon-badge {
+        width: 70px;
+        height: 70px;
+    }
+
+    .icon-badge svg {
+        width: 36px;
+        height: 36px;
+    }
+
+    .form-header h2 {
+        font-size: 2.4rem;
+    }
+
+    .subtitle {
+        font-size: 1.1rem;
+    }
+
+    .form-control {
+        font-size: 1.3rem;
+        padding: 1.2rem 1.4rem;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        font-size: 1.15rem;
+        padding: 1.2rem 2rem;
     }
 
     .modal-content {
         max-width: 90%;
+        padding: 2rem;
     }
 
     .time-grid {
@@ -477,7 +796,7 @@ body {
 
     .appointments-table th,
     .appointments-table td {
-        padding: 8px;
+        padding: 0.8rem;
         font-size: 0.9rem;
     }
 
@@ -487,8 +806,48 @@ body {
         height: 28px;
     }
 }
-</style>
 
+@media (max-width: 480px) {
+    .nutri-page {
+        padding: 1rem;
+    }
+
+    .form-container {
+        padding: 2rem;
+        border-radius: var(--radius-sm);
+    }
+
+    .icon-badge {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.2rem;
+    }
+
+    .icon-badge svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .form-header h2 {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .form-control {
+        font-size: 1.2rem;
+        padding: 1.1rem 1.3rem;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        font-size: 1.1rem;
+        padding: 1.1rem 1.8rem;
+    }
+}
+</style>
 
 <script>
     // Control de Modales
@@ -540,8 +899,19 @@ body {
     
         if (isConfirmation) {
             modalActions.innerHTML = `
-                <button class="btn btn-primary" id="message-modal-confirm">Aceptar</button>
-                <button class="btn btn-secondary" id="message-modal-cancel">Cancelar</button>
+                <button class="btn-submit" id="message-modal-confirm">
+                    <span>Aceptar</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button class="btn-cancel" id="message-modal-cancel">
+                    <span>Cancelar</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
             `;
             const confirmBtn = document.getElementById('message-modal-confirm');
             const cancelBtn = document.getElementById('message-modal-cancel');
@@ -553,7 +923,12 @@ body {
             cancelBtn.addEventListener('click', () => closeModal('message-modal'));
         } else {
             modalActions.innerHTML = `
-                <button class="btn btn-primary" id="message-modal-close">Cerrar</button>
+                <button class="btn-submit" id="message-modal-close">
+                    <span>Cerrar</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
             `;
             document.getElementById('message-modal-close').addEventListener('click', () => closeModal('message-modal'));
         }

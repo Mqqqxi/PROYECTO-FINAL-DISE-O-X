@@ -20,7 +20,7 @@ class RegistroPacienteForm(UserCreationForm):
 class PacienteForm(forms.ModelForm):
     class Meta:
         model = Paciente
-        fields = ['obraSocial']
+        fields = ['obraSocial', 'objetivo']
 
 
 class ValorAntropometricoForm(forms.ModelForm):

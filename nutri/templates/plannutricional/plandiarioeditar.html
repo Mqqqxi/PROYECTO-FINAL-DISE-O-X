@@ -279,6 +279,28 @@
             </div>
         </div>
     </div>
+    <!-- Modal para opciones de platos vacios -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="errorModalLabel">Error al guardar</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="errorModalBody">
+                    <!-- Se llena dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 <style>
@@ -953,16 +975,18 @@ td:nth-child(4) {
 </style>
 
 <script>
-let platoSeleccionadoId = null;
+    let platoSeleccionadoId = null;
 let opcionSeleccionada = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Estilos adicionales para la X de eliminar
     const style = document.createElement('style');
     style.textContent = `
         .selected-comida {
             position: relative;
             padding-right: 25px !important;
-            margin: 5px 0;
+            margin: 5px;
+            display: inline-block;
         }
         .remove-plato {
             position: absolute;
@@ -972,96 +996,85 @@ document.addEventListener('DOMContentLoaded', function() {
             cursor: pointer;
             font-weight: bold;
             color: red;
+            z-index: 10; /* Asegura que esté por encima de otros elementos */
         }
     `;
     document.head.appendChild(style);
 
-    // const tabInputs = document.querySelectorAll('.tabset > input[type="radio"]');
+    // Configurar event listeners para tabs
     const tabInputs = document.querySelectorAll('.tabset-carousel input[type="radio"]');
-    
     tabInputs.forEach(input => {
         input.addEventListener('change', function() {
             seleccionHabilitada = false;
             diaSeleccionado = null;
             comidaSeleccionada = null;
             opcionSeleccionada = null;
-            
-            // Ocultar todas las pestañas y remover la clase 'active'
             document.querySelectorAll('.tab-panel').forEach(panel => {
                 panel.style.display = 'none';
                 panel.classList.remove('active');
             });
-            
-            // Mostrar solo la pestaña seleccionada
             const panelId = this.getAttribute('aria-controls');
             const targetPanel = document.getElementById(panelId);
             targetPanel.style.display = 'block';
-            
-            // Forzar animación (si aplica)
-            void targetPanel.offsetWidth;
-            
-            targetPanel.classList.add('active');
-            
-            createRippleEffect(this.nextElementSibling, event);
+            setTimeout(() => {
+                targetPanel.classList.add('active');
+            }, 50);
+            // Comentado para evitar errores si createRippleEffect no está definido
+            // createRippleEffect(this.nextElementSibling, event);
         });
     });
-    
-    // Mostrar la primera pestaña al cargar la página
+
+    // Mostrar el primer panel inicialmente
     if (tabInputs.length > 0) {
         const firstPanelId = tabInputs[0].getAttribute('aria-controls');
         const firstPanel = document.getElementById(firstPanelId);
         firstPanel.style.display = 'block';
-        
         setTimeout(() => {
             firstPanel.classList.add('active');
         }, 50);
     }
+
+    // Inicializar visibilidad de botones de opciones
+    updateOptionButtons();
     
-    function createRippleEffect(element, e) {
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
-        
-        const rect = element.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e ? e.clientX - rect.left - size / 2 : rect.width / 2;
-        const y = e ? e.clientY - rect.top - size / 2 : rect.height / 2;
-        
-        ripple.style.width = ripple.style.height = `${size}px`;
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        
-        element.appendChild(ripple);
-        
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
-    }
-    
-    const rippleStyle = document.createElement('style');
-    rippleStyle.textContent = `
-        .tabset > label {
-            position: relative;
-            overflow: hidden;
-        }
-        .ripple {
-            position: absolute;
-            background-color: rgba(49, 113, 91, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-effect 0.6s ease-out;
-            pointer-events: none;
-        }
-        @keyframes ripple-effect {
-            to {
-                transform: scale(2.5);
-                opacity: 0;
+    // Añadir delegación de eventos para manejar clics en botones de eliminar
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('remove-plato')) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const platoElement = e.target.closest('.selected-comida');
+            if (!platoElement) return;
+            
+            // Encontrar el contenedor padre para identificar día, tipo y opción
+            const containerDiv = platoElement.closest('[id^="plato"]');
+            if (!containerDiv) return;
+            
+            // Extraer día, tipo y opción del ID del contenedor
+            const containerId = containerDiv.id; // formato: "platoTipoX_Y" donde X es el día y Y es la opción
+            const matches = containerId.match(/plato(\w+)(\d+)_(\d+)/);
+            
+            if (matches && matches.length === 4) {
+                const tipo = matches[1]; // Tipo (Desayuno, Almuerzo, etc.)
+                const dia = matches[2]; // Día
+                const opcion = matches[3]; // Opción
+                
+                // Eliminar el input hidden asociado
+                const nextElement = platoElement.nextElementSibling;
+                if (nextElement && nextElement.tagName === 'INPUT') {
+                    nextElement.remove();
+                }
+                
+                // Eliminar el elemento del plato
+                platoElement.remove();
+                
+                // Actualizar la visibilidad de los botones de opciones
+                updateOptionButtons();
+                
+                console.log(`Plato eliminado - Día: ${dia}, Tipo: ${tipo}, Opción: ${opcion}`);
             }
         }
-    `;
-    document.head.appendChild(rippleStyle);
-
-    // Actualizar visibilidad de botones de opciones
-    updateOptionButtons();
+    });
 });
 
 let seleccionHabilitada = false;
@@ -1069,38 +1082,18 @@ let diaSeleccionado = null;
 let comidaSeleccionada = null;
 
 function toggleCategory(categoryElement) {
-    categoryElement.classList.toggle('collapsed');
     const arrowElement = categoryElement.querySelector('.toggle-arrow');
-    arrowElement.innerHTML = categoryElement.classList.contains('collapsed') ? "▶" : "▼";
+    arrowElement.innerHTML = (arrowElement.innerHTML === "▼") ? "▶" : "▼";
     const categoryItems = categoryElement.nextElementSibling;
-    
-    if (categoryItems && categoryItems.tagName === 'UL') {
-        if (categoryItems.classList.contains('hidden')) {
-            categoryItems.classList.remove('hidden');
-            categoryItems.style.maxHeight = '0px';
-            setTimeout(() => {
-                categoryItems.style.transition = 'max-height 0.3s ease';
-                categoryItems.style.maxHeight = categoryItems.scrollHeight + 'px';
-            }, 10);
-        } else {
-            categoryItems.style.maxHeight = categoryItems.scrollHeight + 'px';
-            setTimeout(() => {
-                categoryItems.style.maxHeight = '0px';
-                setTimeout(() => {
-                    categoryItems.classList.add('hidden');
-                    categoryItems.style.maxHeight = '';
-                }, 300);
-            }, 10);
-        }
-    }
+    categoryItems.classList.toggle("hidden");
 }
 
 function filterList() {
     const searchTerm = document.getElementById("searchInput").value.toLowerCase();
     const items = document.querySelectorAll('.food-list li');
     if (searchTerm) {
-        document.querySelectorAll('.category-items').forEach(list => {
-            list.classList.add("hidden");
+        document.querySelectorAll('.food-list ul').forEach(list => {
+            list.classList.remove("hidden");
         });
     }
     let visibleCategories = new Set();
@@ -1121,7 +1114,7 @@ function filterList() {
         if (arrow) arrow.innerHTML = "▼";
     });
     if (!searchTerm) {
-        document.querySelectorAll('.category-items').forEach(list => {
+        document.querySelectorAll('.food-list ul').forEach(list => {
             list.classList.remove("hidden");
         });
         document.querySelectorAll('.toggle-arrow').forEach(arrow => {
@@ -1131,6 +1124,15 @@ function filterList() {
 }
 
 function habilitarSeleccion(dia, comida, opcion) {
+    const divPrevPlato = document.getElementById(`plato${comida}${dia}_${parseInt(opcion) - 1}`);
+    const platosPrevios = divPrevPlato ? divPrevPlato.querySelectorAll('button.selected-comida').length : 0;
+
+    // Si no es opción 1 y no hay platos en la opción anterior, bloquear selección
+    if (parseInt(opcion) > 1 && platosPrevios === 0) {
+        alert(`Debes seleccionar un plato en Opción ${parseInt(opcion) - 1} primero.`);
+        return;
+    }
+
     seleccionHabilitada = true;
     diaSeleccionado = dia;
     comidaSeleccionada = comida;
@@ -1138,40 +1140,47 @@ function habilitarSeleccion(dia, comida, opcion) {
     console.log(`Habilitado - Día: ${diaSeleccionado}, Comida: ${comidaSeleccionada}, Opción: ${opcionSeleccionada}`);
 }
 
+
 function seleccionarComida(nombre, dia, idPlato) {
-    event.preventDefault();
+    if (!event) {
+        event = window.event || {};
+    }
+    if (event) {
+        event.preventDefault();
+    }
+    
     if (seleccionHabilitada && diaSeleccionado === dia) {
         let divId = `plato${comidaSeleccionada}${dia}_${opcionSeleccionada}`;
         let inputName = `plato${opcionSeleccionada}_dia${dia}_${comidaSeleccionada.toLowerCase()}`;
         let divPlato = document.getElementById(divId);
 
         if (divPlato) {
-            // Crear el nuevo elemento del plato
+            // Crear el botón del plato seleccionado
             let platoElement = document.createElement("button");
             platoElement.setAttribute("type", "button");
             platoElement.classList.add("selected-comida");
             platoElement.innerText = nombre;
 
+            // Botón para eliminar
             let removeBtn = document.createElement("span");
             removeBtn.classList.add("remove-plato");
             removeBtn.innerHTML = "×";
-            removeBtn.onclick = function (e) {
-                e.stopPropagation();
-                removePlato(this, dia, comidaSeleccionada.toLowerCase(), opcionSeleccionada);
-            };
             platoElement.appendChild(removeBtn);
 
-            // Añadir el plato a la celda sin limpiar los anteriores
+            // Insertar el botón en el div
             divPlato.appendChild(platoElement);
 
-            // Añadir un campo oculto para el plato
+            // Crear un input oculto para el plato seleccionado
             let inputHidden = document.createElement("input");
             inputHidden.type = "hidden";
             inputHidden.name = inputName;
             inputHidden.value = idPlato;
             divPlato.appendChild(inputHidden);
 
+            // Actualizar visibilidad de botones de opciones
             updateOptionButtons();
+
+            // Deshabilitar la selección
             seleccionHabilitada = false;
             diaSeleccionado = null;
             comidaSeleccionada = null;
@@ -1187,6 +1196,7 @@ function openPlateModal(dia, comida, opcion) {
     console.log(`Abriendo modal "plateModal" para Día: ${dia}, Comida: ${comida}, Opción: ${opcion}`);
     $('#plateModal').modal('show');
     
+    // Mostrar el botón "Guardar" del modal
     const guardarModalBtn = document.getElementById('guardarModalBtn');
     if (guardarModalBtn) {
         guardarModalBtn.classList.remove('hidden');
@@ -1197,15 +1207,10 @@ function abrirModalPlato(idPlato, dia, comida) {
     console.log(`Abriendo modalComidasPlato para plato ID: ${idPlato}, Día: ${dia}, Comida: ${comida}`);
     document.getElementById('listaComidasPlato').innerHTML = 'Cargando...';
     platoSeleccionadoId = idPlato;
-
-    // Usar la opción seleccionada globalmente (opcionSeleccionada), que se establece en openPlateModal
-    if (dia && comida && opcionSeleccionada) {
-        habilitarSeleccion(dia, comida, opcionSeleccionada);
-    } else {
-        // Si no hay opción seleccionada, usar Opción 1 por defecto
-        habilitarSeleccion(dia, comida, '1');
+    if (dia && comida) {
+        // Usar opción 1 por defecto si no se especifica
+        habilitarSeleccion(dia, comida, opcionSeleccionada || '1');
     }
-
     $('#modalComidasPlato').modal('show');
 
     fetch(`/comida/obtener_comidas_plato/${idPlato}/`)
@@ -1242,30 +1247,69 @@ function abrirModalPlato(idPlato, dia, comida) {
 }
 
 function guardarPlatoDesdeModal() {
-    if (seleccionHabilitada && diaSeleccionado && comidaSeleccionada && opcionSeleccionada && platoSeleccionadoId) {
-        const platoButton = document.querySelector(`button[onclick*="abrirModalPlato('${platoSeleccionadoId}'"]`);
-        const nombrePlato = platoButton ? platoButton.textContent.trim() : "Plato desconocido";
-        seleccionarComida(nombrePlato, diaSeleccionado, platoSeleccionadoId);
-        
-        const guardarModalBtn = document.getElementById('guardarModalBtn');
-        if (guardarModalBtn) {
-            guardarModalBtn.classList.add('hidden');
+    if (!seleccionHabilitada || !diaSeleccionado || !comidaSeleccionada || !opcionSeleccionada || !platoSeleccionadoId) {
+        mostrarErrorModal("Por favor, seleccioná un día, comida y opción antes de guardar.");
+        return;
+    }
+
+    const opcionNum = parseInt(opcionSeleccionada);
+
+    // Verifica que TODAS las opciones anteriores tengan al menos un plato
+    for (let i = 1; i < opcionNum; i++) {
+        const divPrev = document.getElementById(`plato${comidaSeleccionada}${diaSeleccionado}_${i}`);
+        const countPrev = divPrev ? divPrev.querySelectorAll('button.selected-comida').length : 0;
+        if (countPrev === 0) {
+            mostrarErrorModal(`No podés guardar en Opción ${opcionNum} sin haber completado la Opción ${i}.`);
+            return;
         }
-    } else {
-        console.warn("No se puede guardar el plato: faltan datos de selección");
-        alert("Por favor, seleccione un día, comida y opción para poder guardar.");
+    }
+
+    // Guardar normalmente
+    const platoButton = document.querySelector(`button[onclick*="abrirModalPlato('${platoSeleccionadoId}'"]`);
+    const nombrePlato = platoButton ? platoButton.textContent.trim() : "Plato desconocido";
+    seleccionarComida(nombrePlato, diaSeleccionado, platoSeleccionadoId);
+
+    // Ocultar el botón "Guardar"
+    const guardarModalBtn = document.getElementById('guardarModalBtn');
+    if (guardarModalBtn) {
+        guardarModalBtn.classList.add('hidden');
     }
 }
 
-function removePlato(element, dia, tipo, opcion) {
-    // Eliminar el plato y su input asociado
-    const platoElement = element.parentElement;
-    const inputElement = platoElement.nextElementSibling;
-    if (inputElement && inputElement.tagName === 'INPUT') {
-        inputElement.remove();
+function mostrarErrorModal(mensaje) {
+    const modalBody = document.getElementById('errorModalBody');
+    if (modalBody) {
+        modalBody.innerText = mensaje;
+        $('#errorModal').modal('show');
+    } else {
+        // Si el modal no está en el DOM, como fallback:
+        alert(mensaje);
     }
+}
+
+
+
+// La función removePlato ya no es necesaria ya que se maneja con delegación de eventos,
+// pero la dejamos por compatibilidad con el resto del código
+function removePlato(element, dia, tipo, opcion) {
+    if (!element) return;
+    
+    const platoElement = element.closest('.selected-comida');
+    if (!platoElement) return;
+    
+    // Eliminar el input hidden asociado si existe
+    const nextElement = platoElement.nextElementSibling;
+    if (nextElement && nextElement.tagName === 'INPUT') {
+        nextElement.remove();
+    }
+    
+    // Eliminar el elemento del plato
     platoElement.remove();
+    
+    // Actualizar la visibilidad de los botones de opciones
     updateOptionButtons();
+    
+    console.log(`Plato eliminado - Día: ${dia}, Tipo: ${tipo}, Opción: ${opcion}`);
 }
 
 function updateOptionButtons() {
@@ -1278,136 +1322,116 @@ function updateOptionButtons() {
             const btnOpcion2 = document.getElementById(`btn${tipo}${dia}_2`);
             const btnOpcion3 = document.getElementById(`btn${tipo}${dia}_3`);
 
-            // Ajustar la lógica para múltiples platos: el botón de Opción 2 aparece si hay al menos un plato en Opción 1
-            const plato1Count = divPlato1.querySelectorAll('button.selected-comida').length;
-            if (plato1Count > 0) {
+            if (!divPlato1 || !divPlato2 || !divPlato3 || !btnOpcion2 || !btnOpcion3) return;
+
+            const countOp1 = divPlato1.querySelectorAll('button.selected-comida').length;
+            const countOp2 = divPlato2.querySelectorAll('button.selected-comida').length;
+
+            // Mostrar u ocultar botón para Opción 2
+            if (countOp1 > 0) {
                 btnOpcion2.classList.remove('hidden');
             } else {
                 btnOpcion2.classList.add('hidden');
-                divPlato2.innerHTML = '';
             }
 
-            // El botón de Opción 3 aparece si hay al menos un plato en Opción 2
-            const plato2Count = divPlato2.querySelectorAll('button.selected-comida').length;
-            if (plato2Count > 0) {
+            // Mostrar u ocultar botón para Opción 3
+            if (countOp2 > 0 && countOp1 > 0) {
                 btnOpcion3.classList.remove('hidden');
             } else {
                 btnOpcion3.classList.add('hidden');
-                divPlato3.innerHTML = '';
             }
         });
     });
 }
 
-function seleccionarComidaDirecta(nombre, dia, comidaId) {
-    const tiposComida = ["Desayuno", "Almuerzo", "Merienda", "Cena"];
-    let tipoSeleccionado = prompt("¿A qué tipo de comida desea asignar '" + nombre + "'? (Desayuno, Almuerzo, Merienda, Cena)", comidaSeleccionada || "Desayuno");
 
-    if (!tipoSeleccionado || !tiposComida.includes(tipoSeleccionado)) {
-        alert("Por favor, seleccione un tipo de comida válido.");
-        return;
+// ---------------- Carrusel de UNA sola fecha -----------------
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.tabset-carousel').forEach(carousel => {
+        const radios = [...carousel.querySelectorAll('.tabs-track input')];
+        const prevBtn = carousel.querySelector('.prev');
+        const nextBtn = carousel.querySelector('.next');
+        const out     = carousel.querySelector('#currentDate');
+        let index     = radios.findIndex(r => r.checked) || 0;
+
+        function pintar() {
+            // marca el radio
+            radios[index].checked = true;
+            // muestra la fecha (el texto del label hermano)
+            out.textContent = radios[index].nextElementSibling.textContent;
+            // dispara el evento change para que tu código original oculte/muestre el panel
+            radios[index].dispatchEvent(new Event('change', {bubbles:true}));
+            // desactiva flechas en extremos (opcional)
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === radios.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (index > 0) { index--; pintar(); }
+        });
+        nextBtn.addEventListener('click', () => {
+            if (index < radios.length - 1) { index++; pintar(); }
+        });
+
+        // inicialización
+        pintar();
+    });
+});
+
+function validarFormularioAntesDeEnviar() {
+    let errores = [];
+
+    // Construir mapa de día -> fecha (usa los radios de los tabs)
+    const diaFechaMap = {};
+    document.querySelectorAll('.tabs-track input').forEach(radio => {
+        const dia = radio.id.replace('tab', '');
+        const label = radio.nextElementSibling;
+        const fecha = label ? label.textContent.trim() : `Día ${dia}`;
+        diaFechaMap[dia] = fecha;
+    });
+
+    // Validar cada panel de día
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+        const dia = panel.id.replace('dia', '');
+        const fechaTexto = diaFechaMap[dia] || `Día ${dia}`;
+
+        ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'].forEach(tipo => {
+            const op1 = document.querySelector(`#plato${tipo}${dia}_1`);
+            const op2 = document.querySelector(`#plato${tipo}${dia}_2`);
+            const op3 = document.querySelector(`#plato${tipo}${dia}_3`);
+
+            const count1 = op1 ? op1.querySelectorAll('button.selected-comida').length : 0;
+            const count2 = op2 ? op2.querySelectorAll('button.selected-comida').length : 0;
+            const count3 = op3 ? op3.querySelectorAll('button.selected-comida').length : 0;
+
+            if (count1 === 0 && (count2 > 0 || count3 > 0)) {
+                errores.push(`${tipo} del ${fechaTexto}: falta completar Opción 1`);
+            } else if (count2 === 0 && count3 > 0) {
+                errores.push(`${tipo} del ${fechaTexto}: falta completar Opción 2`);
+            }
+        });
+    });
+
+    if (errores.length > 0) {
+        mostrarErrorModal("Errores detectados:\n\n" + errores.join('\n'));
+        return false;
     }
 
-    let divId = `plato${tipoSeleccionado}${dia}_1`;
-    let inputName = `plato1_dia${dia}_${tipoSeleccionado.toLowerCase()}`;
-    let divPlato = document.getElementById(divId);
-
-    if (divPlato) {
-        let comidaElement = document.createElement("button");
-        comidaElement.setAttribute("type", "button");
-        comidaElement.classList.add("selected-comida");
-        comidaElement.innerText = nombre;
-
-        let removeBtn = document.createElement("span");
-        removeBtn.classList.add("remove-plato");
-        removeBtn.innerHTML = "×";
-        removeBtn.onclick = function (e) {
-            e.stopPropagation();
-            removePlato(this, dia, tipoSeleccionado.toLowerCase(), '1');
-        };
-        comidaElement.appendChild(removeBtn);
-
-        // Añadir el plato a la celda sin limpiar los anteriores
-        divPlato.appendChild(comidaElement);
-
-        let inputHidden = document.createElement("input");
-        inputHidden.type = "hidden";
-        inputHidden.name = inputName;
-        inputHidden.value = comidaId;
-        divPlato.appendChild(inputHidden);
-
-        updateOptionButtons();
-        comidaSeleccionada = tipoSeleccionado;
-    }
+    return true;
 }
 
-// Añadir fuentes web al head del documento
-document.addEventListener('DOMContentLoaded', function() {
-    const fontLink = document.createElement('link');
-    fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap';
-    fontLink.rel = 'stylesheet';
-    document.head.appendChild(fontLink);
-    
-    const iconLink = document.createElement('link');
-    iconLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200';
-    iconLink.rel = 'stylesheet';
-    document.head.appendChild(iconLink);
-    
-    const foodItems = document.querySelectorAll('.food-item');
-    foodItems.forEach((item, index) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(10px)';
-        
-        setTimeout(() => {
-            item.style.transition = 'all 0.3s ease';
-            item.style.opacity = '1';
-            item.style.transform = 'translateY(0)';
-        }, 100 + (index * 30));
-    });
-    
-    const categories = document.querySelectorAll('.category');
-    categories.forEach((category, index) => {
-        if (index > 0) {
-            category.classList.add('collapsed');
-            const nextElement = category.nextElementSibling;
-            if (nextElement && nextElement.tagName === 'UL') {
-                nextElement.classList.add('hidden');
-            }
+
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector("form");
+    if (!form) return;
+
+    form.addEventListener("submit", function(e) {
+        if (!validarFormularioAntesDeEnviar()) {
+            e.preventDefault(); // Bloquea el envío si hay errores
         }
     });
 });
 
-// --- Carrusel de fechas ---
-// ---------------- Carrusel de UNA sola fecha -----------------
-document.querySelectorAll('.tabset-carousel').forEach(carousel => {
-    const radios = [...carousel.querySelectorAll('.tabs-track input')];
-    const prevBtn = carousel.querySelector('.prev');
-    const nextBtn = carousel.querySelector('.next');
-    const out     = carousel.querySelector('#currentDate');
-    let index     = radios.findIndex(r => r.checked) || 0;
-
-    function pintar() {
-        // marca el radio
-        radios[index].checked = true;
-        // muestra la fecha (el texto del label hermano)
-        out.textContent = radios[index].nextElementSibling.textContent;
-        // dispara el evento change para que tu código original oculte/muestre el panel
-        radios[index].dispatchEvent(new Event('change', {bubbles:true}));
-        // desactiva flechas en extremos (opcional)
-        prevBtn.disabled = index === 0;
-        nextBtn.disabled = index === radios.length - 1;
-    }
-
-    prevBtn.addEventListener('click', () => {
-        if (index > 0) { index--; pintar(); }
-    });
-    nextBtn.addEventListener('click', () => {
-        if (index < radios.length - 1) { index++; pintar(); }
-    });
-
-    // inicialización
-    pintar();
-});
 
 </script>
 

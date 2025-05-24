@@ -5,6 +5,7 @@ from apps.persona.models import Nutricionista
     
 class Progreso(models.Model):
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='progresos')
+    nutricionista = models.ForeignKey(Nutricionista, on_delete=models.CASCADE, related_name='progresos', null=True)  # Nueva clave foránea
     idProceso = models.AutoField(primary_key=True)
     fecha = models.DateField()  # Fecha del progreso (ejemplo: 2024-12-10)
     peso = models.FloatField()  # Peso en kg (ejemplo: 52.9 kg)

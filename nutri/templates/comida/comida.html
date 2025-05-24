@@ -2,75 +2,92 @@
 {% load static %}
 {% block title %}COMIDA{% endblock %}
 {% block content %}
-<section class="container">
-<div class="section-title">
-    <h2>
-        <span>LISTA DE</span>
-        <span>COMIDAS</span>
-      </h2>
-</div>
-</section>
-<div class="container">
-    <div class="table-container">
 
-        <a style="margin-bottom: 20px;" href="{%url 'comida:agregar_comida'%}" class="btn btn-success btn-sm">
-            AGREGAR COMIDA
-        </a>
+<div class="nutri-page">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
 
-        <table id="miTabla" class="table display">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Calorías</th>
-                    <th>Proteínas</th>
-                    <th>Carbohidratos</th>
-                    <th>Grasas Totales</th>
-                    <th>Fibra Alimentaria</th>
-                    <th>Sodio</th>
-                    <th>Req Energético</th>
-                    <th>Categoría</th>
-                    <th>Imagen</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for comida in comidas %}
-                <tr>
-                    <td data-label="Nombre">{{ comida.nombre }}</td>
-                    <td data-label="Calorías">{{ comida.calorias }}</td>
-                    <td data-label="Proteínas">{{ comida.proteina }}</td>
-                    <td data-label="Carbohidratos">{{ comida.carbohidratos }}</td>
-                    <td data-label="Grasas Totales">{{ comida.grasaTotales }}</td>
-                    <td data-label="Fibra Alimentaria">{{ comida.fibraAlimentaria }}</td>
-                    <td data-label="Sodio">{{ comida.sodio }}</td>
-                    <td data-label="Req Energético">{{ comida.reqEnergetico }}</td>
-                    <td data-label="Categoría">{{ comida.categoria }}</td>
-                    <td data-label="Imagen">
-                        {% if comida.imagen %}
-                            <img src="{{ comida.imagen.url }}" alt="{{ comida.nombre }}" width="50">
-                        {% else %}
-                            <img src="{% static 'images/placeholder.png' %}" alt="Sin imagen" width="50">
-                        {% endif %}
-                    </td>
-                    <td data-label="Acciones">
-                        <a href="{% url 'comida:editar_comida' comida.pk %}" class="btn btn-warning btn-sm">
-                            <i class="fa fa-pencil"></i>
-                        </a>
-                        <a href="#" class="btn btn-danger btn-sm btn-eliminar" data-comida-id="{{ comida.pk }}">
-                          <i class="fa fa-ban"></i>
-                      </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="content-wrapper">
+        <div class="form-container">
+            <div class="form-header">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6h16M4 12h16m-7 6h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2>Lista de Comidas</h2>
+            </div>
 
+            <div class="table-container">
+                <a href="{% url 'comida:agregar_comida' %}" class="btn-submit">
+                    <span>Agregar Comida</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+
+                <table id="miTabla" class="table display">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Calorías</th>
+                            <th>Proteínas</th>
+                            <th>Carbohidratos</th>
+                            <th>Grasas Totales</th>
+                            <th>Fibra Alimentaria</th>
+                            <th>Sodio</th>
+                            <th>Req Energético</th>
+                            <th>Categoría</th>
+                            <th>Imagen</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for comida in comidas %}
+                        <tr>
+                            <td data-label="Nombre">{{ comida.nombre }}</td>
+                            <td data-label="Calorías">{{ comida.calorias }}</td>
+                            <td data-label="Proteínas">{{ comida.proteina }}</td>
+                            <td data-label="Carbohidratos">{{ comida.carbohidratos }}</td>
+                            <td data-label="Grasas Totales">{{ comida.grasaTotales }}</td>
+                            <td data-label="Fibra Alimentaria">{{ comida.fibraAlimentaria }}</td>
+                            <td data-label="Sodio">{{ comida.sodio }}</td>
+                            <td data-label="Req Energético">{{ comida.reqEnergetico }}</td>
+                            <td data-label="Categoría">{{ comida.categoria }}</td>
+                            <td data-label="Imagen">
+                                {% if comida.imagen %}
+                                    <img src="{{ comida.imagen.url }}" alt="{{ comida.nombre }}" class="preview-image">
+                                {% else %}
+                                    <img src="{% static 'images/placeholder.png' %}" alt="Sin imagen" class="preview-image">
+                                {% endif %}
+                            </td>
+                            <td data-label="Acciones">
+                                <a href="{% url 'comida:editar_comida' comida.pk %}" class="btn-action btn-edit">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
+                                <a href="#" class="btn-action btn-delete btn-eliminar" data-comida-id="{{ comida.pk }}">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-1 5v7a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7m-3-1h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Modal de Confirmación -->
-<div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel"
-    aria-hidden="true">
+<div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -81,8 +98,8 @@
                 ¿Estás seguro de que deseas eliminar esta comida?
             </div>
             <div class="modal-footer">
-                <a href="{% url 'comida:comida' %}" class="btn btn-secondary">Cancelar</a>
-                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+                <a href="{% url 'comida:comida' %}" class="btn-cancel">Cancelar</a>
+                <button type="button" class="btn-submit" id="btnConfirmarEliminar">Eliminar</button>
             </div>
         </div>
     </div>
@@ -100,30 +117,15 @@
                 <!-- Aquí se mostrará el mensaje dinámico -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+                <button type="button" class="btn-submit" data-bs-dismiss="modal">Aceptar</button>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
 <script>
-    function showDetails(id) {
-        const item = document.querySelector(`.gallery-item[data-id='${id}']`);
-        if (item) {
-            document.getElementById("detalle-nombre").textContent = item.dataset.nombre;
-            document.getElementById("detalle-calorias").textContent = item.dataset.calorias;
-            document.getElementById("detalle-proteina").textContent = item.dataset.proteina;
-            document.getElementById("detalle-colesterol").textContent = item.dataset.colesterol;
-            document.getElementById("detalle-carbohidratos").textContent = item.dataset.carbohidratos;
-            document.getElementById("detalle-grasaTotales").textContent = item.dataset.grasaTotales;
-            document.getElementById("detalle-sodio").textContent = item.dataset.sodio;
-            document.getElementById("detalle-categoria").textContent = item.dataset.categoria;
-        }
-    }
-
-    $(document).ready(function () {
+$(document).ready(function () {
     $('#miTabla').DataTable({
         paging: true,
         ordering: true,
@@ -136,13 +138,11 @@
         buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
     });
 
-    // Evento para abrir el modal de confirmación cuando se quiere eliminar una comida
     $(".btn-eliminar").click(function (event) {
-        event.preventDefault(); // Evita la recarga de la página
+        event.preventDefault();
         const comidaId = $(this).data("comida-id");
-        $("#modalConfirmacion").modal("show"); // Muestra el modal de confirmación
+        $("#modalConfirmacion").modal("show");
 
-        // Evento para confirmar la eliminación
         $("#btnConfirmarEliminar").off('click').on('click', function () {
             fetch(`/comida/eliminar/${comidaId}/`, {
                 method: "POST",
@@ -153,10 +153,10 @@
             })
             .then(response => response.json())
             .then(data => {
-                $("#modalConfirmacion").modal("hide"); // Cierra el modal de confirmación
+                $("#modalConfirmacion").modal("hide");
                 if (data.success) {
                     mostrarModal("Éxito", "La comida ha sido eliminada con éxito.");
-                    setTimeout(() => location.reload(), 2000); // Recarga la página después de 2 segundos
+                    setTimeout(() => location.reload(), 2000);
                 } else {
                     mostrarModal("Error", "Hubo un error al eliminar la comida.");
                 }
@@ -168,571 +168,481 @@
         });
     });
 
-    // Función para mostrar el modal de éxito o error
     function mostrarModal(titulo, mensaje) {
-        $("#modalMensajeLabel").text(titulo); // Cambia el título del modal
-        $("#modalMensajeBody").text(mensaje); // Cambia el cuerpo del mensaje
-        $("#modalMensaje").modal("show"); // Muestra el modal
+        $("#modalMensajeLabel").text(titulo);
+        $("#modalMensajeBody").text(mensaje);
+        $("#modalMensaje").modal("show");
     }
 });
 </script>
 
 <style>
- /* Base de Diseño Nutricionista 2025 */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap');
-
 :root {
-  /* Paleta de colores moderna y saludable */
-  --primary: #13846B;
-  --primary-light: #1AAB89;
-  --primary-dark: #0E6351;
-  --secondary: #F8F5F0;
-  --accent: #FF7E54;
-  --text: #1A2238;
-  --text-light: #5A6478;
-  --success: #64D2A3;
-  --warning: #FFB661;
-  --danger: #FF6B6B;
-  --light: #FFFFFF;
-  --dark: #0B1023;
-  
-  /* Variables para espaciado y tamaños */
-  --border-radius-sm: 8px;
-  --border-radius-md: 16px;
-  --border-radius-lg: 24px;
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 1.5rem;
-  --spacing-lg: 2.5rem;
-  --spacing-xl: 4rem;
-  
-  /* Sombras modernos con efecto de profundidad */
-  --shadow-sm: 0 2px 10px rgba(10, 16, 35, 0.06);
-  --shadow-md: 0 4px 20px rgba(10, 16, 35, 0.08);
-  --shadow-lg: 0 10px 40px rgba(10, 16, 35, 0.1);
-  
-  /* Transiciones suaves */
-  --transition-fast: 0.2s ease;
-  --transition: 0.3s ease;
-  --transition-slow: 0.5s ease;
-  
-  /* Tamaños de fuente ajustados */
-  --font-size-base: 16px;      /* Reducido para la tabla */
-  --font-size-sm: 14px;        /* Reducido para botones y celdas */
-  --font-size-md: 16px;        /* Reducido para encabezados */
-  --font-size-lg: 18px;
-  --font-size-xl: 20px;
-  --font-size-xxl: 28px;
-  --font-size-hero: 56px;
+    --primary: #2A9D8F;
+    --primary-light: #48C9B0;
+    --secondary: #F4A261;
+    --secondary-light: #F7B267;
+    --surface: #FFFFFF;
+    --background: #F6FAF6;
+    --text: #1A3C34;
+    --text-light: #5E7C76;
+    --accent: #E76F51;
+    --danger: #F44336;
+    --font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.12);
+    --glow: 0 0 30px rgba(42, 157, 143, 0.25);
+    --radius-sm: 16px;
+    --radius-md: 28px;
+    --radius-lg: 36px;
+    --radius-full: 9999px;
 }
 
-/* Reset y estilos base */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
 }
 
-body {
-  font-family: 'Outfit', sans-serif;
-  background-color: var(--secondary);
-  color: var(--text);
-  line-height: 1.6;
-  font-size: var(--font-size-base);
-  overflow-x: hidden;
+.nutri-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #e9f7ef, #f6faf6);
+    padding: 2.5rem;
+    overflow: hidden;
 }
 
-/* Container con márgenes ajustados */
-.container {
-  width: 100%;
-  max-width: 1600px; /* Aumentado para dar más espacio a la tabla */
-  margin: 0 auto;
-  padding: 0 var(--spacing-sm); /* Reducido el padding */
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
 }
 
-section.container {
-  padding-top: var(--spacing-lg);
-  padding-bottom: var(--spacing-lg);
+.shape {
+    position: absolute;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    filter: blur(50px);
+    opacity: 0.4;
 }
 
-/* Estilos de encabezado con diseño 2025 */
-.section-title {
-  text-align: left;
-  padding: var(--spacing-lg) var(--spacing-sm);
-  margin-bottom: var(--spacing-lg);
-  position: relative;
-  overflow: hidden;
+.shape-1 {
+    width: 1420px;
+    height: 1420px;
+    background: var(--primary-light);
+    top: -120px;
+    right: -80px;
+    animation: float-slow 14s infinite alternate;
 }
 
-.section-title::after {
-  content: '';
-  position: absolute;
-  left: var(--spacing-sm);
-  bottom: var(--spacing-lg);
-  width: 80px;
-  height: 6px;
-  background: var(--accent);
-  border-radius: 3px;
+.shape-2 {
+    width: 820px;
+    height: 820px;
+    background: var(--secondary-light);
+    bottom: -60px;
+    left: -90px;
+    animation: float-slow 17s infinite alternate-reverse;
 }
 
-.section-title h2 {
-  color: var(--primary);
-  font-weight: 900;
-  font-size: clamp(3.5rem, 5vw, 5rem);
-  line-height: 1;
-  text-transform: uppercase;
-  margin: 0;
-  letter-spacing: -1px;
+.shape-3 {
+    width: 220px;
+    height: 220px;
+    background: var(--accent);
+    top: 25%;
+    right: 15%;
+    opacity: 0.35;
+    animation: float-slow 11s infinite alternate;
 }
 
-.section-title h2 span {
-  display: block;
+.shape-4 {
+    width: 280px;
+    height: 280px;
+    background: var(--primary);
+    bottom: 15%;
+    left: 20%;
+    opacity: 0.25;
+    animation: float-slow 19s infinite alternate-reverse;
 }
 
-.section-title h2 span:last-child {
-  color: var(--accent);
+@keyframes float-slow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, 50px) scale(1.15); }
 }
 
-/* Tabla con diseño moderno y minimalista */
+.content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    z-index: 1;
+}
+
+.form-container {
+    background: var(--surface);
+    padding: 3.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    transition: all 0.4s ease;
+}
+
+.form-container:hover {
+    box-shadow: var(--shadow-lg), var(--glow);
+    transform: translateY(-4px);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.icon-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.8rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-badge svg {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    z-index: 1;
+}
+
+.icon-badge::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    opacity: 0.35;
+    filter: blur(10px);
+    z-index: 0;
+}
+
+.form-header h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.8px;
+}
+
 .table-container {
-  width: 100%;
-  border: none;
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-sm); /* Reducido el padding */
-  background-color: var(--light);
-  box-shadow: var(--shadow-md);
-  margin-bottom: var(--spacing-xl);
+    margin-top: 2rem;
 }
 
 #miTabla {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: var(--spacing-sm);
-  background-color: var(--light);
-  border-radius: var(--border-radius-md);
-  table-layout: auto; /* Permite que las columnas se ajusten al contenido */
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
 }
 
 #miTabla thead th {
-  background-color: var(--primary);
-  color: var(--light);
-  padding: var(--spacing-sm); /* Reducido el padding */
-  font-weight: 600;
-  font-size: var(--font-size-sm); /* Reducido el tamaño de fuente */
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  position: relative;
-  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-}
-
-#miTabla thead th:after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--accent);
-  transform: scaleX(0.3);
-  transform-origin: left;
-  transition: transform var(--transition);
-}
-
-#miTabla thead th:hover:after {
-  transform: scaleX(0.6);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 1.2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    text-align: left;
 }
 
 #miTabla tbody td {
-  padding: var(--spacing-sm); /* Reducido el padding */
-  border-bottom: 1px solid rgba(10, 16, 35, 0.05);
-  font-size: var(--font-size-sm); /* Reducido el tamaño de fuente */
-  transition: all var(--transition);
-  white-space: nowrap; /* Evita que el texto se divida */
-}
-
-#miTabla tbody tr {
-  transition: all var(--transition);
-}
-
-#miTabla tbody tr:last-child td {
-  border-bottom: none;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 1rem;
+    color: var(--text);
 }
 
 #miTabla tbody tr:hover {
-  background-color: rgba(19, 132, 107, 0.05);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+    background: rgba(42, 157, 143, 0.05);
+    transform: translateY(-2px);
 }
 
-/* Botones modernos con efectos de hover */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1.2rem;
-  font-weight: 500;
-  border-radius: var(--border-radius-sm);
-  border: none;
-  transition: all var(--transition);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  gap: 0.5rem;
-  letter-spacing: 0.3px;
+.preview-image {
+    max-width: 60px;
+    max-height: 60px;
+    border-radius: calc(var(--radius-sm) - 4px);
+    object-fit: cover;
 }
 
-.btn-sm {
-  padding: 0.4rem 0.8rem; /* Reducido para botones pequeños */
-  font-size: var(--font-size-sm);
+.btn-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
 }
 
-.btn-success {
-  background-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(19, 132, 107, 0.2);
+.btn-submit:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
 }
 
-.btn-success:hover {
-  background-color: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(19, 132, 107, 0.3);
+.btn-submit:hover svg {
+    transform: translateX(5px);
 }
 
-.btn-success:active {
-  transform: translateY(0);
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.btn-warning {
-  background-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(19, 132, 107, 0.2);
+.btn-edit {
+    background: var(--secondary);
+    color: white;
 }
 
-.btn-warning:hover {
-  background-color: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(19, 132, 107, 0.3);
+.btn-edit:hover {
+    background: var(--secondary-light);
+    transform: translateY(-2px);
 }
 
-.btn-danger {
-  background-color: white;
-  color: var(--danger);
-  border: 1px solid var(--danger);
+.btn-delete {
+    background: var(--danger);
+    color: white;
 }
 
-.btn-danger:hover {
-  background-color: var(--danger);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+.btn-delete:hover {
+    background: #d32f2f;
+    transform: translateY(-2px);
 }
 
-.btn-primary {
-  background-color: var(--primary-dark);
-  color: white;
-  box-shadow: 0 4px 12px rgba(10, 16, 35, 0.15);
+.btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+    background: rgba(246, 250, 246, 0.9);
+    color: var(--text);
+    border: 2px solid var(--text-light);
 }
 
-.btn-primary:hover {
-  background-color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(10, 16, 35, 0.2);
+.btn-cancel:hover {
+    background: var(--surface);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
 }
 
-.btn-secondary {
-  background-color: var(--secondary);
-  color: var(--text);
-  border: 1px solid rgba(10, 16, 35, 0.1);
-}
-
-.btn-secondary:hover {
-  background-color: var(--light);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-agregar-comida {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-}
-
-/* Modales con diseño moderno */
 .modal-content {
-  border: none;
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    background: var(--surface);
 }
 
 .modal-header {
-  background-color: var(--primary);
-  color: white;
-  border-bottom: none;
-  padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-bottom: none;
+    padding: 1.5rem;
 }
 
 .modal-title {
-  font-weight: 600;
-  font-size: var(--font-size-xl);
+    font-weight: 600;
+    font-size: 1.5rem;
 }
 
 .modal-body {
-  background-color: var(--light);
-  color: var(--text);
-  padding: var(--spacing-lg);
-  font-size: var(--font-size-base);
+    padding: 1.5rem;
+    color: var(--text);
+    font-size: 1rem;
 }
 
 .modal-footer {
-  border-top: none;
-  padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--light);
+    border-top: none;
+    padding: 1rem 1.5rem;
+    background: var(--surface);
 }
 
-/* Formularios modernos */
-.form-control, .form-select {
-  padding: 0.75rem 1rem;
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(10, 16, 35, 0.1);
-  background-color: var(--light);
-  transition: all var(--transition);
-  font-size: var(--font-size-base);
-  box-shadow: inset 0 2px 4px rgba(10, 16, 35, 0.03);
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(19, 132, 107, 0.15);
-  outline: none;
-}
-
-.form-label {
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: var(--text);
-  font-size: var(--font-size-md);
-}
-
-.mb-3 {
-  margin-bottom: var(--spacing-md);
-}
-
-/* Listas dentro de la tabla */
-#miTabla ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-#miTabla li {
-  padding: 0.25rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: var(--font-size-base);
-}
-
-#miTabla li:before {
-  content: "•";
-  color: var(--accent);
-  font-weight: bold;
-  margin-right: 0.35rem;
-  font-size: var(--font-size-lg);
-}
-
-/* Botón de cerrar del modal */
 .btn-close {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  opacity: 0.8;
-  transition: all var(--transition);
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
 }
 
 .btn-close:hover {
-  opacity: 1;
-  background-color: rgba(255, 255, 255, 0.5);
-  transform: rotate(90deg);
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.5);
+    transform: rotate(90deg);
 }
 
-/* DataTables personalizado */
-.dataTables_wrapper .dataTables_filter input {
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(10, 16, 35, 0.1);
-  padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
-  font-size: var(--font-size-base);
-}
-
-.dataTables_wrapper .dataTables_filter label {
-  font-size: var(--font-size-base);
-}
-
+.dataTables_wrapper .dataTables_filter input,
 .dataTables_wrapper .dataTables_length select {
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(10, 16, 35, 0.1);
-  padding: 0.4rem 0.75rem;
-  font-size: var(--font-size-base);
-}
-
-.dataTables_wrapper .dataTables_length label {
-  font-size: var(--font-size-base);
-}
-
-.dataTables_wrapper .dataTables_info {
-  font-size: var(--font-size-base);
-  padding-top: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--text-light);
+    padding: 0.5rem;
+    font-size: 1rem;
+    background: rgba(246, 250, 246, 0.9);
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(10, 16, 35, 0.1) !important;
-  background: var(--light) !important;
-  color: var(--text) !important;
-  padding: 0.4rem 0.8rem !important;
-  margin: 0 0.2rem;
-  font-size: var(--font-size-base);
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--text-light);
+    background: var(--surface);
+    color: var(--text);
+    padding: 0.4rem 0.8rem;
+    margin: 0 0.2rem;
+    font-size: 1rem;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-  background: var(--primary) !important;
-  color: var(--light) !important;
-  border: 1px solid var(--primary) !important;
+    background: var(--primary);
+    color: white;
+    border: 2px solid var(--primary);
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-  background: var(--secondary) !important;
-  color: var(--primary) !important;
+    background: var(--primary-light);
+    color: white;
 }
 
-/* Efectos de glassmorfismo - tendencia 2025 */
-.glass-effect {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+@media (min-width: 768px) {
+    .modal-footer {
+        display: flex;
+        gap: 1rem;
+    }
 }
 
-/* Animaciones de entrada */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.table-container {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-/* Responsividad mejorada */
 @media (max-width: 992px) {
-  .section-title h2 {
-    font-size: clamp(3rem, 8vw, 4rem);
-  }
-  
-  #miTabla thead {
-    display: none;
-  }
-  
-  #miTabla, 
-  #miTabla tbody, 
-  #miTabla tr, 
-  #miTabla td {
-    display: block;
-    width: 100%;
-  }
-  
-  #miTabla tr {
-    margin-bottom: var(--spacing-md);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid rgba(10, 16, 35, 0.05);
-  }
-  
-  #miTabla td {
-    text-align: right;
-    padding-left: 50%;
-    position: relative;
-    border-bottom: 1px solid rgba(10, 16, 35, 0.05);
-    font-size: var(--font-size-sm);
-  }
-  
-  #miTabla td:before {
-    content: attr(data-label);
-    position: absolute;
-    left: var(--spacing-sm);
-    width: 45%;
-    text-align: left;
-    font-weight: 600;
-    color: var(--primary);
-    font-size: var(--font-size-sm);
-  }
-  
-  .btn {
-    padding: 0.6rem 1rem;
-  }
+    #miTabla thead {
+        display: none;
+    }
+
+    #miTabla, #miTabla tbody, #miTabla tr, #miTabla td {
+        display: block;
+        width: 100%;
+    }
+
+    #miTabla tr {
+        margin-bottom: 1rem;
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-sm);
+    }
+
+    #miTabla td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    #miTabla td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        width: 45%;
+        text-align: left;
+        font-weight: 600;
+        color: var(--primary);
+    }
 }
 
-@media (max-width: 576px) {
-  :root {
-    --font-size-base: 14px; /* Más pequeño en móviles */
-  }
-  
-  .section-title {
-    padding: var(--spacing-md) var(--spacing-sm);
-  }
-  
-  .section-title h2 {
-    font-size: clamp(2.5rem, 10vw, 3rem);
-  }
-  
-  .btn {
-    font-size: var(--font-size-sm);
-  }
-  
-  .modal-body, .modal-footer {
-    padding: var(--spacing-md);
-  }
+@media (max-width: 768px) {
+    .form-container {
+        padding: 2.5rem;
+    }
+
+    .form-header h2 {
+        font-size: 2.4rem;
+    }
+
+    .icon-badge {
+        width: 70px;
+        height: 70px;
+    }
+
+    .icon-badge svg {
+        width: 36px;
+        height: 36px;
+    }
 }
 
-/* Decoración sutil - formas orgánicas modernas */
-.table-container:before {
-  content: '';
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 150px;
-  height: 150px;
-  background-color: rgba(255, 126, 84, 0.1);
-  border-radius: 50%;
-  z-index: -1;
-}
+@media (max-width: 480px) {
+    .nutri-page {
+        padding: 1.5rem;
+    }
 
-.table-container {
-  position: relative;
-}
+    .form-container {
+        padding: 2rem;
+    }
 
-/* Mejora de legibilidad */
-p, li, td, th, input, select, textarea, button, label {
-  letter-spacing: 0.3px;
-}
+    .form-header h2 {
+        font-size: 2rem;
+    }
 
-/* Asegurar que las imágenes en la tabla no rompan el diseño */
-#miTabla tbody td img {
-  max-width: 40px; /* Reducido para ahorrar espacio */
-  height: auto;
-  border-radius: var(--border-radius-sm);
+    .icon-badge {
+        width: 60px;
+        height: 60px;
+    }
+
+    .icon-badge svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .btn-submit, .btn-cancel {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
 }
 </style>
 {% endblock %}

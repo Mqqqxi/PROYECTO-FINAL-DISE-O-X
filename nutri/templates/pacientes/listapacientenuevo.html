@@ -1,392 +1,75 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}LISTA DE PACIENTES{% endblock %}
-
 {% block content %}
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
-    * {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+<div class="nutri-page">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
 
-    body {
-        background-color: #f8f9fa;
-        background-image: linear-gradient(135deg, #f8f9fa 0%, #e9f5f2 100%);
-        min-height: 100vh;
-    }
-
-    .container3 {
-        max-width: 1280px;
-        margin: 30px auto;
-        padding: 30px;
-        background-color: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-        position: relative;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-    }
-
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #ffffff;
-        padding: 20px 25px;
-        border-radius: 16px;
-        box-shadow: 0 5px 20px rgba(49, 113, 91, 0.06);
-        margin-bottom: 30px;
-        border: 1px solid rgba(49, 113, 91, 0.08);
-    }
-
-    .section-left {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .section-left span {
-        font-size: 16px;
-        color: #1e3a31;
-        font-weight: 500;
-        padding: 8px 16px;
-        background-color: #f1f8f6;
-        border-radius: 12px;
-        border: 1px solid rgba(49, 113, 91, 0.1);
-    }
-
-    .section-left button {
-        background-color: #31715B;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .section-left button:before {
-        content: '';
-        display: inline-block;
-        width: 18px;
-        height: 18px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    #exportCsvButton:before {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3Cpolyline points='7 10 12 15 17 10'/%3E%3Cline x1='12' y1='15' x2='12' y2='3'/%3E%3C/svg%3E");
-    }
-
-    #exportPdfButton:before {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cpolyline points='10 9 9 9 8 9'/%3E%3C/svg%3E");
-    }
-
-    .section-left button:hover {
-        background-color: #265a48;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(49, 113, 91, 0.2);
-    }
-
-    .section-right input {
-        padding: 14px 20px;
-        border: 1px solid rgba(49, 113, 91, 0.15);
-        border-radius: 12px;
-        width: 250px;
-        background-color: #f9fafb;
-        transition: all 0.3s ease;
-        font-size: 15px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2331715B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: 12px center;
-        background-size: 18px;
-        padding-left: 40px;
-    }
-
-    .section-right input:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(49, 113, 91, 0.15);
-        width: 280px;
-        border-color: #31715B;
-    }
-
-    h2 {
-        color: #1e3a31;
-        margin: 20px 0 10px;
-        font-weight: 700;
-    }
-
-    h3 {
-        margin: 0 0 20px;
-        color: #31715B;
-    }
-
-    .patient-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 25px;
-        padding: 15px 5px;
-    }
-
-    .patient-link {
-        text-decoration: none;
-        display: block;
-        height: 100%;
-    }
-    
-    .patient-card {
-        background-color: #ffffff;
-        border-radius: 18px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
-        text-align: center;
-        padding: 25px 15px;
-        transition: all 0.3s ease;
-        color: #1e3a31;
-        border: 1px solid rgba(49, 113, 91, 0.06);
-        height: 320px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .patient-card:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 5px;
-        background: linear-gradient(90deg, #31715B, #4a9a7e);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.4s ease;
-    }
-
-    .patient-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 35px rgba(49, 113, 91, 0.1);
-        cursor: pointer;
-        background-color: #fbfdfb;
-    }
-
-    .patient-card:hover:after {
-        transform: scaleX(1);
-    }
-
-    .patient-image {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        margin-bottom: 20px;
-        transition: all 0.4s ease;
-        border: 4px solid #f1f8f6;
-        object-fit: cover;
-        background-color: white;
-        box-shadow: 0 8px 20px rgba(49, 113, 91, 0.1);
-    }
-
-    .patient-card:hover .patient-image {
-        transform: scale(1.12);
-        border: 4px solid #31715B;
-    }
-
-    .patient-info {
-        height: auto;
-        min-height: 60px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .patient-card p {
-        margin: 5px 0;
-        font-size: 16px;
-        font-weight: 600;
-        line-height: 1.4;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .patient-card p:last-child {
-        font-size: 14px;
-        font-weight: 500;
-        color: #667085;
-    }
-
-    .status {
-        display: inline-block;
-        padding: 8px 18px;
-        border-radius: 30px;
-        color: white;
-        font-size: 13px;
-        margin-top: 10px;
-        transition: all 0.3s ease;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    }
-
-    .patient-card:hover .status {
-        transform: scale(1.05);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .status.green {
-        background: linear-gradient(90deg, #31715B, #4a9a7e);
-    }
-
-    .status.red {
-        background: linear-gradient(90deg, #dc3545, #e35d6a);
-    }
-
-    .status.blue {
-        background: linear-gradient(90deg, #31715B, #4a9a7e);
-    }
-    
-    .patient-link.hidden {
-        display: none;
-    }
-    
-    .no-results {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 40px;
-        font-size: 16px;
-        color: #31715B;
-        background-color: #f1f8f6;
-        border-radius: 16px;
-        margin-top: 30px;
-        border: 1px dashed rgba(49, 113, 91, 0.2);
-    }
-
-    .container3::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2331715b' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
-        opacity: 0.7;
-        z-index: -1;
-        pointer-events: none;
-        border-radius: 20px;
-    }
-
-    /* Nutrición - elementos temáticos */
-    .nutrition-accent {
-        position: absolute;
-        z-index: -1;
-    }
-
-    .leaf-accent {
-        top: -10px;
-        right: -10px;
-        width: 70px;
-        height: 70px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2331715B' stroke-width='1' stroke-linecap='round' stroke-linejoin='round' opacity='0.15'%3E%3Cpath d='M2 12C2 6.5 6.5 2 12 2c5.5 0 10 4.5 10 10s-4.5 10-10 10C6.5 22 2 17.5 2 12z'/%3E%3Cpath d='M12 7c-1.75 0-3.5.5-5 1.5 1.5 1 3.25 1.5 5 1.5s3.5-.5 5-1.5c-1.5-1-3.25-1.5-5-1.5z'/%3E%3Cpath d='M12 7v10'/%3E%3Cpath d='M7 14c.97 1.37 3 2 5 2s4.03-.63 5-2'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        opacity: 0.15;
-    }
-
-    @media print {
-        header, .section-right {
-            display: none !important;
-        }
-        .container3 {
-            box-shadow: none;
-            background: none;
-            padding: 0;
-        }
-        .patient-grid {
-            display: block;
-            padding: 0;
-        }
-        .patient-link {
-            display: block;
-            page-break-inside: avoid;
-            margin-bottom: 10px;
-        }
-        .patient-card {
-            box-shadow: none;
-            border: 1px solid #31715B;
-            height: auto;
-            padding: 10px;
-            display: block;
-            text-align: left;
-        }
-        .patient-image {
-            display: none;
-        }
-        .patient-info {
-            height: auto;
-            min-height: 0;
-            margin-bottom: 5px;
-        }
-        .patient-card p {
-            white-space: normal;
-            overflow: visible;
-            text-overflow: unset;
-        }
-    }
-</style>
-
-<div class="container3">
-    <div class="nutrition-accent leaf-accent"></div>
-    
-    <header>
-        <div class="section-left">
-            <span>Pacientes activos: <strong>{{ pacientes.count }}</strong></span>
-            <button id="exportCsvButton">Exportar CSV</button>
-            <button id="exportPdfButton">Exportar PDF</button>
-        </div>
-        <div class="section-right">
-            <input type="text" id="searchInput" placeholder="Buscar paciente...">
-        </div>
-    </header>
-    
-    <div class="patient-grid" id="patientGrid">
-        {% for paciente in pacientes %}
-        <a href="{% url 'pacientes:infopaciente_detalle' paciente.pk %}" class="patient-link">
-                <div class="patient-card">
-                    {% if paciente.persona.genero == 'M' or paciente.persona.genero == 'masculino' %}
-                        <img src="{% static 'images/masculino.jpg' %}" alt="masculino" class="patient-image">
-                        {% elif paciente.persona.genero == 'F' or paciente.persona.genero == 'femenino' %}
-                        <img src="{% static 'images/femenino.PNG' %}" alt="femenino" class="patient-image">
-                    {% else %}
-                        <img src="{% static 'images/no_definido.PNG' %}" alt="No definido" class="patient-image">
-                    {% endif %}
-                    <div class="patient-info">
-                        <p>{{ paciente.persona.first_name }} {{ paciente.persona.last_name }}</p>
-                        <p>{{ paciente.persona.numDocumento }}</p>
-                    </div>
-                    <span class="status {% if paciente.persona.is_active %}green{% else %}red{% endif %}">
-                        {% if paciente.persona.is_active %}Activo{% else %}No Activo{% endif %}
-                    </span>
+    <div class="content-wrapper">
+        <div class="form-container">
+            <div class="form-header">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                    </svg>
                 </div>
-            </a>
-        {% empty %}
-            <p>No hay pacientes registrados.</p>
-        {% endfor %}
-        <div id="noResults" class="no-results" style="display: none;">
-            No se encontraron pacientes que coincidan con la búsqueda.
+                <h2>Lista de Pacientes</h2>
+            </div>
+
+            <header>
+                <div class="section-left">
+                    <span>Total pacientes: <strong>{{ pacientes.count }}</strong></span>
+                    <button id="exportCsvButton" class="btn-submit">
+                        <span>Exportar CSV</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button id="exportPdfButton" class="btn-submit">
+                        <span>Exportar PDF</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="section-right">
+                    <input type="text" id="searchInput" placeholder="Buscar paciente..." class="search-input">
+                </div>
+            </header>
+
+            <div class="patient-grid" id="patientGrid">
+                {% for paciente in pacientes %}
+                <a href="{% url 'pacientes:infopaciente_detalle' paciente.pk %}" class="patient-link">
+                    <div class="patient-card">
+                        {% if paciente.persona.genero == 'M' or paciente.persona.genero == 'masculino' %}
+                            <img src="{% static 'images/masculino.jpg' %}" alt="masculino" class="patient-image">
+                        {% elif paciente.persona.genero == 'F' or paciente.persona.genero == 'femenino' %}
+                            <img src="{% static 'images/femenino.PNG' %}" alt="femenino" class="patient-image">
+                        {% else %}
+                            <img src="{% static 'images/no_definido.PNG' %}" alt="No definido" class="patient-image">
+                        {% endif %}
+                        <div class="patient-info">
+                            <p>{{ paciente.persona.first_name }} {{ paciente.persona.last_name }}</p>
+                            <p>{{ paciente.persona.numDocumento }}</p>
+                        </div>
+                        <span class="status {% if paciente.persona.is_active %}green{% else %}red{% endif %}">
+                            {% if paciente.persona.is_active %}Activo{% else %}No Activo{% endif %}
+                        </span>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="no-results">No hay pacientes registrados.</div>
+                {% endfor %}
+                <div id="noResults" class="no-results" style="display: none;">
+                    No se encontraron pacientes que coincidan con la búsqueda.
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -488,12 +171,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     fillColor: [255, 255, 255]
                 },
                 headStyles: {
-                    fillColor: [49, 113, 91], // Color #31715B
+                    fillColor: [42, 157, 143], // Color --primary
                     textColor: [255, 255, 255],
                     fontStyle: 'bold'
                 },
                 alternateRowStyles: {
-                    fillColor: [239, 235, 224] // Color #EFEBE0
+                    fillColor: [246, 250, 246] // Color --background
                 },
                 margin: { top: 50 },
                 theme: 'striped'
@@ -508,4 +191,533 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<style>
+:root {
+    --primary: #2A9D8F;
+    --primary-light: #48C9B0;
+    --secondary: #F4A261;
+    --secondary-light: #F7B267;
+    --surface: #FFFFFF;
+    --background: #F6FAF6;
+    --text: #1A3C34;
+    --text-light: #5E7C76;
+    --accent: #E76F51;
+    --danger: #F44336;
+    --font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.12);
+    --glow: 0 0 30px rgba(42, 157, 143, 0.25);
+    --radius-sm: 16px;
+    --radius-md: 28px;
+    --radius-lg: 36px;
+    --radius-full: 9999px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+}
+
+.nutri-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #e9f7ef, #f6faf6);
+    padding: 2.5rem;
+    overflow: hidden;
+}
+
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    filter: blur(50px);
+    opacity: 0.4;
+}
+
+.shape-1 {
+    width: 1420px;
+    height: 1420px;
+    background: var(--primary-light);
+    top: -120px;
+    right: -80px;
+    animation: float-slow 14s infinite alternate;
+}
+
+.shape-2 {
+    width: 820px;
+    height: 820px;
+    background: var(--secondary-light);
+    bottom: -60px;
+    left: -90px;
+    animation: float-slow 17s infinite alternate-reverse;
+}
+
+.shape-3 {
+    width: 220px;
+    height: 220px;
+    background: var(--accent);
+    top: 25%;
+    right: 15%;
+    opacity: 0.35;
+    animation: float-slow 11s infinite alternate;
+}
+
+.shape-4 {
+    width: 280px;
+    height: 280px;
+    background: var(--primary);
+    bottom: 15%;
+    left: 20%;
+    opacity: 0.25;
+    animation: float-slow 19s infinite alternate-reverse;
+}
+
+@keyframes float-slow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, 50px) scale(1.15); }
+}
+
+.content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    z-index: 1;
+}
+
+.form-container {
+    background: var(--surface);
+    padding: 3.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    transition: all 0.4s ease;
+}
+
+.form-container:hover {
+    box-shadow: var(--shadow-lg), var(--glow);
+    transform: translateY(-4px);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.icon-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.8rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-badge svg {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    z-index: 1;
+}
+
+.icon-badge::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    opacity: 0.35;
+    filter: blur(10px);
+    z-index: 0;
+}
+
+.form-header h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.8px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(42, 157, 143, 0.1);
+}
+
+.section-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section-left span {
+    font-size: 1rem;
+    color: var(--text);
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    background: rgba(246, 250, 246, 0.9);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(42, 157, 143, 0.1);
+}
+
+.section-right {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: 0.9rem 1.2rem 0.9rem 3rem;
+    border: 2px solid var(--text-light);
+    border-radius: var(--radius-sm);
+    width: 250px;
+    background: rgba(246, 250, 246, 0.9);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231A3C34' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 0.9rem center;
+    background-size: 1.2rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.2);
+    width: 280px;
+}
+
+.btn-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-submit:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.btn-submit:hover svg {
+    transform: translateX(5px);
+}
+
+.patient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.patient-link {
+    text-decoration: none;
+    display: block;
+}
+
+.patient-card {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    color: var(--text);
+    border: 1px solid rgba(42, 157, 143, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    height: 320px;
+}
+
+.patient-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-md), var(--glow);
+    background: rgba(246, 250, 246, 0.9);
+}
+
+.patient-card:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.patient-card:hover:after {
+    transform: scaleX(1);
+}
+
+.patient-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 1.2rem;
+    transition: all 0.4s ease;
+    border: 4px solid rgba(246, 250, 246, 0.9);
+    object-fit: cover;
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.patient-card:hover .patient-image {
+    transform: scale(1.12);
+    border: 4px solid var(--primary);
+}
+
+.patient-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.patient-card p {
+    margin: 0.3rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.patient-card p:last-child {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-light);
+}
+
+.status {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border-radius: var(--radius-full);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.patient-card:hover .status {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.status.green {
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+}
+
+.status.red {
+    background: linear-gradient(90deg, var(--danger), #d32f2f);
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    font-size: 1rem;
+    color: var(--text);
+    background: rgba(246, 250, 246, 0.9);
+    border-radius: var(--radius-sm);
+    margin-top: 1.5rem;
+    border: 1px dashed var(--text-light);
+}
+
+.patient-link.hidden {
+    display: none;
+}
+
+@media print {
+    .nutri-page, header, .section-right, .form-header {
+        display: none !important;
+    }
+
+    .content-wrapper, .form-container {
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        background: none;
+        border: none;
+    }
+
+    .patient-grid {
+        display: block;
+        padding: 0;
+    }
+
+    .patient-link {
+        display: block;
+        page-break-inside: avoid;
+        margin-bottom: 10px;
+    }
+
+    .patient-card {
+        box-shadow: none;
+        border: 1px solid var(--primary);
+        height: auto;
+        padding: 10px;
+        display: block;
+        text-align: left;
+        background: none;
+    }
+
+    .patient-image {
+        display: none;
+    }
+
+    .patient-info {
+        height: auto;
+        min-height: 0;
+        margin-bottom: 5px;
+    }
+
+    .patient-card p {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nutri-page {
+        padding: 1.5rem;
+    }
+
+    .form-container {
+        padding: 2rem;
+    }
+
+    .form-header h2 {
+        font-size: 2.4rem;
+    }
+
+    .icon-badge {
+        width: 70px;
+        height: 70px;
+    }
+
+    Search-input {
+        width: 200px;
+    }
+
+    .icon-badge svg {
+        width: 36px;
+        height: 36px;
+    }
+
+    .section-left {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: flex-start;
+    }
+
+    .section-right {
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .search-input:focus {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 1.5rem;
+    }
+
+    .form-header h2 {
+        font-size: 2rem;
+    }
+
+    .icon-badge {
+        width: 60px;
+        height: 60px;
+    }
+
+    .icon-badge svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .patient-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-submit {
+        font-size: 0.9rem;
+        padding: 0.7rem 1.2rem;
+    }
+}
+</style>
 {% endblock %}

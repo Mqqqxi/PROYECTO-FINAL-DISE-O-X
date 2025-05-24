@@ -177,18 +177,15 @@ def editar_plan_dia(request, plan_nutricional_id):
             with transaction.atomic():
                 for i in range(1, plan_nutricional.duracion_dias + 1):
                     for tipo in ['desayuno', 'almuerzo', 'merienda', 'cena']:
-                        # Obtener listas de IDs de platos desde el formulario
                         platos1_ids = request.POST.getlist(f'plato1_dia{i}_{tipo}')
                         platos2_ids = request.POST.getlist(f'plato2_dia{i}_{tipo}')
                         platos3_ids = request.POST.getlist(f'plato3_dia{i}_{tipo}')
                         descripcion = request.POST.get(f'descripcion_dia{i}_{tipo}', '').strip()
 
-                        # Convertir las listas de IDs en listas de objetos JSON
                         platos1_json = []
                         platos2_json = []
                         platos3_json = []
 
-                        # Procesar platos para Opción 1
                         for plato_id in platos1_ids:
                             if plato_id:
                                 try:
@@ -197,7 +194,6 @@ def editar_plan_dia(request, plan_nutricional_id):
                                 except Plato.DoesNotExist:
                                     continue
 
-                        # Procesar platos para Opción 2
                         for plato_id in platos2_ids:
                             if plato_id:
                                 try:
@@ -206,7 +202,6 @@ def editar_plan_dia(request, plan_nutricional_id):
                                 except Plato.DoesNotExist:
                                     continue
 
-                        # Procesar platos para Opción 3
                         for plato_id in platos3_ids:
                             if plato_id:
                                 try:
@@ -215,7 +210,6 @@ def editar_plan_dia(request, plan_nutricional_id):
                                 except Plato.DoesNotExist:
                                     continue
 
-                        # Obtener o crear el registro de PlanDelDia
                         plan_dia, created = PlanDelDia.objects.get_or_create(
                             plan_nutricional=plan_nutricional,
                             dia=i,
@@ -223,7 +217,6 @@ def editar_plan_dia(request, plan_nutricional_id):
                             defaults={'descripcion': descripcion if descripcion else None}
                         )
 
-                        # Asignar las listas JSON a los campos
                         plan_dia.plato1 = platos1_json
                         plan_dia.plato2 = platos2_json
                         plan_dia.plato3 = platos3_json
@@ -236,7 +229,17 @@ def editar_plan_dia(request, plan_nutricional_id):
             messages.error(request, f"Error al editar el plan diario: {str(e)}")
             return redirect("pacientes:listapacientenuevo")
 
-    # Obtener datos para renderizar la página
+    # Crear registros vacíos para todos los días y tipos de comida si no existen
+    with transaction.atomic():
+        for i in range(1, plan_nutricional.duracion_dias + 1):
+            for tipo in ['DESAYUNO', 'ALMUERZO', 'MERIENDA', 'CENA']:
+                PlanDelDia.objects.get_or_create(
+                    plan_nutricional=plan_nutricional,
+                    dia=i,
+                    tipo_comida=tipo,
+                    defaults={'plato1': [], 'plato2': [], 'plato3': [], 'descripcion': None}
+                )
+
     platos = Plato.objects.all()
     comidas = Comida.objects.all()
     rango_dias = range(1, plan_nutricional.duracion_dias + 1)
@@ -251,14 +254,13 @@ def editar_plan_dia(request, plan_nutricional_id):
         "paciente": paciente,
         "platos": platos,
         "comidas": comidas,
-        "rango_dias": rango_dias,         # si lo sigues usando en otros sitios
-        "dias_fechas": dias_fechas,       # 👉 aquí la novedad
+        "rango_dias": rango_dias,
+        "dias_fechas": dias_fechas,
         "tipo": "Plan",
         "planes_dia": planes_dia,
         "plan_nutricional": plan_nutricional,
         "comidas_lista": comidas_lista
     })
-
 
 def editar_paciente(request, persona_id):
     paciente = get_object_or_404(Paciente, persona_id=persona_id)

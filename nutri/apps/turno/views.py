@@ -5,6 +5,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.utils.dateparse import parse_date
+
+from apps.persona.models import Nutricionista
 from .models import Turno
 from apps.pacientes.models import Paciente
 
@@ -68,10 +70,17 @@ def reservar_turnos(request):
                 'error': f'Ya tienes un turno reservado el día {turno_existente.dia} a las {turno_existente.hora.strftime("%H:%M")}.'
             }, status=400)
 
+        # Obtener la única nutricionista
+        try:
+            nutricionista = Nutricionista.objects.get()
+        except Nutricionista.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'No hay una nutricionista registrada.'}, status=500)
+
         # Crea el turno
         try:
             Turno.objects.create(
                 paciente=paciente,
+                nutricionista=nutricionista,
                 dia=dia,
                 hora=hora,
                 motivo=motivo
