@@ -124,7 +124,6 @@
     </div>
 </div>
 
-
 <!-- Modal de Confirmación -->
 <div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -179,12 +178,14 @@ $(document).ready(function () {
 
     let platoIdAEliminar = null;
 
-    $(".btn-eliminar").click(function (event) {
+    // Manejar clic en el botón de eliminar
+    $(document).on("click", ".btn-eliminar", function (event) {
         event.preventDefault();
         platoIdAEliminar = $(this).data("id");
         $("#modalConfirmacion").modal("show");
     });
 
+    // Manejar confirmación de eliminación
     $("#btnConfirmarEliminar").click(function () {
         if (platoIdAEliminar) {
             fetch(`/comida/plato/eliminar/${platoIdAEliminar}/`, {
@@ -211,83 +212,43 @@ $(document).ready(function () {
         }
     });
 
+    // Función para mostrar el modal de éxito/error
     function mostrarModal(titulo, mensaje) {
         $("#modalMensajeLabel").text(titulo);
         $("#modalMensajeBody").text(mensaje);
         $("#modalMensaje").modal("show");
     }
-});
 
-document.getElementById('formAgregarPlato').addEventListener('submit', function (event) {
-    event.preventDefault();
-    let formData = new FormData(this);
+    // Manejar envío del formulario para agregar un nuevo plato
+    document.getElementById('formAgregarPlato').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let formData = new FormData(this);
 
-    fetch("{% url 'comida:agregar_plato' %}", {
-        method: "POST",
-        body: formData,
-        headers: {
-            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            $("#modalAgregarPlato").modal("hide");
-
-            // Obtener los valores del formulario
-            let nombre = document.getElementById('nombre').value;
-            let tipo = document.getElementById('tipo').value;
-            let descripcion = document.getElementById('descripcion').value;
-
-            // Crear una nueva fila para la tabla
-            let newRow = `
-                <tr>
-                    <td data-label="Nombre">${nombre}</td>
-                    <td data-label="Descripción">${descripcion}</td>
-                    <td data-label="Tipo">${tipo}</td>
-                    <td data-label="Comidas">
-                        <ul>
-                            <li>Sin comidas asignadas</li>
-                            <a href="{% url 'comida:agregar_comida_plato' 0 %}" class="btn-action btn-add" data-id="${data.plato_id}">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </a>
-                        </ul>
-                    </td>
-                    <td data-label="Acciones">
-                        <a href="{% url 'comida:editar_plato' 0 %}" class="btn-action btn-edit" data-id="${data.plato_id}">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="btn-action btn-delete btn-eliminar" data-id="${data.plato_id}">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-1 5v7a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7m-3-1h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                    </td>
-                </tr>
-            `;
-
-            // Agregar la nueva fila a la tabla
-            $('#miTabla').DataTable().row.add($(newRow)).draw();
-
-            // Mostrar mensaje de éxito
-            mostrarModal("Éxito", "El plato ha sido agregado con éxito.");
-
-            // Limpiar el formulario
-            document.getElementById('formAgregarPlato').reset();
-        } else {
-            mostrarModal("Error", "Error al agregar el plato.");
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarModal("Error", "Ocurrió un error inesperado.");
+        fetch("{% url 'comida:agregar_plato' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                $("#modalAgregarPlato").modal("hide");
+                mostrarModal("Éxito", "El plato ha sido agregado con éxito.");
+                setTimeout(() => location.reload(), 2000); // Recargar la página después de 2 segundos
+            } else {
+                mostrarModal("Error", "Error al agregar el plato.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarModal("Error", "Ocurrió un error inesperado.");
+        });
     });
 });
 
+// Validación del input de nombre
 document.addEventListener('DOMContentLoaded', function () {
     const nombreInput = document.getElementById('nombre');
 
