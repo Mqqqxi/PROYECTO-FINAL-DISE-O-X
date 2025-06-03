@@ -57,6 +57,8 @@ def crear_datos_paciente(request, persona_id):
     }
     return render(request, "pacientes/crear_datos_paciente.html", context)
 
+from datetime import date
+
 def crear_plan_nutricional(request, persona_id):
     paciente = get_object_or_404(Paciente, persona_id=persona_id)
     plan_existente = PlanNutricional.objects.filter(paciente=paciente).exists()
@@ -74,6 +76,7 @@ def crear_plan_nutricional(request, persona_id):
         form = PlanNutricionalForm(initial={"paciente": paciente})
     return render(request, "plannutricional/plannutricional.html", {
         "form": form,
+        'today': date.today(),
         "paciente": paciente,
     })
 

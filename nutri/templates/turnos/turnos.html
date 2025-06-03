@@ -31,13 +31,7 @@
                 <p></p>
             </div>
             {% else %}
-            <a href="https://wa.me/+543644350877?text=Hola {{ turno.paciente.persona.first_name|urlencode }} {{ turno.paciente.persona.last_name|urlencode }}, te recordamos tu consulta con la nutricionista el {{ turno.dia|urlencode }} a las {{ turno.hora|time:'H:i'|urlencode }}. Motivo: {{ turno.motivo|urlencode }}. ¡Te esperamos!"
-               class="btn-submit" target="_blank">
-                <span>Enviar Recordatorio por WhatsApp</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.76.45 3.43 1.24 4.88L2 22l5.29-1.36c1.42.79 3.03 1.2 4.75 1.2 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2z" stroke="currentColor" stroke-width="2"/>
-                </svg>
-            </a>
+            
             {% endif %}
         </div>
 
@@ -847,6 +841,31 @@
         padding: 1.1rem 1.8rem;
     }
 }
+
+/* Estilo para el día con turno reservado */
+.fc-daygrid-day:has(.fc-event.reserved-event) {
+    background: rgba(231, 111, 81, 0.2); /* Fondo suave con color --accent */
+    border-radius: var(--radius-sm);
+    transition: background 0.3s ease;
+}
+
+.fc-event.reserved-event {
+    background: var(--accent); /* Color coral para el evento */
+    border: none;
+    color: white;
+    font-size: 0.9rem;
+    padding: 4px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Asegurar que el texto "Turno Reservado" sea visible en el cuadro */
+.fc-daygrid-day-frame {
+    position: relative;
+    overflow: visible;
+}
+
+
 </style>
 
 <script>
@@ -886,7 +905,6 @@
         }
     }
     
-    // Función para mostrar el modal de mensaje/confirmación
     function showMessageModal(title, message, isConfirmation = false, onConfirm = null) {
         const modal = document.getElementById('message-modal');
         const modalTitle = document.getElementById('message-modal-title');
@@ -985,11 +1003,27 @@
                             Hora: ${data.turno.hora}<br>
                             Motivo: ${data.turno.motivo}
                         `;
+                        // Agregar el turno como evento en el calendario
+                        calendar.getEvents().forEach(event => event.remove()); // Limpiar eventos previos
+                        calendar.addEvent({
+                            title: 'Turno Reservado',
+                            start: data.turno.dia,
+                            allDay: true,
+                            backgroundColor: 'var(--accent)',
+                            borderColor: 'var(--accent)',
+                            textColor: 'white',
+                            classNames: ['reserved-event']
+                        });
                     } else {
                         reservedTurnDiv.style.display = 'none';
+                        // Limpiar eventos si no hay turno
+                        calendar.getEvents().forEach(event => event.remove());
                     }
                 })
-                .catch(error => console.error('Error al cargar turno reservado:', error));
+                .catch(error => {
+                    console.error('Error al cargar turno reservado:', error);
+                    showMessageModal('Error', 'Ocurrió un error al cargar el turno reservado.');
+                });
         }
     
         function cargarHorarios(rangos, horariosOcupados) {
@@ -1115,6 +1149,8 @@
                                         ],
                                         []
                                     );
+                                    // Limpiar eventos del calendario
+                                    calendar.getEvents().forEach(event => event.remove());
                                 } else {
                                     showMessageModal('Error', data.error || 'No se pudo cancelar el turno.');
                                 }

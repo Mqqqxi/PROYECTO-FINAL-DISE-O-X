@@ -10,28 +10,31 @@
         <div class="shape shape-3"></div>
         <div class="shape shape-4"></div>
     </div>
-    
+
     <div class="content-wrapper">
         <div class="form-container">
             <div class="form-header">
                 <div class="icon-badge">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                            fill="currentColor" />
                     </svg>
                 </div>
                 <h2>Agregar Comidas a {{plato.nombre}}</h2>
             </div>
             <!-- Modal para mensajes -->
-<div id="modalMensaje" class="modal">
-    <div class="modal-content">
-        <span class="modal-close">&times;</span>
-        <p id="modalMensajeTexto">Esta comida ya fue agregada.</p>
-        <button class="modal-btn">Aceptar</button>
-    </div>
-</div>
+            <div id="modalMensaje" class="modal">
+                <div class="modal-content">
+                    <span class="modal-close">&times;</span>
+                    <p id="modalMensajeTexto">Esta comida ya fue agregada.</p>
+                    <button class="modal-btn">Aceptar</button>
+                </div>
+            </div>
 
             <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Buscar por nombre..." onkeyup="filterComidas()" class="search-input" />
+                <input type="text" id="searchInput" placeholder="Buscar por nombre..." onkeyup="filterComidas()"
+                    class="search-input" />
             </div>
 
             <div class="carousel-section">
@@ -39,13 +42,13 @@
                 <div class="carousel-container">
                     <div class="carousel">
                         {% for comida in comidas %}
-                        <div class="carousel-item" draggable="true" ondragstart="drag(event)" id="comida-{{ comida.idcomida }}"
-                            data-id="{{ comida.idcomida }}" data-plato-id="{{ plato.idplato }}"
-                            data-nombre="{{ comida.nombre }}" data-calorias="{{ comida.calorias }}"
-                            data-proteina="{{ comida.proteina }}" data-colesterol="{{ comida.colesterol }}"
-                            data-carbohidratos="{{ comida.carbohidratos }}" data-grasaTotales="{{ comida.grasaTotales }}"
-                            data-sodio="{{ comida.sodio }}" data-categoria="{{ comida.categoria }}"
-                            onclick="showDetails('{{ comida.idcomida }}')">
+                        <div class="carousel-item" draggable="true" ondragstart="drag(event)"
+                            id="comida-{{ comida.idcomida }}" data-id="{{ comida.idcomida }}"
+                            data-plato-id="{{ plato.idplato }}" data-nombre="{{ comida.nombre }}"
+                            data-calorias="{{ comida.calorias }}" data-proteina="{{ comida.proteina }}"
+                            data-colesterol="{{ comida.colesterol }}" data-carbohidratos="{{ comida.carbohidratos }}"
+                            data-grasaTotales="{{ comida.grasaTotales }}" data-sodio="{{ comida.sodio }}"
+                            data-categoria="{{ comida.categoria }}" onclick="showDetails('{{ comida.idcomida }}')">
                             <img src="{{ comida.imagen.url }}" alt="{{ comida.nombre }}">
                             <div class="carousel-info">{{ comida.nombre }}</div>
                         </div>
@@ -69,7 +72,8 @@
                         data-categoria="{{ comida.comida.categoria }}"
                         onclick="showDetails('{{ comida.comida.idcomida }}')">
                         <img src="{{ comida.comida.imagen.url }}" alt="{{ comida.comida.nombre }}">
-                        <button class="delete-btn" onclick="event.stopPropagation(); eliminarComidaGuardada(this)">✖</button>
+                        <button class="delete-btn"
+                            onclick="event.stopPropagation(); eliminarComidaGuardada(this)">✖</button>
                     </div>
                     {% endfor %}
                 </div>
@@ -97,7 +101,8 @@
                 </div>
             </div>
 
-            <form id="guardarPlatoForm" method="post" action="{% url 'comida:guardar_plato' plato.idplato %}" class="smart-form">
+            <form id="guardarPlatoForm" method="post" action="{% url 'comida:guardar_plato' plato.idplato %}"
+                class="smart-form">
                 {% csrf_token %}
                 <input type="hidden" name="comidas_seleccionadas" id="comidasSeleccionadas">
                 <ul id="lista-comidas-seleccionadas"></ul>
@@ -107,7 +112,8 @@
                     <button type="submit" class="btn-submit">
                         <span>Guardar Plato</span>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
                 </div>
@@ -119,25 +125,34 @@
 <style>
     :root {
         /* Color palette from first HTML */
-        --primary: #2A9D8F; /* Teal green */
-        --primary-light: #48C9B0; /* Lighter teal */
-        --secondary: #F4A261; /* Warm peach */
-        --secondary-light: #F7B267; /* Lighter peach */
-        --surface: #FFFFFF; /* Clean white */
-        --background: #F6FAF6; /* Soft green-gray */
-        --text: #1A3C34; /* Dark teal */
-        --text-light: #5E7C76; /* Muted teal */
-        --accent: #E76F51; /* Coral */
-        
+        --primary: #2A9D8F;
+        /* Teal green */
+        --primary-light: #48C9B0;
+        /* Lighter teal */
+        --secondary: #F4A261;
+        /* Warm peach */
+        --secondary-light: #F7B267;
+        /* Lighter peach */
+        --surface: #FFFFFF;
+        /* Clean white */
+        --background: #F6FAF6;
+        /* Soft green-gray */
+        --text: #1A3C34;
+        /* Dark teal */
+        --text-light: #5E7C76;
+        /* Muted teal */
+        --accent: #E76F51;
+        /* Coral */
+
         /* Typography */
         --font-family: 'Outfit', 'Inter', system-ui, sans-serif;
-        
+
         /* Shadows and effects */
         --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
         --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.1);
         --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.12);
         --glow: 0 0 30px rgba(42, 157, 143, 0.25);
-        
+
         /* Border radii */
         --radius-sm: 16px;
         --radius-md: 28px;
@@ -220,8 +235,13 @@
     }
 
     @keyframes float-slow {
-        0% { transform: translate(0, 0) scale(1); }
-        100% { transform: translate(50px, 50px) scale(1.15); }
+        0% {
+            transform: translate(0, 0) scale(1);
+        }
+
+        100% {
+            transform: translate(50px, 50px) scale(1.15);
+        }
     }
 
     .content-wrapper {
@@ -411,14 +431,20 @@
         border-radius: var(--radius-sm);
         box-shadow: var(--shadow-sm);
         transition: all 0.3s ease;
+        overflow-x: hidden;
+        /* Oculta el desbordamiento horizontal */
     }
+
 
     .carousel {
         display: flex;
         transition: transform 0.5s ease-in-out;
         gap: 1rem;
         padding: 1rem;
-        justify-content: center;
+        flex-wrap: nowrap;
+        /* Evita que los ítems se envuelvan a la siguiente línea */
+        width: max-content;
+        /* Asegura que el carrusel tenga el ancho necesario para todos los ítems */
     }
 
     .carousel-item {
@@ -634,7 +660,8 @@
             flex-direction: column;
         }
 
-        .dropzone, .details {
+        .dropzone,
+        .details {
             width: 100%;
         }
 
@@ -643,7 +670,8 @@
             padding: 1.2rem 1.4rem;
         }
 
-        .btn-submit, .btn-cancel {
+        .btn-submit,
+        .btn-cancel {
             font-size: 1.15rem;
             padding: 1.2rem 2rem;
         }
@@ -681,81 +709,153 @@
             padding: 1.1rem 1.3rem;
         }
 
-        .btn-submit, .btn-cancel {
+        .btn-submit,
+        .btn-cancel {
             font-size: 1.1rem;
             padding: 1.1rem 1.8rem;
         }
     }
 
     /* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(26, 60, 52, 0.5);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(4px);
-}
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(26, 60, 52, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(4px);
+    }
 
-.modal-content {
-    background: var(--surface);
-    padding: 2rem;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-lg);
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-    position: relative;
-    transition: transform 0.3s ease;
-}
+    .modal-content {
+        background: var(--surface);
+        padding: 2rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        position: relative;
+        transition: transform 0.3s ease;
+    }
 
-.modal-content.show {
-    transform: scale(1);
-}
+    .modal-content.show {
+        transform: scale(1);
+    }
 
-.modal-content:not(.show) {
-    transform: scale(0.8);
-}
+    .modal-content:not(.show) {
+        transform: scale(0.8);
+    }
 
-.modal-close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 1.5rem;
-    color: var(--text-light);
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 1.5rem;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
 
-.modal-close:hover {
-    color: var(--accent);
-}
+    .modal-close:hover {
+        color: var(--accent);
+    }
 
-.modal-btn {
-    margin-top: 1.5rem;
-    padding: 0.8rem 2rem;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: white;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow-sm);
-}
+    .modal-btn {
+        margin-top: 1.5rem;
+        padding: 0.8rem 2rem;
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+    }
 
-.modal-btn:hover {
-    background: linear-gradient(135deg, var(--secondary), var(--primary));
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-}
+    .modal-btn:hover {
+        background: linear-gradient(135deg, var(--secondary), var(--primary));
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
 
+    /* Arreglo de drop */
+
+    .food-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        /* Default size, will be updated by JS */
+        height: 100px;
+        /* Default size, will be updated by JS */
+        transition: transform 0.3s ease;
+    }
+
+    .food-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+    }
+
+    .delete-btn {
+        position: absolute;
+        top: 2px;
+        /* Adjusted for padding */
+        right: 2px;
+        /* Adjusted for padding */
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: var(--radius-full);
+        width: 20px;
+        /* Default size, will be updated by JS */
+        height: 20px;
+        /* Default size, will be updated by JS */
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: var(--shadow-sm);
+        z-index: 1;
+        /* Ensure it stays above the image */
+    }
+
+    .delete-btn:hover {
+        background: #d65f43;
+    }
+
+    .dropzone {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1rem;
+        /* Reducido para evitar desbordamiento */
+        background: rgba(246, 250, 246, 0.9);
+        border: 2px dashed var(--primary-light);
+        border-radius: var(--radius-sm);
+        min-height: 200px;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+        /* Asegura que padding no aumente el tamaño */
+        max-height: 400px;
+        /* Límite opcional para evitar desbordamiento vertical */
+        overflow-y: auto;
+        /* Permite scroll si hay muchos elementos */
+    }
 </style>
 
 <script>
@@ -763,21 +863,25 @@
     let currentIndex = 0;
 
     function moveSlide(direction) {
-        const carousel = document.querySelector(".carousel");
-        const items = document.querySelectorAll(".carousel-item");
-        const totalItems = items.length;
+    const carousel = document.querySelector(".carousel");
+    const items = document.querySelectorAll(".carousel-item:not(.hidden)");
+    const totalItems = items.length;
+    const containerWidth = document.querySelector(".carousel-container").offsetWidth;
+    const itemWidth = items[0].offsetWidth + 20; // Ancho del ítem + gap
+    const maxIndex = Math.max(0, totalItems - Math.floor(containerWidth / itemWidth));
 
-        currentIndex += direction;
-        if (currentIndex < 0) {
-            currentIndex = totalItems - 1;
-        } else if (currentIndex >= totalItems) {
-            currentIndex = 0;
-        }
+    currentIndex += direction;
 
-        const itemWidth = items[0].offsetWidth + 20;
-        const newTranslateX = -currentIndex * itemWidth;
-        carousel.style.transform = `translateX(${newTranslateX}px)`;
+    // Limitar el índice para no desplazarse más allá de los ítems visibles
+    if (currentIndex < 0) {
+        currentIndex = 0;
+    } else if (currentIndex > maxIndex) {
+        currentIndex = maxIndex;
     }
+
+    const newTranslateX = -currentIndex * itemWidth;
+    carousel.style.transform = `translateX(${newTranslateX}px)`;
+}
 
     function drag(event) {
         let item = event.target.closest(".carousel-item");
@@ -792,94 +896,94 @@
     }
 
     function drop(event) {
-    event.preventDefault();
-    event.target.classList.remove("dragover");
+        event.preventDefault();
+        event.target.classList.remove("dragover");
 
-    let comidaId = event.dataTransfer.getData("text");
-    let comidaElement = document.getElementById(comidaId);
+        let comidaId = event.dataTransfer.getData("text");
+        let comidaElement = document.getElementById(comidaId);
 
-    if (!comidaElement) return;
+        if (!comidaElement) return;
 
-    let dropzone = document.querySelector(".dropzone");
+        let dropzone = document.querySelector(".dropzone");
 
-    let existingItems = dropzone.querySelectorAll(".food-item");
-    for (let item of existingItems) {
-        if (item.dataset.comidaId === comidaElement.dataset.id) {
-            showModal("Esta comida ya fue agregada.");
-            return;
+        // Check only visible food items (not hidden with display: none)
+        let existingItems = dropzone.querySelectorAll(".food-item:not([style*='display: none'])");
+        for (let item of existingItems) {
+            if (item.dataset.comidaId === comidaElement.dataset.id) {
+                showModal("Esta comida ya fue agregada.");
+                return;
+            }
         }
+
+        // Create a new food item
+        let foodItem = document.createElement("div");
+        foodItem.classList.add("food-item");
+        foodItem.dataset.comidaId = comidaElement.dataset.id;
+        foodItem.dataset.platoId = comidaElement.dataset.platoId;
+
+        Object.assign(foodItem.dataset, comidaElement.dataset);
+
+        foodItem.onclick = function () {
+            showDetails(this.dataset.comidaId);
+        };
+
+        let img = comidaElement.querySelector("img").cloneNode(true);
+
+        let deleteButton = document.createElement("button");
+        deleteButton.classList.add("delete-btn");
+        deleteButton.innerHTML = "✖";
+        deleteButton.onclick = function (e) {
+            e.stopPropagation();
+            eliminarComidaGuardada(this);
+        };
+
+        foodItem.appendChild(img);
+        foodItem.appendChild(deleteButton);
+
+        dropzone.appendChild(foodItem);
+
+        updateTotalDetails();
+        adjustImageSize();
     }
 
-    let foodItem = document.createElement("div");
-    foodItem.classList.add("food-item");
-    foodItem.dataset.comidaId = comidaElement.dataset.id;
-    foodItem.dataset.platoId = comidaElement.dataset.platoId;
 
-    Object.keys(comidaElement.dataset).forEach(key => {
-        foodItem.dataset[key] = comidaElement.dataset[key];
-    });
+    function showModal(mensaje) {
+        const modal = document.getElementById("modalMensaje");
+        const modalTexto = document.getElementById("modalMensajeTexto");
+        const modalClose = document.querySelector(".modal-close");
+        const modalBtn = document.querySelector(".modal-btn");
 
-    foodItem.onclick = function () {
-        showDetails(this.dataset.comidaId);
-    };
-
-    let img = comidaElement.querySelector("img").cloneNode(true);
-
-    let deleteButton = document.createElement("button");
-    deleteButton.classList.add("delete-btn");
-    deleteButton.innerHTML = "✖";
-    deleteButton.onclick = function (e) {
-        e.stopPropagation();
-        eliminarComidaGuardada(this);
-    };
-
-    foodItem.appendChild(img);
-    foodItem.appendChild(deleteButton);
-
-    dropzone.appendChild(foodItem);
-
-    updateTotalDetails();
-    adjustImageSize();
-}
-
-function showModal(mensaje) {
-    const modal = document.getElementById("modalMensaje");
-    const modalTexto = document.getElementById("modalMensajeTexto");
-    const modalClose = document.querySelector(".modal-close");
-    const modalBtn = document.querySelector(".modal-btn");
-
-    modalTexto.textContent = mensaje;
-    modal.style.display = "flex";
-    setTimeout(() => {
-        modal.querySelector(".modal-content").classList.add("show");
-    }, 10);
-
-    const closeModal = () => {
-        modal.querySelector(".modal-content").classList.remove("show");
+        modalTexto.textContent = mensaje;
+        modal.style.display = "flex";
         setTimeout(() => {
-            modal.style.display = "none";
-        }, 300);
-    };
+            modal.querySelector(".modal-content").classList.add("show");
+        }, 10);
 
-    modalClose.onclick = closeModal;
-    modalBtn.onclick = closeModal;
+        const closeModal = () => {
+            modal.querySelector(".modal-content").classList.remove("show");
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 300);
+        };
 
-    // Cerrar el modal al hacer clic fuera del contenido
-    modal.onclick = function (event) {
-        if (event.target === modal) {
-            closeModal();
-        }
-    };
+        modalClose.onclick = closeModal;
+        modalBtn.onclick = closeModal;
 
-    // Cerrar el modal con la tecla Escape
-    document.addEventListener("keydown", function handler(event) {
-        if (event.key === "Escape") {
-            closeModal();
-            document.removeEventListener("keydown", handler);
-        }
-    });
-}
+        // Cerrar el modal al hacer clic fuera del contenido
+        modal.onclick = function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
 
+        // Cerrar el modal con la tecla Escape
+        document.addEventListener("keydown", function handler(event) {
+            if (event.key === "Escape") {
+                closeModal();
+                document.removeEventListener("keydown", handler);
+            }
+        });
+    }
 
     function adjustImageSize() {
         let foodItems = document.querySelectorAll(".dropzone .food-item");
@@ -891,12 +995,23 @@ function showModal(mensaje) {
         if (itemCount > 8) newSize = 70;
         if (itemCount > 10) newSize = 60;
         if (itemCount > 12) newSize = 50;
+        newSize = Math.min(newSize, 100); // Límite máximo
 
         foodItems.forEach(item => {
             let img = item.querySelector("img");
+            let deleteBtn = item.querySelector(".delete-btn");
             if (img) {
                 img.style.width = newSize + "px";
                 img.style.height = newSize + "px";
+                item.style.width = newSize + "px";
+                item.style.height = newSize + "px";
+            }
+            if (deleteBtn) {
+                deleteBtn.style.width = (newSize / 5) + "px";
+                deleteBtn.style.height = (newSize / 5) + "px";
+                deleteBtn.style.fontSize = (newSize / 10) + "px";
+                deleteBtn.style.top = (newSize / 50) + "px";
+                deleteBtn.style.right = (newSize / 50) + "px";
             }
         });
     }
@@ -979,6 +1094,7 @@ function showModal(mensaje) {
         document.getElementById("comidasSeleccionadas").value = comidasSeleccionadas.join(",");
     }
 
+
     let comidasParaEliminar = [];
 
     function eliminarComidaGuardada(button) {
@@ -1010,7 +1126,7 @@ function showModal(mensaje) {
         });
 
         if (comidas.length === 0) {
-            alert("Debes seleccionar al menos una comida.");
+            showModal("Debes seleccionar al menos una comida.");
             return;
         }
 
@@ -1035,7 +1151,7 @@ function showModal(mensaje) {
 
         } catch (error) {
             console.error('Error:', error);
-            alert('Ocurrió un error al guardar los cambios');
+            showModal('Ocurrió un error al guardar los cambios');
         }
     });
 
@@ -1052,27 +1168,27 @@ function showModal(mensaje) {
         updateTotalDetails();
 
         // Redirige a la página anterior
-    window.history.back();
-    
+        window.history.back();
+
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         updateTotalDetails();
-        
+
         const dropzone = document.querySelector(".dropzone");
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'childList' || 
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.type === 'childList' ||
                     (mutation.type === 'attributes' && mutation.attributeName === 'style')) {
                     updateTotalDetails();
                 }
             });
         });
 
-        observer.observe(dropzone, { 
-            childList: true, 
-            subtree: true, 
-            attributes: true 
+        observer.observe(dropzone, {
+            childList: true,
+            subtree: true,
+            attributes: true
         });
     });
 </script>
