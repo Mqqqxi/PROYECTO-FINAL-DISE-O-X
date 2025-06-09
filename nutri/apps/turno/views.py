@@ -18,6 +18,10 @@ def Turnos(request):
         'is_nutricionista': is_nutricionista
     })
 
+
+from django.db import transaction
+from django.db.models import Q
+
 @login_required
 def reservar_turnos(request):
     if request.user.is_nutricionista:
@@ -70,24 +74,33 @@ def reservar_turnos(request):
                 'error': f'Ya tienes un turno reservado el día {turno_existente.dia} a las {turno_existente.hora.strftime("%H:%M")}.'
             }, status=400)
 
-        # Obtener la única nutricionista
-        try:
-            nutricionista = Nutricionista.objects.get()
-        except Nutricionista.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'No hay una nutricionista registrada.'}, status=500)
+        # Verifica si ya existe un turno en el mismo día y hora
+        with transaction.atomic():
+            turno_ocupado = Turno.objects.filter(dia=dia, hora=hora).exists()
+            if turno_ocupado:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'El horario {hora} del día {dia} ya está ocupado.'
+                }, status=400)
 
-        # Crea el turno
-        try:
-            Turno.objects.create(
-                paciente=paciente,
-                nutricionista=nutricionista,
-                dia=dia,
-                hora=hora,
-                motivo=motivo
-            )
-            return JsonResponse({'success': True, 'message': 'Turno reservado exitosamente.'})
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+            # Obtener la única nutricionista
+            try:
+                nutricionista = Nutricionista.objects.get()
+            except Nutricionista.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'No hay una nutricionista registrada.'}, status=500)
+
+            # Crea el turno
+            try:
+                Turno.objects.create(
+                    paciente=paciente,
+                    nutricionista=nutricionista,
+                    dia=dia,
+                    hora=hora,
+                    motivo=motivo
+                )
+                return JsonResponse({'success': True, 'message': 'Turno reservado exitosamente.'})
+            except Exception as e:
+                return JsonResponse({'success': False, 'error': str(e)}, status=500)
     return JsonResponse({'success': False, 'error': 'Método no permitido.'}, status=405)
 
 @login_required

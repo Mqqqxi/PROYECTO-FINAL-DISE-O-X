@@ -203,9 +203,9 @@
                          <li><a href="{% url 'comida:plato' %}" class="smoothScroll">Platos</a></li>
                          <li><a href="{% url 'pacientes:listapacientenuevo' %}" class="smoothScroll">Pacientes</a></li>
                          {% endif %}
-                         <li><a href="{% url 'inicio' %}#feature" class="smoothScroll">Sobre mí</a></li>
-                         <li><a href="{% url 'inicio' %}#courses" class="smoothScroll">Servicios</a></li>
-                         <li><a href="{% url 'inicio' %}#contact" class="smoothScroll">Contact</a></li>
+                         <li><a href="#feature" class="smoothScroll">Sobre mí</a></li>
+                         <li><a href="#courses" class="smoothScroll">Servicios</a></li>
+                         <li><a href="#contact" class="smoothScroll">Contacto</a></li>
                     </ul>
 
                     {% if user.is_authenticated %}
@@ -231,7 +231,7 @@
                </div>
           </div>
      </section>
-     <div id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
+     <div id="top" data-target=".navbar-collapse" data-offset="50">
           {% block content %}
           {% endblock %}
      </div>
@@ -246,8 +246,10 @@
                         <h2>Datilera</h2>
                     </div>
                     <address>
-                        <p>Nutricionista Emilia Ferreyra<br>Av. Alberdi 1234, Resistencia, Chaco, Argentina</p>
-                        <p>Horario de atención: Lunes a Viernes de 9:00 a 18:00</p>
+                        <p>Nutricionista Emilia Ferreyra<br>Calle La Rioja 950, Quitilipi, Chaco</p>
+                        <p><strong>Horario de atención:</strong><br>
+                           Lunes a Viernes 8 a 12 | 16 a 20<br>
+                           Sábado de 8 a 12</p>
                     </address>
                 </div>
             </div>
@@ -257,12 +259,12 @@
                         <h2>Contacto</h2>
                     </div>
                     <address>
-                        <p>+54 362 412 3456</p>
-                        <p><a href="mailto:info@emiliaferreyra.com">info@emiliaferreyra.com</a></p>
+                        <p>+54 364 463-95116</p>
+                        <p><a href="mailto:datileranutricion@hotmail.com">datileranutricion@hotmail.com</a></p>
                         <ul class="social-icon">
-                            <li><a href="https://www.facebook.com/emiliaferreyranutricion" class="fa fa-facebook-square" title="Facebook"></a></li>
-                            <li><a href="https://www.instagram.com/emiliaferreyranutricion" class="fa fa-instagram" title="Instagram"></a></li>
-                            <li><a href="https://wa.me/+543624123456" class="fa fa-whatsapp" title="WhatsApp"></a></li>
+                            <li><a href="https://www.facebook.com/datilera.nutricion" class="fa fa-facebook-square" title="Facebook"></a></li>
+                            <li><a href="https://www.instagram.com/datilera.nutricion" class="fa fa-instagram" title="Instagram"></a></li>
+                            <li><a href="https://wa.me/+543644639511" class="fa fa-whatsapp" title="WhatsApp"></a></li>
                         </ul>
                     </address>
                 </div>

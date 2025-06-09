@@ -18,6 +18,8 @@ from apps.persona.models import Nutricionista
 from django.utils import timezone
 from django.http import JsonResponse
 
+from datetime import date
+
 @login_required
 def CrearProgreso(request, paciente_pk):
     paciente = get_object_or_404(Paciente, pk=paciente_pk)
