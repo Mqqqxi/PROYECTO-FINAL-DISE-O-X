@@ -28,12 +28,6 @@ class ComidaForm(forms.ModelForm):
             'categoria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Categoría'}),
         }
 
-    def clean_nombre(self):
-            nombre = self.cleaned_data.get('nombre')
-            if any(char.isdigit() for char in nombre):
-                raise forms.ValidationError("El nombre no debe contener números.")
-            return nombre
-
     def clean_imagen(self):
         imagen = self.cleaned_data.get('imagen')
         if not imagen:

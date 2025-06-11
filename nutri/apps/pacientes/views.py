@@ -353,12 +353,11 @@ from django.db import transaction
 from django.urls import reverse
 from django.utils import timezone
 from apps.planNutricional.models import PlanNutricional, PlanDelDia
-from apps.comida.models import Plato, Comida
+from apps.comida.models import Plato, PlatoComida
 
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from apps.planNutricional.models import PlanNutricional, PlanDelDia
-
 
 from datetime import timedelta
 from django.http import HttpResponseForbidden
@@ -411,10 +410,14 @@ def infopaciente(request, paciente_id=None):
         recomendacion = plan_nutricional.recomendacion
     else:
         recomendacion = None
+    
     plan_data = []
+    plato_comidas_data = []  # Nueva variable para almacenar las comidas asociadas
+    
     if plan_nutricional:
         dias = list(range(1, plan_nutricional.duracion_dias + 1))
         fecha_inicio = plan_nutricional.fecha_inicio.date()
+        
         for dia in dias:
             planes_dia = PlanDelDia.objects.filter(plan_nutricional=plan_nutricional, dia=dia)
             desayuno = planes_dia.filter(tipo_comida="DESAYUNO").first()
@@ -429,7 +432,35 @@ def infopaciente(request, paciente_id=None):
                     return []
                 return [item.get("nombre", "") for item in opciones]
 
+            def obtener_comidas_de_platos(opciones):
+                """Función para obtener las comidas asociadas a los platos"""
+                if not opciones:
+                    return []
+                platos_con_comidas = []
+                for item in opciones:
+                    nombre_plato = item.get("nombre", "")
+                    if nombre_plato:
+                        try:
+                            plato = Plato.objects.get(nombre=nombre_plato)
+                            # Obtener las relaciones PlatoComida para este plato con optimización
+                            plato_comidas = PlatoComida.objects.filter(plato=plato).select_related('comida')
+                            
+                            comidas_list = []
+                            for plato_comida in plato_comidas:
+                                # Agregar el nombre de la comida con su peso
+                                comidas_list.append(f"{plato_comida.comida.nombre}")
+                            
+                            platos_con_comidas.append({
+                                'plato_nombre': nombre_plato,
+                                'comidas': comidas_list
+                            })
+                        except Plato.DoesNotExist:
+                            continue
+                return platos_con_comidas
+
             dia_nombre = fecha_actual.strftime("%d/%m/%Y")
+            
+            # Datos para mostrar los platos (sin cambios)
             plan_data.append({
                 'dia': dia,
                 'dia_nombre': dia_nombre,
@@ -459,6 +490,32 @@ def infopaciente(request, paciente_id=None):
                 }
             })
 
+            # Datos para mostrar las comidas asociadas (nuevo)
+            plato_comidas_data.append({
+                'dia': dia,
+                'dia_nombre': dia_nombre,
+                'desayuno': {
+                    'op1': obtener_comidas_de_platos(desayuno.plato1) if desayuno else [],
+                    'op2': obtener_comidas_de_platos(desayuno.plato2) if desayuno else [],
+                    'op3': obtener_comidas_de_platos(desayuno.plato3) if desayuno else [],
+                },
+                'almuerzo': {
+                    'op1': obtener_comidas_de_platos(almuerzo.plato1) if almuerzo else [],
+                    'op2': obtener_comidas_de_platos(almuerzo.plato2) if almuerzo else [],
+                    'op3': obtener_comidas_de_platos(almuerzo.plato3) if almuerzo else [],
+                },
+                'merienda': {
+                    'op1': obtener_comidas_de_platos(merienda.plato1) if merienda else [],
+                    'op2': obtener_comidas_de_platos(merienda.plato2) if merienda else [],
+                    'op3': obtener_comidas_de_platos(merienda.plato3) if merienda else [],
+                },
+                'cena': {
+                    'op1': obtener_comidas_de_platos(cena.plato1) if cena else [],
+                    'op2': obtener_comidas_de_platos(cena.plato2) if cena else [],
+                    'op3': obtener_comidas_de_platos(cena.plato3) if cena else [],
+                }
+            })
+
     contexto = {
         'paciente': paciente,
         'valores_antropometricos': valores_antropometricos,
@@ -475,9 +532,10 @@ def infopaciente(request, paciente_id=None):
         'diferencia_peso': diferencia_peso,
         'porcentaje_completado': porcentaje_completado,
         'plan_data': plan_data,
-        'recomendación' : recomendacion,
+        'plato_comidas_data': plato_comidas_data,  # Nueva variable agregada
+        'recomendación': recomendacion,
         'comidas_loop': ['desayuno', 'almuerzo', 'merienda', 'cena'],
         'today': timezone.now(),
-        'is_nutricionista': request.user.is_nutricionista,  # Añadido explícitamente
+        'is_nutricionista': request.user.is_nutricionista,
     }
     return render(request, 'pacientes/infopaciente.html', contexto)

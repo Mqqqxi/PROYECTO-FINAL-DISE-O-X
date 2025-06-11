@@ -314,13 +314,15 @@
     margin: 0 0 16px;
   }
 
-  .data-row {
-    display: flex;
-    margin-bottom: 16px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--gray-medium);
-    transition: var(--transition);
-  }
+  /* Ajustar el diseño de la fila de datos */
+.data-row {
+  display: flex;
+  align-items: flex-start; /* Alinear al inicio para evitar espacio vertical */
+  margin-bottom: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gray-medium);
+  transition: var(--transition);
+}
 
   .data-row:hover {
     background-color: var(--gray-light);
@@ -333,25 +335,25 @@
     border-bottom: none;
   }
 
-  .data-label {
-    font-size: 14px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    flex: 1;
-  }
+  /* Reducir el ancho de la etiqueta de fecha */
+.data-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex: 0 0 100px; /* Ancho fijo para la fecha, ajusta según necesidad */
+  min-width: 100px; /* Asegura un ancho mínimo */
+  margin-right: 10px; /* Espacio controlado entre la fecha y el contenido */
+}
 
-  .data-value {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    flex: 2;
-    word-wrap: break-word;
-    /* Permite que las palabras largas se rompan */
-    word-break: break-all;
-    /* Fuerza el rompimiento de palabras largas */
-    overflow-wrap: break-word;
-    /* Estándar moderno para word-wrap */
-  }
+  /* Asegurar que el contenido de las comidas ocupe el espacio restante */
+.data-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1; /* Ocupa el espacio restante */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
 
 
 
@@ -631,19 +633,27 @@
   }
 
 
-  /* Estilos para las opciones dentro de cada comida */
-  .meal-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  /* Ajustar el contenedor de opciones de comida */
+.meal-options {
+  display: flex;
+  flex-direction: row; /* Mantener las opciones en fila */
+  gap: 10px;
+  width: 100%;
+  flex-wrap: nowrap; /* Evitar que las opciones se envuelvan */
+  justify-content: flex-start; /* Alinear al inicio */
+}
 
-  .meal-option {
-    background: var(--gray-light);
-    padding: 8px 12px;
-    border-radius: var(--border-radius-sm);
-    transition: var(--transition);
-  }
+  /* Ajustar cada opción de comida */
+.meal-option {
+  background: var(--gray-light);
+  padding: 8px 12px;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition);
+  flex: 1;
+  min-width: 100px;
+  max-width: 150px;
+  box-sizing: border-box;
+}
 
   .meal-option:hover {
     background: rgba(78, 205, 196, 0.1);
@@ -1661,6 +1671,230 @@
             </tbody>
           </table>
         </div>
+        <!-- Sección para mostrar las comidas asociadas a los platos -->
+        <div class="content-card" style="margin-top: 20px;">
+          <h4>Comidas asociadas a los platos</h4>
+          {% for dia_comidas in plato_comidas_data %}
+          <div class="data-row">
+            <div class="data-label">{{ dia_comidas.dia_nombre }}</div>
+            <div class="data-value">
+              <div class="meal-options">
+                <!-- Desayuno -->
+                <div class="meal-option">
+                  <strong>Desayuno:</strong>
+                  {% if dia_comidas.desayuno.op1 or dia_comidas.desayuno.op2 or dia_comidas.desayuno.op3 %}
+                  <div class="opciones-comidas">
+                    {% if dia_comidas.desayuno.op1 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.desayuno.op1 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if dia_comidas.desayuno.op2 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.desayuno.op2 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if dia_comidas.desayuno.op3 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.desayuno.op3 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% else %}
+                  <p>-</p>
+                  {% endif %}
+                </div>
+
+                <!-- Almuerzo -->
+                <div class="meal-option">
+                  <strong>Almuerzo:</strong>
+                  {% if dia_comidas.almuerzo.op1 or dia_comidas.almuerzo.op2 or dia_comidas.almuerzo.op3 %}
+                  <div class="opciones-comidas">
+                    {% if dia_comidas.almuerzo.op1 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.almuerzo.op1 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if dia_comidas.almuerzo.op2 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.almuerzo.op2 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if dia_comidas.almuerzo.op3 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.almuerzo.op3 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% else %}
+                  <p>-</p>
+                  {% endif %}
+                </div>
+
+                <!-- Merienda -->
+                <div class="meal-option">
+                  <strong>Merienda:</strong>
+                  {% if dia_comidas.merienda.op1 or dia_comidas.merienda.op2 or dia_comidas.merienda.op3 %}
+                  <div class="opciones-comidas">
+                    {% if dia_comidas.merienda.op1 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.merienda.op1 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if dia_comidas.merienda.op2 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.merienda.op2 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if dia_comidas.merienda.op3 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.merienda.op3 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% else %}
+                  <p>-</p>
+                  {% endif %}
+                </div>
+
+                <!-- Cena -->
+                <div class="meal-option">
+                  <strong>Cena:</strong>
+                  {% if dia_comidas.cena.op1 or dia_comidas.cena.op2 or dia_comidas.cena.op3 %}
+                  <div class="opciones-comidas">
+                    {% if dia_comidas.cena.op1 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.cena.op1 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if dia_comidas.cena.op2 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.cena.op2 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if dia_comidas.cena.op3 %}
+                    <div class="plato-comidas">
+                      {% for plato_comidas in dia_comidas.cena.op3 %}
+                      <div class="plato-detalle">
+                        <strong>{{ plato_comidas.plato_nombre }}</strong>
+                        <ul>
+                          {% for comida in plato_comidas.comidas %}
+                          <li>{{ comida }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% else %}
+                  <p>-</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
         {% else %}
         <p>No hay un plan nutricional activo para este paciente.</p>
         {% endif %}
@@ -1763,9 +1997,8 @@
                 </div>
                 <div class="col-md-6">
                   <label for="fecha" class="form-label">Fecha:</label>
-                  <input type="date" class="form-control" id="fecha" name="fecha" value="{{ today|date:'Y-m-d' }}"
-                    min="1900-01-01" max="2100-12-31" required>>
-                </div>
+                  <input type="date" class="form-control" id="fecha" name="fecha" value="{{ today|date:'Y-m-d' }}" required>
+              </div>
               </div>
               <div class="row g-3 mt-3">
                 <div class="col-md-12 text-center">
@@ -2083,115 +2316,194 @@
   });
 </script>
 
-<!-- <script>
-  function printPlanNutricional() {
-    const planContent = document.querySelector('#plan-nutricional-content .content-card').innerHTML;
-
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Imprimir Plan Nutricional</title>
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-          <style>
-            body { font-family: 'Inter', sans-serif; padding: 20px; }
-            table { width: 100%; border-collapse: collapse; font-size: 12px; }
-            th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
-            th { background-color: #f2f2f2; }
-            .meal-option { margin-bottom: 10px; }
-            .meal-option strong { display: block; font-weight: bold; }
-            ul { padding-left: 20px; }
-          </style>
-        </head>
-        <body>
-          <h2>Plan Nutricional</h2>
-          ${planContent}
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => printWindow.print(), 500); // Esperar que se cargue todo
-  }
-</script> -->
-
 <script>
-  function printPlanNutricional() {
-    const planContent = document.querySelector('#plan-nutricional-content .content-card');
 
-    // Clonamos el contenido original
-    const cloned = planContent.cloneNode(true);
+function printPlanNutricional() {
+  const planContent = document.querySelector('#plan-nutricional-content .content-card:first-child');
+  const comidasContent = document.querySelector('#plan-nutricional-content .content-card:nth-child(2)');
 
-    // Tomamos la recomendación si existe
-    // const recomendacionElem = document.getElementById('recomendacion-impresion');
-    // const recomendacionHTML = recomendacionElem ? recomendacionElem.outerHTML : '';
+  // Clonamos el contenido original
+  const cloned = planContent.cloneNode(true);
+  const clonedComidas = comidasContent ? comidasContent.cloneNode(true) : null;
 
-    // Reemplazar opciones OP1, OP2, OP3 por texto plano con '+'
-    const cells = cloned.querySelectorAll('.nutrition-meal');
-    cells.forEach(cell => {
-      const platos = [];
-      cell.querySelectorAll('li').forEach(li => {
-        const texto = li.textContent.trim();
-        if (texto && texto !== '-') {
-          platos.push(texto);
-        }
-      });
-
-      // Obtener descripción si hay
-      const descripcion = cell.querySelector('small')?.textContent.trim();
-
-      // Limpiar el contenido de la celda
-      cell.innerHTML = '';
-
-      // Agregar línea de platos
-      if (platos.length > 0) {
-        const p = document.createElement('p');
-        p.textContent = platos.join(' + ');
-        cell.appendChild(p);
-      } else {
-        cell.innerHTML = '<p>-</p>';
-      }
-
-      // Agregar la descripción si existe
-      if (descripcion) {
-        const small = document.createElement('p');
-        small.textContent = `Descripción: ${descripcion}`;
-        small.style.fontStyle = 'italic';
-        small.style.fontSize = '11px';
-        small.style.marginTop = '4px';
-        small.style.color = '#666';
-        cell.appendChild(small);
+  // Reemplazar opciones OP1, OP2, OP3 por texto plano con '+'
+  const cells = cloned.querySelectorAll('.nutrition-meal');
+  cells.forEach(cell => {
+    const platos = [];
+    cell.querySelectorAll('li').forEach(li => {
+      const texto = li.textContent.trim();
+      if (texto && texto !== '-') {
+        platos.push(texto);
       }
     });
 
-    // Imprimir contenido modificado
-    const htmlContent = `
+    // Obtener descripción si hay
+    const descripcion = cell.querySelector('small')?.textContent.trim();
+
+    // Limpiar el contenido de la celda
+    cell.innerHTML = '';
+
+    // Agregar línea de platos
+    if (platos.length > 0) {
+      const p = document.createElement('p');
+      p.textContent = platos.join(' + ');
+      cell.appendChild(p);
+    } else {
+      cell.innerHTML = '<p>-</p>';
+    }
+
+    // Agregar la descripción si existe
+    if (descripcion) {
+      const small = document.createElement('p');
+      small.textContent = `Descripción: ${descripcion}`;
+      small.style.fontStyle = 'italic';
+      small.style.fontSize = '11px';
+      small.style.marginTop = '4px';
+      small.style.color = '#666';
+      cell.appendChild(small);
+    }
+  });
+
+  // Imprimir contenido modificado
+  const htmlContent = `
+    <!DOCTYPE html>
     <html>
-      <head>
-        <title>Plan Nutricional</title>
-        <style>
-          body { font-family: 'Inter', sans-serif; padding: 20px; }
-          table { width: 100%; border-collapse: collapse; font-size: 12px; }
-          th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
-          th { background-color: #f2f2f2; }
-          th:first-child, td:first-child { width: 60px; }
-          p { margin: 0 0 5px; display: inline-block; }
-          strong { display: block; margin-bottom: 5px; }
-        </style>
-      </head>
-      <body>
-        <h2>Plan Nutricional</h2>
-        ${cloned.innerHTML}
-      </body>
+    <head>
+      <title>Plan Nutricional</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          font-size: 12px;
+          line-height: 1.4;
+          margin: 20px;
+          color: #333;
+        }
+        
+        h1 {
+          text-align: center;
+          color: #2c3e50;
+          margin-bottom: 30px;
+          font-size: 24px;
+        }
+        
+        .content-card {
+          margin-bottom: 30px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        
+        .content-card h2 {
+          background-color: #f8f9fa;
+          margin: 0;
+          padding: 15px;
+          font-size: 16px;
+          border-bottom: 1px solid #ddd;
+        }
+        
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 12px;
+        }
+        
+        th, td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: left;
+          vertical-align: top;
+        }
+        
+        th {
+          background-color: #f8f9fa;
+          font-weight: bold;
+          font-size: 12px;
+        }
+        
+        td {
+          font-size: 12px;
+        }
+        
+        .nutrition-meal p {
+          margin: 2px 0;
+          font-size: 12px;
+          line-height: 1.3;
+        }
+        
+        .nutrition-meal {
+          font-size: 12px;
+        }
+        
+        /* Estilos específicos para la sección de comidas */
+        .content-card:nth-child(2) {
+          font-size: 12px;
+        }
+        
+        .content-card:nth-child(2) * {
+          font-size: 12px !important;
+        }
+        
+        .content-card:nth-child(2) h3 {
+          font-size: 14px !important;
+          margin: 10px 0 5px 0;
+        }
+        
+        .content-card:nth-child(2) p {
+          font-size: 12px !important;
+          margin: 3px 0;
+        }
+        
+        .content-card:nth-child(2) ul {
+          margin: 5px 0;
+          padding-left: 20px;
+        }
+        
+        .content-card:nth-child(2) li {
+          font-size: 12px !important;
+          margin: 2px 0;
+        }
+        
+        @media print {
+          body {
+            font-size: 12px;
+          }
+          
+          .content-card {
+            break-inside: avoid;
+          }
+          
+          * {
+            font-size: 12px !important;
+          }
+          
+          h1 {
+            font-size: 20px !important;
+          }
+          
+          h2 {
+            font-size: 14px !important;
+          }
+          
+          h3 {
+            font-size: 13px !important;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Plan Nutricional</h1>
+      ${cloned.outerHTML}
+      ${clonedComidas ? clonedComidas.outerHTML : ''}
+    </body>
     </html>
   `;
 
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => printWindow.print(), 500);
-  }
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => printWindow.print(), 500);
+}
 
 </script>
 
@@ -2227,5 +2539,53 @@
 
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const inputFecha = document.getElementById('fecha');
+    
+    function validarFecha() {
+        const fechaSeleccionada = inputFecha.value;
+        const fechaHoy = new Date().toISOString().split('T')[0];
+        
+        // Validar que el año no tenga 5 dígitos o más
+        if (fechaSeleccionada) {
+            const año = new Date(fechaSeleccionada).getFullYear();
+            if (año >= 10000) {
+                inputFecha.classList.add('is-invalid');
+                inputFecha.classList.remove('is-valid');
+                inputFecha.setCustomValidity('El año no puede tener 5 dígitos o más');
+                return false;
+            }
+        }
+        
+        if (fechaSeleccionada && fechaSeleccionada < fechaHoy) {
+            inputFecha.classList.add('is-invalid');
+            inputFecha.classList.remove('is-valid');
+            inputFecha.setCustomValidity('La fecha no puede ser anterior a hoy');
+            return false;
+        } else if (fechaSeleccionada) {
+            inputFecha.classList.add('is-valid');
+            inputFecha.classList.remove('is-invalid');
+            inputFecha.setCustomValidity('');
+            return true;
+        }
+        
+        inputFecha.setCustomValidity('');
+        return false;
+    }
+    
+    // Establecer fecha mínima
+    const hoy = new Date().toISOString().split('T')[0];
+    inputFecha.setAttribute('min', hoy);
+    
+    // Establecer fecha máxima para evitar años de 5 dígitos
+    inputFecha.setAttribute('max', '9999-12-31');
+    
+    // Validar en tiempo real
+    inputFecha.addEventListener('change', validarFecha);
+    inputFecha.addEventListener('blur', validarFecha);
+    inputFecha.addEventListener('input', validarFecha);
+});
+</script>
 
 {% endblock %}

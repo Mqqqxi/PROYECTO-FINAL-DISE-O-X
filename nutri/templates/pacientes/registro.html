@@ -534,10 +534,13 @@
                         <div class="form-field">
                             <label for="fechaNacimiento">Fecha de nacimiento</label>
                             <div class="field-container">
-                                <input type="date" name="fechaNacimiento" id="fechaNacimiento" value="{{ form.fechaNacimiento.value }}" required>
+                                <input type="date" name="fechaNacimiento" id="fechaNacimiento" 
+                                    value="{{ form.fechaNacimiento.value }}" required>
                                 {% if form.fechaNacimiento.errors %}
                                     <p class="error-message">{{ form.fechaNacimiento.errors|striptags }}</p>
                                 {% endif %}
+                                <p class="error-message" id="edadError" style="display: none;"></p>
+                                <p class="success-message" id="edadSuccess" style="display: none;"></p>
                             </div>
                         </div>
 
@@ -640,6 +643,91 @@
             }
         }
     });
+</script>
+
+<script>
+function calcularEdad(fechaNacimiento) {
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mesActual = hoy.getMonth();
+    const diaActual = hoy.getDate();
+    
+    if (mesActual < nacimiento.getMonth() || 
+        (mesActual === nacimiento.getMonth() && diaActual < nacimiento.getDate())) {
+        edad--;
+    }
+    
+    return edad;
+}
+
+function validarEdad() {
+    const input = document.getElementById('fechaNacimiento');
+    const fecha = input.value;
+    const errorDiv = document.getElementById('edadError');
+    const successDiv = document.getElementById('edadSuccess');
+    
+    // Limpiar mensajes previos
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+    input.classList.remove('is-valid', 'is-invalid');
+    
+    if (!fecha) return false;
+    
+    const edad = calcularEdad(fecha);
+    const fechaSeleccionada = new Date(fecha);
+    const hoy = new Date();
+    
+    // Validar fecha futura
+    if (fechaSeleccionada > hoy) {
+        errorDiv.textContent = 'La fecha de nacimiento no puede ser en el futuro';
+        errorDiv.style.display = 'block';
+        input.classList.add('is-invalid');
+        return false;
+    }
+    
+    // Validar edad mínima (18 años)
+    if (edad < 18) {
+        errorDiv.textContent = `Debes ser mayor de edad (tienes ${edad} años)`;
+        errorDiv.style.display = 'block';
+        input.classList.add('is-invalid');
+        return false;
+    }
+    
+    // Validar edad máxima (100 años)
+    if (edad > 100) {
+        errorDiv.textContent = `La edad máxima permitida es 100 años (tienes ${edad} años)`;
+        errorDiv.style.display = 'block';
+        input.classList.add('is-invalid');
+        return false;
+    }
+    
+    // Todo válido
+    successDiv.textContent = `✓ Edad válida: ${edad} años`;
+    successDiv.style.display = 'block';
+    input.classList.add('is-valid');
+    return true;
+}
+
+// Configurar validación
+document.addEventListener('DOMContentLoaded', function() {
+    const inputFecha = document.getElementById('fechaNacimiento');
+    
+    // Establecer límites en el input
+    const hoy = new Date();
+    const fechaMaxima = new Date();
+    fechaMaxima.setFullYear(hoy.getFullYear() - 18); // Mínimo 18 años
+    
+    const fechaMinima = new Date();
+    fechaMinima.setFullYear(hoy.getFullYear() - 100); // Máximo 100 años
+    
+    inputFecha.setAttribute('min', fechaMinima.toISOString().split('T')[0]);
+    inputFecha.setAttribute('max', fechaMaxima.toISOString().split('T')[0]);
+    
+    // Agregar eventos
+    inputFecha.addEventListener('change', validarEdad);
+    inputFecha.addEventListener('blur', validarEdad);
+});
 </script>
 
 </html>
