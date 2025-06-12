@@ -25,6 +25,8 @@
 
      <!-- MAIN CSS -->
      <link rel="stylesheet" href="{% static 'css/templatemo-style.css' %}">
+     <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'images/icono.png' %}">
 
      <!-- Estilos globales -->
      <style>
@@ -169,7 +171,16 @@
 .copyright-text p {
     margin: 0;
 }
-          
+ 
+.navbar-logo {
+    width: 50px; /* Ajusta el ancho del ícono */
+    height: 50px; /* Ajusta la altura del ícono */
+    margin-right: 8px; /* Espacio entre el ícono y el texto */
+    vertical-align: middle; /* Alinea el ícono con el texto */
+}
+
+
+
      </style>
 </head>
 
@@ -190,7 +201,7 @@
                          <span class="icon icon-bar"></span>
                          <span class="icon icon-bar"></span>
                     </button>
-                    <a href="{% url 'inicio' %}#top" class="navbar-brand">DATILERA</a>
+                    <a href="{% url 'inicio' %}#top" class="navbar-brand"><img src="{% static 'images/icono.png' %}" alt="Ícono Datilera" class="navbar-logo"></a>
                </div>
 
                <!-- MENU LINKS -->
@@ -243,10 +254,10 @@
             <div class="col-md-4 col-sm-6">
                 <div class="footer-info">
                     <div class="section-title">
-                        <h2>Datilera</h2>
+                        <h2>DATILERA</h2>
                     </div>
                     <address>
-                        <p>Nutricionista Emilia Ferreyra<br>Calle La Rioja 950, Quitilipi, Chaco</p>
+                        <p>Nutricionista Emilia Ferreyra - MP 061<br>Calle La Rioja 950, Quitilipi, Chaco</p>
                         <p><strong>Horario de atención:</strong><br>
                            Lunes a Viernes 8 a 12 | 16 a 20<br>
                            Sábado de 8 a 12</p>
