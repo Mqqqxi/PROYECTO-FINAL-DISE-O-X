@@ -165,4 +165,4 @@ def editar_progreso(request, paciente_pk):
         except Exception as e:
             messages.error(request, f'Error al actualizar evolución: {str(e)}')
     
-    return redirect('pacientes:infopaciente')
+    return redirect('pacientes:infopaciente_detalle', paciente_id=paciente.pk)
