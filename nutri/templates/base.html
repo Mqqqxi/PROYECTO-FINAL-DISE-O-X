@@ -214,9 +214,11 @@
                          <li><a href="{% url 'comida:plato' %}" class="smoothScroll">Platos</a></li>
                          <li><a href="{% url 'pacientes:listapacientenuevo' %}" class="smoothScroll">Pacientes</a></li>
                          {% endif %}
+                         {% if request.path == '/' %}
                          <li><a href="#feature" class="smoothScroll">Sobre mí</a></li>
                          <li><a href="#courses" class="smoothScroll">Servicios</a></li>
                          <li><a href="#contact" class="smoothScroll">Contacto</a></li>
+                         {% endif %}
                     </ul>
 
                     {% if user.is_authenticated %}
