@@ -5,860 +5,1071 @@
 
 {% block content %}
 <style>
-  /* Estilos modernos para 2025 - Aplicación de nutricionista */
-  :root {
-    --primary-color: #4ECDC4;
-    --secondary-color: #35B5AA;
-    --accent-color: #FF6B6B;
-    --accent-secondary: #F8CB2E;
-    --success-color: #7ABD7E;
-    --warning-color: #FFD166;
-    --danger-color: #EF476F;
-    --background-light: #F5F7FA;
-    --card-bg: #FFFFFF;
-    --gray-light: #EFF1F3;
-    --gray-medium: #D8DEE3;
-    --text-primary: #212B36;
-    --text-secondary: #637381;
-    --card-shadow: 0 8px 24px rgba(149, 157, 165, 0.15);
-    --hover-shadow: 0 12px 32px rgba(149, 157, 165, 0.25);
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-    --border-radius: 12px;
-    --border-radius-sm: 8px;
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  }
+/* Estilos modernos para 2025 - Aplicación de nutricionista */
+:root {
+  --primary-color: #4ECDC4;
+  --secondary-color: #35B5AA;
+  --accent-color: #FF6B6B;
+  --accent-secondary: #F8CB2E;
+  --success-color: #7ABD7E;
+  --warning-color: #FFD166;
+  --danger-color: #EF476F;
+  --background-light: #F5F7FA;
+  --card-bg: #FFFFFF;
+  --gray-light: #EFF1F3;
+  --gray-medium: #D8DEE3;
+  --text-primary: #212B36;
+  --text-secondary: #637381;
+  --card-shadow: 0 8px 24px rgba(149, 157, 165, 0.15);
+  --hover-shadow: 0 12px 32px rgba(149, 157, 165, 0.25);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  --nutrition-gradient: linear-gradient(135deg, #34C759, #FF9500, #FF3B30);
+  --card-hover-gradient: linear-gradient(135deg, rgba(52, 199, 89, 0.1), rgba(255, 149, 0, 0.1));
+  --table-header-gradient: linear-gradient(135deg, #2A9D8F, #48C9B0);
+}
 
-  body {
-    font-family: 'Inter', 'Montserrat', sans-serif;
-    background-color: var(--background-light);
-    color: var(--text-primary);
-    line-height: 1.7;
-    margin: 0;
-    padding: 0;
-  }
+body {
+  font-family: 'Inter', 'Montserrat', sans-serif;
+  background-color: var(--background-light);
+  color: var(--text-primary);
+  line-height: 1.7;
+  margin: 0;
+  padding: 0;
+}
 
-  /* Contenedor principal */
-  .container2 {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 20px;
-  }
+/* Contenedor principal */
+.container2 {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-  /* Header del paciente */
-  .patient-profile-header {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 20px;
-    background: linear-gradient(135deg, var(--card-bg), var(--gray-light));
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    padding: 35px;
-    margin-bottom: 35px;
-    transition: var(--transition);
-  }
+/* Header del paciente */
+.patient-profile-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  background: linear-gradient(135deg, var(--card-bg), var(--gray-light));
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 35px;
+  margin-bottom: 35px;
+  transition: var(--transition);
+  animation: scaleFadeIn 0.6s ease-out forwards;
+}
 
-  .patient-profile-header:hover {
-    box-shadow: var(--hover-shadow);
-    transform: translateY(-4px);
-  }
+.patient-profile-header:hover {
+  box-shadow: var(--hover-shadow);
+  transform: scale(1.03) translateY(-2px);
+}
 
-  .patient-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
+.patient-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: slideInLeft 0.6s ease-out 0.2s forwards;
+  opacity: 0;
+}
 
-  .patient-avatar {
-    width: 70px;
-    height: 70px;
-    border-radius: 18px;
-    background: var(--gradient-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
-  }
+.patient-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 18px;
+  background: var(--gradient-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+  animation: popIn 0.5s ease-out 0.3s forwards;
+  opacity: 0;
+}
 
-  .patient-details h3 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 700;
-  }
+.patient-details h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
 
-  .patient-details p {
-    margin: 4px 0 0;
-    color: var(--text-secondary);
-    font-size: 14px;
-  }
+.patient-details p {
+  margin: 4px 0 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
 
-  .patient-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+.patient-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-  .weight-info {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
+.weight-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
 
-  .weight-box {
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 16px;
-    text-align: center;
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition);
-  }
+.weight-box {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  opacity: 0;
+}
 
-  .weight-box:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--hover-shadow);
-  }
+.weight-box:nth-child(1) {
+  animation: popIn 0.5s ease-out 0.4s forwards;
+}
+.weight-box:nth-child(2) {
+  animation: popIn 0.5s ease-out 0.5s forwards;
+}
+.weight-box:nth-child(3) {
+  animation: popIn 0.5s ease-out 0.6s forwards;
+}
 
-  .weight-box h4 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--primary-color);
-  }
+.weight-box:hover {
+  box-shadow: var(--hover-shadow);
+  transform: translateY(-5px); /* Keep old hover effect for consistency */
+}
 
-  .weight-box p {
-    margin: 4px 0 0;
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
+.weight-box h4 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
 
-  .appointment-info {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
+.weight-box p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
 
-  .appointment-box {
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 16px;
-    text-align: center;
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition);
-  }
+.appointment-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
 
-  .appointment-box:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--hover-shadow);
-  }
+.appointment-box {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  opacity: 0;
+}
 
-  .appointment-box .date {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin: 0;
-  }
+.appointment-box:nth-child(1) {
+  animation: fadeSlideUp 0.5s ease-out 0.7s forwards;
+}
+.appointment-box:nth-child(2) {
+  animation: fadeSlideUp 0.5s ease-out 0.8s forwards;
+}
 
-  .appointment-box .time {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin: 2px 0 0;
-  }
+.appointment-box:hover {
+  box-shadow: var(--hover-shadow);
+  transform: translateY(-5px); /* Keep old hover effect for consistency */
+}
 
-  .appointment-box p {
-    margin: 4px 0 0;
-    font-size: 12px;
-    font-weight: 500;
-  }
+.appointment-box .date {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
 
-  /* Navegación principal */
-  .main-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 30px;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    background-color: var(--card-bg);
-  }
+.appointment-box .time {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+}
 
-  .main-tab {
-    flex: 1;
-    padding: 18px 15px;
-    text-align: center;
-    font-weight: 500;
-    font-size: 15px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: var(--transition);
-    position: relative;
-  }
+.appointment-box p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+}
 
-  .main-tab.active {
-    color: white;
-    font-weight: 600;
-    background: var(--gradient-bg);
-  }
+/* Navegación principal */
+.main-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 30px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  background-color: var(--card-bg);
+}
 
-  .main-tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    width: 100%;
-    background: var(--gradient-bg);
-  }
+.main-tab {
+  flex: 1;
+  padding: 18px 15px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
 
-  .main-tab:hover {
-    background: var(--secondary-color);
-    color: white;
-  }
+.main-tab.active {
+  color: white;
+  font-weight: 600;
+  background: var(--gradient-bg);
+}
 
-  .main-tab i {
-    font-size: 20px;
-  }
+.main-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--gradient-bg);
+}
 
-  /* Sub-navegación */
-  .clinical-tabs {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-  }
+.main-tab:hover {
+  background: var(--secondary-color);
+  color: white;
+}
 
-  .clinical-tab {
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: var(--shadow-sm);
-  }
+.main-tab i {
+  font-size: 20px;
+}
 
-  .clinical-tab:hover {
-    background: var(--secondary-color);
-    color: white;
-  }
+/* Sub-navegación */
+.clinical-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
 
-  .clinical-tab.active {
-    background: var(--primary-color);
-    color: white;
-    box-shadow: var(--card-shadow);
-  }
+.clinical-tab {
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
 
-  .clinical-tab-icon {
-    font-size: 16px;
-  }
+.clinical-tab:hover {
+  background: var(--secondary-color);
+  color: white;
+}
 
-  .spacer {
-    flex-grow: 1;
-  }
+.clinical-tab.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--card-shadow);
+}
 
-  .action-buttons {
-    display: flex;
-    gap: 8px;
-  }
+.clinical-tab-icon {
+  font-size: 16px;
+}
 
-  .action-buttons .btn {
-    padding: 10px;
-    border-radius: var(--border-radius);
-    background: var(--primary-color);
-    color: white;
-    transition: var(--transition);
-    box-shadow: var(--shadow-sm);
-  }
+.spacer {
+  flex-grow: 1;
+}
 
-  .action-buttons .btn:hover {
-    background: var(--accent-color);
-    transform: translateY(-2px);
-  }
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
 
-  /* Contenido */
-  .tab-content {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
+.action-buttons .btn {
+  padding: 10px;
+  border-radius: var(--border-radius);
+  background: var(--primary-color);
+  color: white;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
 
-  .tab-content.visible {
-    opacity: 1;
-  }
+.action-buttons .btn:hover {
+  background: var(--accent-color);
+  transform: translateY(-2px);
+}
 
-  .content-section {
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    padding: 30px;
-    min-height: 300px;
-    border: 1px solid rgba(235, 238, 241, 0.8);
-    transition: var(--transition);
-    animation: fadeIn 0.4s ease-out;
-  }
+.tab-content {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
-  .content-section:hover {
-    box-shadow: var(--hover-shadow);
-  }
+.tab-content.visible {
+  opacity: 1;
+  animation: fadeIn 0.4s ease-out;
+}
 
-  .content-card h4 {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 0 0 16px;
-  }
+.content-section {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 30px;
+  min-height: 300px;
+  border: 1px solid rgba(235, 238, 241, 0.8);
+  transition: var(--transition);
+}
 
-  /* Ajustar el diseño de la fila de datos */
+.content-section:hover {
+  box-shadow: var(--hover-shadow);
+}
+
+.content-card h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+}
+
+/* Ajustar el diseño de la fila de datos */
 .data-row {
   display: flex;
-  align-items: flex-start; /* Alinear al inicio para evitar espacio vertical */
+  align-items: flex-start;
   margin-bottom: 16px;
   padding: 12px 0;
   border-bottom: 1px solid var(--gray-medium);
   transition: var(--transition);
 }
 
-  .data-row:hover {
-    background-color: var(--gray-light);
-    padding: 8px;
-    margin: -8px -8px 8px -8px;
-    border-radius: var(--border-radius-sm);
-  }
+.data-row:hover {
+  background-color: var(--gray-light);
+  padding: 8px;
+  margin: -8px -8px 8px -8px;
+  border-radius: var(--border-radius-sm);
+}
 
-  .data-row:last-child {
-    border-bottom: none;
-  }
+.data-row:last-child {
+  border-bottom: none;
+}
 
-  /* Reducir el ancho de la etiqueta de fecha */
 .data-label {
   font-size: 14px;
   color: var(--text-secondary);
   font-weight: 500;
-  flex: 0 0 100px; /* Ancho fijo para la fecha, ajusta según necesidad */
-  min-width: 100px; /* Asegura un ancho mínimo */
-  margin-right: 10px; /* Espacio controlado entre la fecha y el contenido */
+  flex: 0 0 100px;
+  min-width: 100px;
+  margin-right: 10px;
 }
 
-  /* Asegurar que el contenido de las comidas ocupe el espacio restante */
 .data-value {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
-  flex: 1; /* Ocupa el espacio restante */
+  flex: 1;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
+/* Gráfico de progreso */
+.progress-chart {
+  height: 350px;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 25px;
+  transition: var(--transition);
+}
 
+.progress-chart:hover {
+  box-shadow: var(--hover-shadow);
+}
 
-  /* Gráfico de progreso */
-  .progress-chart {
-    height: 350px;
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 20px;
-    box-shadow: var(--card-shadow);
-    margin-bottom: 25px;
-    transition: var(--transition);
+/* Indicadores de progreso */
+.progress-indicator {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.progress-step::after {
+  content: '';
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background-color: var(--gray-medium);
+  z-index: 1;
+}
+
+.progress-step:last-child::after {
+  display: none;
+}
+
+.progress-step.completed::after {
+  border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.step-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.progress-step.completed .step-label {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* Chat */
+.chat-container {
+  height: 400px;
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--gray-medium);
+  background: var(--card-bg);
+  overflow: hidden;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  padding: 12px 18px;
+  border-radius: 20px;
+  max-width: 75%;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  line-height: 1.5;
+}
+
+.message.nutricionista {
+  background: var(--gradient-bg);
+  color: white;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.message.paciente {
+  background: var(--gray-light);
+  color: var(--text-primary);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-input {
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid var(--gray-medium);
+  background: var(--card-bg);
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 15px;
+  border: 1px solid var(--gray-medium);
+  border-radius: 30px;
+  margin-right: 10px;
+  transition: var(--transition);
+}
+
+.chat-input input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+}
+
+.chat-input button {
+  padding: 0 25px;
+  background: var(--gradient-bg);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.chat-input button:hover {
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+}
+
+/* Botones */
+button,
+.btn {
+  padding: 12px 24px;
+  background: var(--gradient-bg);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+button:hover,
+.btn:hover {
+  box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--danger-color), #F27999);
+}
+
+.btn-danger:hover {
+  box-shadow: 0 5px 15px rgba(239, 71, 111, 0.3);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-color), #5A9E5A);
+}
+
+.btn-success:hover {
+  box-shadow: 0 5px 15px rgba(122, 189, 126, 0.3);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--warning-color), #FFBA08);
+  color: var(--text-primary);
+}
+
+.btn-warning:hover {
+  box-shadow: 0 5px 15px rgba(255, 209, 102, 0.3);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-
-  .progress-chart:hover {
-    box-shadow: var(--hover-shadow);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  /* Indicadores de progreso */
-  .progress-indicator {
-    display: flex;
-    justify-content: space-between;
-    margin: 30px 0;
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
-
-  .progress-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    position: relative;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
+}
 
-  .progress-step::after {
-    content: '';
-    position: absolute;
-    top: 25px;
-    left: 50%;
-    width: 100%;
-    height: 3px;
-    background-color: var(--gray-medium);
-    z-index: 1;
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
   }
-
-  .progress-step:last-child::after {
-    display: none;
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
+}
 
-  .progress-step.completed::after {
-    background-color: var(--primary-color);
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
   }
-
-  .step-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--card-bg);
-    border: 3px solid var(--gray-medium);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    position: relative;
-    z-index: 2;
-    transition: var(--transition);
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
+}
 
-  .progress-step.completed .step-icon {
-    border-color: var(--primary-color);
-    background-color: var(--primary-color);
-    color: white;
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
   }
-
-  .step-label {
-    font-size: 14px;
-    color: var(--text-secondary);
-    text-align: center;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  .progress-step.completed .step-label {
-    color: var(--primary-color);
-    font-weight: 500;
-  }
-
-  /* Chat */
-  .chat-container {
-    height: 400px;
-    border-radius: var(--border-radius);
-    display: flex;
-    flex-direction: column;
-    box-shadow: var(--card-shadow);
-    border: 1px solid var(--gray-medium);
-    background: var(--card-bg);
-    overflow: hidden;
-  }
-
-  .chat-messages {
-    flex: 1;
-    padding: 16px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .message {
-    padding: 12px 18px;
-    border-radius: 20px;
-    max-width: 75%;
-    font-size: 14px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    line-height: 1.5;
-  }
-
-  .message.nutricionista {
-    background: var(--gradient-bg);
-    color: white;
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
-  }
-
-  .message.paciente {
-    background: var(--gray-light);
-    color: var(--text-primary);
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
-  }
-
-  .chat-input {
-    display: flex;
-    padding: 15px;
-    border-top: 1px solid var(--gray-medium);
-    background: var(--card-bg);
-  }
-
-  .chat-input input {
-    flex: 1;
-    padding: 15px;
-    border: 1px solid var(--gray-medium);
-    border-radius: 30px;
-    margin-right: 10px;
-    transition: var(--transition);
-  }
-
-  .chat-input input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
-  }
-
-  .chat-input button {
-    padding: 0 25px;
-    background: var(--gradient-bg);
-    color: white;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: var(--transition);
-    font-weight: 500;
-  }
-
-  .chat-input button:hover {
-    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-    transform: translateY(-2px);
-  }
-
-  /* Botones */
-  button,
-  .btn {
-    padding: 12px 24px;
-    background: var(--gradient-bg);
-    color: white;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: var(--transition);
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: var(--shadow-sm);
-  }
-
-  button:hover,
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
-  }
-
-  .btn-danger {
-    background: linear-gradient(135deg, var(--danger-color), #F27999);
-  }
-
-  .btn-danger:hover {
-    box-shadow: 0 5px 15px rgba(239, 71, 111, 0.3);
-  }
-
-  .btn-success {
-    background: linear-gradient(135deg, var(--success-color), #5A9E5A);
-  }
-
-  .btn-success:hover {
-    box-shadow: 0 5px 15px rgba(122, 189, 126, 0.3);
-  }
-
-  .btn-warning {
-    background: linear-gradient(135deg, var(--warning-color), #FFBA08);
-    color: var(--text-primary);
-  }
-
-  .btn-warning:hover {
-    box-shadow: 0 5px 15px rgba(255, 209, 102, 0.3);
-  }
-
-  /* Animaciones */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Responsividad */
-  @media (max-width: 1024px) {
-    .patient-profile-header {
-      grid-template-columns: 1fr;
-      gap: 25px;
-    }
-
-    .weight-info {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .content-section {
-      padding: 20px;
-    }
-  }
-
-  @media (max-width: 768px) {
-
-    .weight-info,
-    .appointment-info {
-      grid-template-columns: 1fr;
-    }
-
-    .main-tabs {
-      flex-direction: column;
-      flex-wrap: wrap;
-    }
-
-    .main-tab {
-      flex-basis: 100%;
-    }
-
-    .clinical-tabs {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .clinical-tab {
-      flex-basis: 50%;
-      text-align: center;
-      justify-content: center;
-    }
-
-    .action-buttons {
-      margin-top: 15px;
-      width: 100%;
-      justify-content: center;
-    }
-  }
-
-
-  /* Ajustar el contenedor de opciones de comida */
 /* Ajustar el contenedor de opciones de comida */
 .meal-options {
   display: flex;
-  flex-direction: row; /* Mantener las opciones en fila */
-  gap: 10px;
+  flex-direction: row;
+  gap: 12px;
   width: 100%;
-  flex-wrap: nowrap; /* Evitar que las opciones se envuelvan */
-  justify-content: flex-start; /* Alinear al inicio */
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  margin-top: 8px;
 }
 
-
-/* Ajustar cada opción de comida */
 .meal-option {
-  background: var(--gray-light);
-  padding: 14px 18px; /* Aumentado ligeramente para más espacio interno */
+  background: var(--card-bg);
+  padding: 12px;
   border-radius: var(--border-radius-sm);
+  border: 1px solid var(--gray-light);
+  box-shadow: var(--shadow-sm);
   transition: var(--transition);
-  flex: 1; /* Permitir que los cuadrados crezcan proporcionalmente */
-  min-width: 220px; /* Aumentado para hacer los cuadrados más anchos */
-  max-width: 280px; /* Aumentado para permitir más espacio */
-  box-sizing: border-box;
-  border: 1px solid var(--gray-medium); /* Opcional: añadir borde para destacar los cuadrados */
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  min-width: 200px;
 }
 
-  .meal-option:hover {
-  background: rgba(78, 205, 196, 0.1);
+.meal-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--nutrition-gradient);
+  opacity: 0;
+  transition: var(--transition);
 }
 
-  .meal-option strong {
-  color: var(--primary-color);
-  font-size: 13px;
-  margin-bottom: 4px;
+.meal-option:hover::before {
+  opacity: 1;
+}
+
+.meal-option:hover {
+  background: var(--card-hover-gradient);
+  box-shadow: var(--hover-shadow);
+  transform: scale(1.02);
+}
+
+.meal-option strong {
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-bottom: 6px;
   display: block;
+  font-weight: 600;
+  background: linear-gradient(90deg, #34C759, #FF9500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-  .meal-option ul {
+.meal-option ul {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 16px;
   list-style-type: disc;
 }
 
-  .meal-option li {
-    margin-bottom: 4px;
-    font-size: 13px;
-    color: var(--text-primary);
+.meal-option li {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  transition: var(--transition);
+}
+
+.meal-option li:hover {
+  color: var(--primary-color);
+}
+
+.meal-option p {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Colores vibrantes para opciones */
+.meal-option:nth-child(1) {
+  background-color: rgba(52, 199, 89, 0.05);
+}
+
+.meal-option:nth-child(2) {
+  background-color: rgba(255, 149, 0, 0.05);
+}
+
+.meal-option:nth-child(3) {
+  background-color: rgba(255, 59, 48, 0.05);
+}
+
+/* Estilos para la tabla del plan nutricional */
+.nutrition-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 24px;
+  font-size: 14px;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.nutrition-table th,
+.nutrition-table td {
+  padding: 14px 18px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gray-light);
+  transition: var(--transition);
+}
+
+.nutrition-table th {
+  background: var(--table-header-gradient);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.nutrition-table th::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: white;
+  transition: width 0.4s ease;
+}
+
+.nutrition-table th:hover::after {
+  width: 100%;
+}
+
+.nutrition-table td {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  position: relative;
+}
+
+.nutrition-table tr:hover td {
+  background: var(--card-hover-gradient);
+}
+
+.nutrition-day {
+  font-weight: 600;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, rgba(52, 199, 89, 0.1), rgba(255, 149, 0, 0.1));
+  text-align: center;
+  font-size: 15px;
+  border-right: 1px solid var(--gray-light);
+}
+
+.nutrition-meal {
+  padding: 16px;
+}
+
+.nutrition-meal ul {
+  margin: 0;
+  padding-left: 16px;
+  list-style-type: disc;
+}
+
+.nutrition-meal li {
+  margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+.nutrition-meal li:hover {
+  color: #34C759;
+}
+
+.nutrition-meal small {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-style: italic;
+  opacity: 0.8;
+  transition: var(--transition);
+}
+
+.nutrition-meal small:hover {
+  opacity: 1;
+  color: var(--primary-color);
+}
+
+/* Iconos para tipos de comida */
+.nutrition-table th:nth-child(2)::before {
+  content: '☕';
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.nutrition-table th:nth-child(3)::before {
+  content: '🍽️';
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.nutrition-table th:nth-child(4)::before {
+  content: '🥐';
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.nutrition-table th:nth-child(5)::before {
+  content: '🍲';
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+/* Estilos para las comidas asociadas */
+.opciones-comidas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+  justify-content: flex-start;
+  margin-top: 16px;
+}
+
+.plato-comidas {
+  background: var(--card-bg);
+  padding: 16px 20px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--gray-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.plato-comidas::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--nutrition-gradient);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.plato-comidas:hover::before {
+  opacity: 1;
+}
+
+.plato-comidas:hover {
+  background: var(--card-hover-gradient);
+  border-color: #34C759;
+  box-shadow: var(--hover-shadow);
+  transform: scale(1.02);
+}
+
+.plato-detalle strong {
+  color: var(--text-primary);
+  font-size: 15px;
+  margin-bottom: 8px;
+  display: block;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: linear-gradient(90deg, #FF3B30, #FF9500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.plato-detalle ul {
+  margin: 0;
+  padding-left: 18px;
+  list-style-type: disc;
+  text-align: left;
+}
+
+.plato-detalle li {
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  transition: var(--transition);
+}
+
+.plato-detalle li:hover {
+  color: var(--primary-color);
+}
+
+/* Colores vibrantes para opciones de comidas asociadas */
+.plato-comidas:nth-child(1) {
+  background-color: rgba(52, 199, 89, 0.05);
+}
+
+.plato-comidas:nth-child(2) {
+  background-color: rgba(255, 149, 0, 0.05);
+}
+
+.plato-comidas:nth-child(3) {
+  background-color: rgba(255, 59, 48, 0.05);
+}
+
+/* Ajustes para responsividad */
+@media (max-width: 1024px) {
+  .patient-profile-header {
+    grid-template-columns: 1fr;
+    gap: 25px;
   }
 
-  .meal-option p {
-    margin: 0;
-    font-size: 13px;
-    color: var(--text-secondary);
-    font-style: italic;
+  .weight-info {
+    grid-template-columns: 1fr 1fr;
   }
 
+  .content-section {
+    padding: 20px;
+  }
+}
 
-
-
-
-
-  /* Estilos para la tabla del plan nutricional */
-  .nutrition-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-size: 14px;
+@media (max-width: 768px) {
+  .weight-info,
+  .appointment-info {
+    grid-template-columns: 1fr;
   }
 
-  .nutrition-table th,
-  .nutrition-table td {
-    padding: 12px 16px;
-    text-align: left;
-    vertical-align: top;
-    border-bottom: 1px solid var(--gray-medium);
+  .main-tabs {
+    flex-direction: column;
+    flex-wrap: wrap;
   }
 
-  .nutrition-table th {
-    background-color: var(--gray-light);
-    font-weight: 600;
-    color: var(--text-primary);
-    text-transform: uppercase;
-    font-size: 13px;
-  }
-
-  .nutrition-table td {
-    background-color: var(--card-bg);
-    color: var(--text-primary);
-  }
-
-  .nutrition-day {
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .nutrition-meal ul {
-    margin: 0;
-    padding-left: 20px;
-    list-style-type: disc;
-  }
-
-  .nutrition-meal li {
-    margin-bottom: 8px;
-    line-height: 1.5;
-  }
-
-  .nutrition-meal small {
-    display: block;
-    margin-top: 8px;
-    color: var(--text-secondary);
-    font-size: 12px;
-    font-style: italic;
-  }
-
-  .nutrition-table tr:hover {
-    background-color: var(--gray-light);
-  }
-
-  /* Estilos para las opciones dentro de cada comida */
-  .meal-options {
-    display: flex;
-    flex-direction: row;
-    /* Options are displayed side by side */
-    gap: 10px;
-    width: 100%;
-    flex-wrap: nowrap;
-    /* Prevent wrapping to ensure all options stay in one row */
-    justify-content: space-between;
-  }
-
-  .meal-option {
-    background: var(--gray-light);
-    padding: 8px 12px;
-    border-radius: var(--border-radius-sm);
-    transition: var(--transition);
-    flex: 1;
-    /* Make each option take equal space */
-    min-width: 100px;
-    /* Reduced min-width to fit better in the cell */
-    max-width: 150px;
-    /* Added max-width to prevent overly wide options */
-    box-sizing: border-box;
-  }
-
-  .meal-option:hover {
-    background: rgba(78, 205, 196, 0.1);
-  }
-
-  .meal-option strong {
-    color: var(--primary-color);
-    font-size: 13px;
-    margin-bottom: 4px;
-    display: block;
-  }
-
-  .meal-option ul {
-    margin: 0;
-    padding-left: 20px;
-    list-style-type: disc;
-  }
-
-  .meal-option li {
-    margin-bottom: 4px;
-    font-size: 13px;
-    color: var(--text-primary);
-  }
-
-  .meal-option p {
-    margin: 0;
-    font-size: 13px;
-    color: var(--text-secondary);
-    font-style: italic;
-  }
-
-  /* Ensure the table cell is wide enough */
-  .nutrition-meal {
-    vertical-align: top;
-    padding: 10px;
-    min-width: 350px;
-    /* Increased to ensure all options fit in one row */
-  }
-
-  /* Adjust table styling for better fit */
-  .nutrition-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  /* Add horizontal scrolling to the table container */
-  .nutrition-table-container {
-    overflow-x: auto;
-    /* Enable horizontal scrolling if the table is too wide */
-    margin-bottom: 20px;
-  }
-
-  .nutrition-table th,
-  .nutrition-table td {
-    border: 1px solid var(--gray-light);
-    padding: 8px;
-    text-align: left;
-  }
-
-  .nutrition-day {
-    font-weight: bold;
-    text-align: center;
-    min-width: 100px;
-    /* Ensure the day column has enough space */
-  }
-
-  .evolucion-action-buttons {
-    margin-left: auto;
-    display: none;
-    gap: 8px;
+  .main-tab {
+    flex-basis: 100%;
   }
 
   .clinical-tabs {
-    align-items: center;
-    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  @media (max-width: 768px) {
-    .evolucion-action-buttons {
-      margin-top: 10px;
-      justify-content: center;
-      width: 100%;
-    }
+  .clinical-tab {
+    flex-basis: 50%;
+    text-align: center;
+    justify-content: center;
   }
+
+  .action-buttons {
+    margin-top: 15px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nutrition-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .nutrition-table th,
+  .nutrition-table td {
+    min-width: 130px;
+    padding: 10px 12px;
+  }
+
+  .meal-options {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .meal-option {
+    width: 100%;
+    padding: 10px;
+    min-width: auto;
+  }
+
+  .meal-option strong {
+    font-size: 13px;
+  }
+
+  .meal-option li {
+    font-size: 11px;
+  }
+
+  .opciones-comidas {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .plato-comidas {
+    width: 100%;
+    padding: 12px 16px;
+  }
+
+  .plato-detalle strong {
+    font-size: 14px;
+  }
+
+  .plato-detalle li {
+    font-size: 12px;
+  }
+
+  .nutrition-meal {
+    padding: 12px;
+  }
+
+  .nutrition-meal small {
+    font-size: 10px;
+    margin-top: 6px;
+  }
+
+  .nutrition-table th::before {
+    font-size: 12px;
+    margin-right: 6px;
+  }
+}
+
+.evolucion-action-buttons {
+  margin-left: auto;
+  display: none;
+  gap: 8px;
+}
+
+.clinical-tabs {
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 768px) {
+  .evolucion-action-buttons {
+    margin-top: 10px;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -1466,6 +1677,7 @@
     <div id="plan-nutricional-content" class="content-section" style="display: none;">
       <div class="content-card">
         <h4>Plan Nutricional</h4>
+        <h4>Platos</h4>
         <!-- Agregamos recomendación si existe -->
         {% if recomendacion %}
         <div id="recomendacion-impresion" class="mb-3">
@@ -1497,7 +1709,7 @@
                 <td class="nutrition-meal">
                   <div class="meal-options">
                     <div class="meal-option">
-                      <strong>OP1:</strong>
+                      <strong>Opcion 1:</strong>
                       {% if dia_data.desayuno.op1 %}
                       <ul>
                         {% for plato in dia_data.desayuno.op1 %}
@@ -1509,7 +1721,7 @@
                       {% endif %}
                     </div>
                     <div class="meal-option">
-                      <strong>OP2:</strong>
+                      <strong>Opcion 2:</strong>
                       {% if dia_data.desayuno.op2 %}
                       <ul>
                         {% for plato in dia_data.desayuno.op2 %}
@@ -1521,7 +1733,7 @@
                       {% endif %}
                     </div>
                     <div class="meal-option">
-                      <strong>OP3:</strong>
+                      <strong>Opcion 3:</strong>
                       {% if dia_data.desayuno.op3 %}
                       <ul>
                         {% for plato in dia_data.desayuno.op3 %}
@@ -1541,7 +1753,7 @@
                 <td class="nutrition-meal">
                   <div class="meal-options">
                     <div class="meal-option">
-                      <strong>OP1:</strong>
+                      <strong>Opcion 1:</strong>
                       {% if dia_data.almuerzo.op1 %}
                       <ul>
                         {% for plato in dia_data.almuerzo.op1 %}
@@ -1553,7 +1765,7 @@
                       {% endif %}
                     </div>
                     <div class="meal-option">
-                      <strong>OP2:</strong>
+                      <strong>Opcion 2:</strong>
                       {% if dia_data.almuerzo.op2 %}
                       <ul>
                         {% for plato in dia_data.almuerzo.op2 %}
@@ -1565,7 +1777,7 @@
                       {% endif %}
                     </div>
                     <div class="meal-option">
-                      <strong>OP3:</strong>
+                      <strong>Opcion 3:</strong>
                       {% if dia_data.almuerzo.op3 %}
                       <ul>
                         {% for plato in dia_data.almuerzo.op3 %}
@@ -1585,7 +1797,7 @@
                 <td class="nutrition-meal">
                   <div class="meal-options">
                     <div class="meal-option">
-                      <strong>OP1:</strong>
+                      <strong>Opcion 1:</strong>
                       {% if dia_data.merienda.op1 %}
                       <ul>
                         {% for plato in dia_data.merienda.op1 %}
@@ -1597,7 +1809,7 @@
                       {% endif %}
                     </div>
                     <div class="meal-option">
-                      <strong>OP2:</strong>
+                      <strong>Opcion 2:</strong>
                       {% if dia_data.merienda.op2 %}
                       <ul>
                         {% for plato in dia_data.merienda.op2 %}
@@ -1609,7 +1821,7 @@
                       {% endif %}
                     </div>
                     <div class="meal-option">
-                      <strong>OP3:</strong>
+                      <strong>Opcion 3:</strong>
                       {% if dia_data.merienda.op3 %}
                       <ul>
                         {% for plato in dia_data.merienda.op3 %}
@@ -1629,7 +1841,7 @@
                 <td class="nutrition-meal">
                   <div class="meal-options">
                     <div class="meal-option">
-                      <strong>OP1:</strong>
+                      <strong>Opcion 1:</strong>
                       {% if dia_data.cena.op1 %}
                       <ul>
                         {% for plato in dia_data.cena.op1 %}
@@ -1641,7 +1853,7 @@
                       {% endif %}
                     </div>
                     <div class="meal-option">
-                      <strong>OP2:</strong>
+                      <strong>Opcion 2:</strong>
                       {% if dia_data.cena.op2 %}
                       <ul>
                         {% for plato in dia_data.cena.op2 %}
@@ -1653,7 +1865,7 @@
                       {% endif %}
                     </div>
                     <div class="meal-option">
-                      <strong>OP3:</strong>
+                      <strong>Opcion 3:</strong>
                       {% if dia_data.cena.op3 %}
                       <ul>
                         {% for plato in dia_data.cena.op3 %}
@@ -1676,7 +1888,7 @@
         </div>
         <!-- Sección para mostrar las comidas asociadas a los platos -->
         <div class="content-card" style="margin-top: 20px;">
-          <h4>Comidas asociadas a los platos</h4>
+          <h4>Comidas asociadas a cada plato</h4>
           {% for dia_comidas in plato_comidas_data %}
           <div class="data-row">
             <div class="data-label">{{ dia_comidas.dia_nombre }}</div>
